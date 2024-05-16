@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tech-buddy-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tech-buddy
+  template:
+    metadata:
+      labels:
+        app: tech-buddy
+    spec:
+      containers:
+        - name: tech-buddy
+          image: delvlooping/tech-buddy:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: tech-buddy-secret
+                  key: SECRET
