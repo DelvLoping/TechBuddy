@@ -21,7 +21,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <Providers>
           <div className="flex justify-center items-center h-screen p-10">
-            <Card className=" h-full p-8 overflow-y-auto">{children}</Card>
+            <Card className=" h-full p-8 overflow-y-auto rounded-3xl">
+              {children}
+            </Card>
           </div>
         </Providers>
       </body>
