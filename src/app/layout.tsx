@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./providers";
+import { Card } from "@nextui-org/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,8 +17,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className="light">
+      <body className={inter.className}>
+        <Providers>
+          <div className="flex justify-center items-center h-screen p-10">
+            <Card className=" h-full p-8 overflow-y-auto">{children}</Card>
+          </div>
+        </Providers>
+      </body>
     </html>
   );
 }
