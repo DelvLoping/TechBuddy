@@ -2,19 +2,24 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { verifyToken } from "../middleware";
+import { authenticate } from "../middleware";
+import { ADMIN } from "@/app/constant";
 
 export async function GET(req: NextRequest) {
   try {
-    const isAuthenticated = await verifyToken(req);
-    if (!isAuthenticated) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
-
+    await authenticate(req);
     const user = req.user;
 
-    if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    let users;
+
+    if (user.type === ADMIN) {
+      users = await prisma.user.findMany();
+    } else {
+      users = await prisma.user.findMany({
+        where: {
+          id: user.id,
+        },
+      });
     }
 
     return NextResponse.json({ user }, { status: 200 });
