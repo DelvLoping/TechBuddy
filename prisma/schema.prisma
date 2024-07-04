@@ -119,6 +119,7 @@ model Address {
 enum UserType {
   TECHBUDDY
   HELPER
+  ADMIN
 }
 
 enum InterventionType {
