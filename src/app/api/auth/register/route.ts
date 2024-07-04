@@ -23,16 +23,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let addressId = undefined;
+    let addressId;
     if (address && type === "HELPER") {
-      addressId = await prisma.address.create({
-        data: {
-          street,
-          city,
-          postalCode,
-          country,
-        },
-      })?.id;
+      try {
+        const createdAddress = await prisma.address.create({
+          data: {
+            street,
+            city,
+            postalCode,
+            country,
+          },
+        });
+
+        addressId = createdAddress.id;
+      } catch (error) {
+        console.error("Error creating address:", error);
+        throw new Error("Failed to create address");
+      }
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -45,7 +52,7 @@ export async function POST(req: NextRequest) {
         lastname,
         age,
         type,
-        address: addressId,
+        address: addressId ? { connect: { id: addressId } } : undefined,
       },
     });
 
