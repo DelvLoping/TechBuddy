@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
         password: hashedPassword,
         firstname,
         lastname,
-        age,
+        age: parseInt(age) || undefined,
         type,
         address: addressId ? { connect: { id: addressId } } : undefined,
       },

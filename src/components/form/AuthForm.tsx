@@ -3,7 +3,7 @@ import { Button, Checkbox, Input } from "@nextui-org/react";
 import React, { useState } from "react";
 import { Spinner } from "@nextui-org/spinner";
 import { useSelector } from "react-redux";
-import { HELPER, TECHBUDDY } from "@/app/constant";
+import { HELPER, TECHBUDDY } from "@/constant";
 import Link from "next/link";
 
 export default function AuthForm({

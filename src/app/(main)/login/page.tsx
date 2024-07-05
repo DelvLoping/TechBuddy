@@ -1,6 +1,6 @@
 "use client";
 
-import AuthForm from "@/app/component/form/AuthForm";
+import AuthForm from "@/components/form/AuthForm";
 import { login } from "@/lib/redux/slices/user";
 import Link from "next/link";
 import { useDispatch } from "react-redux";

@@ -1,13 +1,16 @@
-// src/app/api/helpRequest/route.ts
+// src/app/api/help-request/route.ts
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../middleware";
-import { ADMIN, IN_PERSON, VIRTUAL } from "@/app/constant";
+import { ADMIN, IN_PERSON, VIRTUAL } from "@/constant";
 
 export async function GET(req: NextRequest) {
   try {
-    await authenticate(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
 
     const user = req.user;
 
@@ -35,7 +38,10 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    await authenticate(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
 
     const {
       subject,
