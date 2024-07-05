@@ -34,7 +34,7 @@ axiosInstance.interceptors.response.use(
         store.dispatch(removeJWT());
       }
     }
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
 );
 

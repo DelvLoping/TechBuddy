@@ -5,10 +5,14 @@ import React, { useState } from "react";
 import { Spinner } from "@nextui-org/spinner";
 import { useSelector } from "react-redux";
 import { OPEN,VIRTUAL,IN_PERSON} from "@/constant";
+import axios from "axios";
+import axiosInstance from "@/lib/axiosInstance";
 
-export default function HelpRequest({ id, onSubmit }) {
+export default function HelpRequest({ id }) {
   const userReducer = useSelector((state) => state.user);
-  const { error, loading } = userReducer || {};
+  const { loading } = userReducer || {};
+  const [error, setError] = useState("");
+
   const [formData, setFormData] = useState({
     subject: undefined,
     description: undefined,
@@ -29,20 +33,14 @@ export default function HelpRequest({ id, onSubmit }) {
   const submit = async (e) => {
     e.preventDefault();
     try {
-      const response = await onSubmit(formData);
-      console.log(response)
-      if (response && response.status === 201) {
-        console.log('submissionSuccess'); 
-        setSubmissionSuccess(true); 
-      } 
-      console.log(submissionSuccess); 
-
+      await axiosInstance.post("/helper-request", formData) 
+      setSubmissionSuccess(true)   
     } catch (error) {
-      console.error("Error submitting help request:", error);
+      if(axios.isAxiosError(error) && error.response.data){
+        setError(error.response.data.message)
+      }
     }
-  };
-  console.log(submissionSuccess); 
-
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -145,7 +143,7 @@ export default function HelpRequest({ id, onSubmit }) {
       )}
 
       {submissionSuccess && ( 
-        <div className="text-green-600 font-bold mt-4">
+        <div className="text-green-600 text-center font-bold mt-4">
           Your help request has been submitted successfully!
         </div>
       )}
