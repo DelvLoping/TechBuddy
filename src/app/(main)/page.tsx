@@ -1,13 +1,8 @@
 "use client";
 import axiosInstance from "@/lib/axiosInstance";
 import Image from "next/image";
-import { useEffect } from "react";
 
 export default function Home() {
-  useEffect(() => {
-    axiosInstance.get("/user").then((res) => console.log(res));
-  }, []);
-
   return (
     <main className="flex min-h-screen flex-col items-center">
       <ul>
