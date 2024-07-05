@@ -3,11 +3,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../middleware";
-import { ADMIN, HELPER, TECHBUDDY } from "@/app/constant";
+import { ADMIN, HELPER, TECHBUDDY } from "@/constant";
 
 export async function GET(req: NextRequest) {
   try {
-    await authenticate(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
 
     const user = req.user;
 

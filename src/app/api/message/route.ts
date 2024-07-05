@@ -3,11 +3,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../middleware";
-import { ADMIN } from "@/app/constant";
+import { ADMIN } from "@/constant";
 
 export async function GET(req: NextRequest) {
   try {
-    await authenticate(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
     const user = req.user;
 
     let messages;
@@ -34,7 +37,10 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    await authenticate(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
 
     const { chatId, content } = await req.json();
     const user = req.user;

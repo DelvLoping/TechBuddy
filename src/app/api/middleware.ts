@@ -53,6 +53,6 @@ export function removeFromValidTokens(id: number) {
 export const authenticate = async (req: NextRequest) => {
   const isAuthenticated = await verifyToken(req);
   if (!isAuthenticated) {
-    throw new Error("Unauthorized");
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 };

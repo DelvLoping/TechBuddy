@@ -3,11 +3,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../middleware";
-import { ADMIN, TECHBUDDY } from "@/app/constant";
+import { ADMIN, TECHBUDDY } from "@/constant";
 
 export async function GET(req: NextRequest) {
   try {
-    await authenticate(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
     const user = req.user;
 
     let helpApplications;
@@ -47,7 +50,10 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    await authenticate(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
 
     const { requestId } = await req.json();
     const user = req.user;

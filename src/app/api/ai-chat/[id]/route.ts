@@ -3,12 +3,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../../middleware";
-import { ADMIN } from "@/app/constant";
+import { ADMIN } from "@/constant";
 
 export async function GET(req: NextRequest, { params }) {
   try {
     const { id } = params;
-    await authenticate(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
 
     const aiChat = await prisma.aIChat.findUnique({
       where: {
@@ -39,7 +42,10 @@ export async function GET(req: NextRequest, { params }) {
 export async function PUT(req: NextRequest, { params }) {
   try {
     const { id } = params;
-    await authenticate(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
 
     const { question, answer } = await req.json();
     const oldAIChat = await prisma.aIChat.findUnique({
@@ -84,7 +90,10 @@ export async function PUT(req: NextRequest, { params }) {
 export async function DELETE(req: NextRequest, { params }) {
   try {
     const { id } = params;
-    await authenticate(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
 
     const aiChat = await prisma.aIChat.findUnique({
       where: {

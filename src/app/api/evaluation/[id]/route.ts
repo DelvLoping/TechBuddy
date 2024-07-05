@@ -3,12 +3,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../../middleware";
-import { ADMIN, RATINGS } from "@/app/constant";
+import { ADMIN, RATINGS } from "@/constant";
 
 export async function GET(req: NextRequest, { params }) {
   try {
     const { id } = params;
-    await authenticate(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
 
     const evaluation = await prisma.evaluation.findUnique({
       where: {
@@ -46,7 +49,10 @@ export async function GET(req: NextRequest, { params }) {
 export async function PUT(req: NextRequest, { params }) {
   try {
     const { id } = params;
-    await authenticate(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
 
     const { rating, comment } = await req.json();
     const oldEvaluation = await prisma.evaluation.findUnique({
@@ -92,7 +98,10 @@ export async function PUT(req: NextRequest, { params }) {
 export async function DELETE(req: NextRequest, { params }) {
   try {
     const { id } = params;
-    await authenticate(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
 
     const evaluation = await prisma.evaluation.findUnique({
       where: {
