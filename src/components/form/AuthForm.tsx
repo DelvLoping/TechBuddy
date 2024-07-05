@@ -158,7 +158,7 @@ export default function AuthForm({
         <Button
           type="submit"
           disabled={loading}
-          className="min-w-24 w-[20vw] bg-primary text-white mt-8 font-bold"
+          className="min-w-24 w-[20vw] bg-primary text-white mt-8 font-bold p-2"
           onClick={submit}
         >
           {loading ? <Spinner color="white" /> : "Submit"}
