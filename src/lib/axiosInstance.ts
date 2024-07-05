@@ -1,8 +1,6 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { removeJWT } from "./redux/slices/user";
-import { makeStore } from "./redux/store";
-
-const store = makeStore();
+import { removeJWT, setJWT } from "./redux/slices/user";
+import { store } from "./redux/store";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
