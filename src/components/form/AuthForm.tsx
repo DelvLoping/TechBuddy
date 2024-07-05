@@ -6,6 +6,21 @@ import { useSelector } from "react-redux";
 import { HELPER, TECHBUDDY } from "@/constant";
 import Link from "next/link";
 
+export interface IformData {
+  email: string;
+  password: string;
+  firstname?: string;
+  lastname?: string;
+  age?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    country?: string;
+    postalCode?: string;
+  };
+  type?: string;
+}
+
 export default function AuthForm({
   id,
   onSubmit,
@@ -15,9 +30,9 @@ export default function AuthForm({
   onSubmit: (formData: any) => Promise<void>;
   register?: boolean;
 }) {
-  const userReducer = useSelector((state) => state.user);
+  const userReducer = useSelector((state: any) => state.user);
   const { jwt, user, error, loading } = userReducer || {};
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<IformData>({
     email: "",
     password: "",
     firstname: "",
@@ -110,7 +125,7 @@ export default function AuthForm({
             <div className="flex flex-col items-center justify-center gap-4 w-60 mb-4">
               <Input
                 label="Street"
-                value={formData.address.street}
+                value={formData?.address?.street}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
@@ -120,7 +135,7 @@ export default function AuthForm({
               />
               <Input
                 label="City"
-                value={formData.address.city}
+                value={formData?.address?.city}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
@@ -132,7 +147,7 @@ export default function AuthForm({
             <div className="flex flex-col items-center justify-center gap-4 w-60 mb-4">
               <Input
                 label="Country"
-                value={formData.address.country}
+                value={formData?.address?.country}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
@@ -142,7 +157,7 @@ export default function AuthForm({
               />
               <Input
                 label="Zip"
-                value={formData.address.postalCode}
+                value={formData?.address?.postalCode}
                 onChange={(e) =>
                   setFormData({
                     ...formData,

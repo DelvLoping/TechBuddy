@@ -3,9 +3,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../../middleware";
+import { NextRequestWithUser } from "../../type";
 import { ADMIN } from "@/constant";
 
-export async function GET(req: NextRequest, { params }) {
+export async function GET(
+  req: NextRequestWithUser,
+  { params }: { params: { id: string } }
+) {
   try {
     const { id } = params;
     const authFailed = await authenticate(req);
@@ -46,7 +50,7 @@ export async function GET(req: NextRequest, { params }) {
     }
 
     return NextResponse.json({ helpRequest }, { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error getting help request:", error);
     return NextResponse.json(
       { message: "Something went wrong" },
@@ -55,7 +59,10 @@ export async function GET(req: NextRequest, { params }) {
   }
 }
 
-export async function PUT(req: NextRequest, { params }) {
+export async function PUT(
+  req: NextRequestWithUser,
+  { params }: { params: { id: string } }
+) {
   try {
     const { id } = params;
     const authFailed = await authenticate(req);
@@ -141,7 +148,7 @@ export async function PUT(req: NextRequest, { params }) {
       { helpRequest: updatedHelpRequest },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error updating help request:", error);
     return NextResponse.json(
       { message: "Something went wrong" },
@@ -150,7 +157,10 @@ export async function PUT(req: NextRequest, { params }) {
   }
 }
 
-export async function DELETE(req: NextRequest, { params }) {
+export async function DELETE(
+  req: NextRequestWithUser,
+  { params }: { params: { id: string } }
+) {
   try {
     const { id } = params;
     const authFailed = await authenticate(req);
@@ -186,7 +196,7 @@ export async function DELETE(req: NextRequest, { params }) {
       { message: "Help request deleted" },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error deleting help request:", error);
     return NextResponse.json(
       { message: "Something went wrong" },

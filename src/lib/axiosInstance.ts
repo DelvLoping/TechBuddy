@@ -1,5 +1,5 @@
-import axios, { AxiosRequestConfig } from "axios";
-import { removeJWT, setJWT } from "./redux/slices/user";
+import axios, { InternalAxiosRequestConfig, AxiosHeaders } from "axios";
+import { removeJWT } from "./redux/slices/user";
 import { store } from "./redux/store";
 
 const axiosInstance = axios.create({
@@ -7,14 +7,14 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
+  (config: InternalAxiosRequestConfig) => {
     const token =
       typeof window !== "undefined" ? localStorage.getItem("jwt") : null;
     if (token) {
-      config.headers = {
-        ...config.headers,
-        Authorization: `Bearer ${token}`,
-      };
+      if (!config.headers) {
+        config.headers = new AxiosHeaders();
+      }
+      config.headers.set("Authorization", `Bearer ${token}`);
     }
     return config;
   },

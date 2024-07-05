@@ -1,7 +1,7 @@
-import { User } from "@prisma/client";
+import { User, UserType } from "@prisma/client";
 
 export interface UserState {
-  user: User | null;
+  user: UserType | null;
   jwt: string | null;
   error: string | null;
   loading: boolean;

@@ -9,7 +9,7 @@ import { FaPowerOff } from "react-icons/fa6";
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const useReducer = useSelector((state) => state.user);
+  const useReducer = useSelector((state: any) => state.user);
   const { jwt: jwtRedux } = useReducer;
   const dispatch = useDispatch();
 

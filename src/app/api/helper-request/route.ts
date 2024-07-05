@@ -3,10 +3,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../middleware";
+import { NextRequestWithUser } from "../type";
 import { ADMIN, IN_PERSON, VIRTUAL } from "@/constant";
 import _ from "lodash";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
@@ -28,7 +29,7 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({ helpRequests }, { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching help requests:", error);
     return NextResponse.json(
       { message: "Something went wrong" },
@@ -37,7 +38,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
@@ -124,7 +125,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ helpRequest: newHelpRequest }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating help request:", error);
     return NextResponse.json(
       { message: "Something went wrong" },

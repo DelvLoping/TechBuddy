@@ -5,8 +5,9 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { addToValidTokens } from "@/app/api/middleware";
+import { NextRequestWithUser } from "../../type";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequestWithUser) {
   try {
     const { email, password, firstname, lastname, age, address, type } =
       await req.json();
@@ -56,9 +57,13 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET, {
-      expiresIn: "10d",
-    });
+    const token = jwt.sign(
+      { userId: newUser.id },
+      process.env.JWT_SECRET || "secret",
+      {
+        expiresIn: "10d",
+      }
+    );
 
     addToValidTokens(newUser.id, token);
 
