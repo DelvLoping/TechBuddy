@@ -16,14 +16,13 @@ export async function verifyToken(req: NextRequest): Promise<boolean> {
     if (!token) {
       return false;
     }
-
-    if (!validTokens.has(token)) {
-      return false;
-    }
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
       userId: number;
     };
+
+    if (!validTokens.has(decoded.userId)) {
+      return false;
+    }
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
@@ -32,7 +31,6 @@ export async function verifyToken(req: NextRequest): Promise<boolean> {
       return false;
     }
 
-    // Optionally, you can attach the user object to the request for further use in your route handlers
     req.user = user;
 
     return true;
@@ -51,3 +49,10 @@ export function addToValidTokens(id: number, token: string) {
 export function removeFromValidTokens(id: number) {
   validTokens.delete(id);
 }
+
+export const authenticate = async (req: NextRequest) => {
+  const isAuthenticated = await verifyToken(req);
+  if (!isAuthenticated) {
+    throw new Error("Unauthorized");
+  }
+};
