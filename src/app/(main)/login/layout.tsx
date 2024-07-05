@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 
-const metadata: Metadata = {
+export const metadata: Metadata = {
   title: "TechBuddy | Login",
   description:
     "Login to your TechBuddy account. Get started with your journey to become a tech expert or a tech helper.",

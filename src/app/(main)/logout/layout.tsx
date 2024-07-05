@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 
-const metadata: Metadata = {
+export const metadata: Metadata = {
   title: "TechBuddy | Logout",
   description: "Logout from your TechBuddy account. We hope to see you soon!",
 };
