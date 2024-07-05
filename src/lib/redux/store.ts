@@ -5,6 +5,7 @@ export const makeStore = () => {
   return configureStore({
     reducer: {
       user: userReducer,
+
     },
   });
 };

@@ -1,123 +1,131 @@
 "use client";
-import { Button, Textarea, Input, user } from "@nextui-org/react";
+
+import { Button, Input, Textarea, Select, SelectItem } from "@nextui-org/react";
 import React, { useState } from "react";
 import { Spinner } from "@nextui-org/spinner";
 import { useSelector } from "react-redux";
+import { OPEN,VIRTUAL,IN_PERSON,} from "@/app/constant";
 
-export default function HelpRequest({
-  id,
-  onSubmit,
-  register = false,
-}: {
-  id: string;
-  onSubmit: (formData: any) => Promise<void>;
-  register?: boolean;
-}) {
+export default function HelpRequest({ id, onSubmit }) {
   const userReducer = useSelector((state) => state.user);
-  console.log(userReducer)
   const { error, loading } = userReducer || {};
   const [formData, setFormData] = useState({
     subject: "",
     description: "",
+    interventionType: VIRTUAL, 
     interventionDate: "",
-    interventionType: "",
+    reward:"",
     interventionAddress: {
       street: "",
       city: "",
-      state: "",
-      zip: "",
+      postalCode: "",
+      country: "",
     },
+    status: OPEN,
   });
 
-  const submit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const submit = async (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    await onSubmit(formData);
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleChangeAddress = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleAddressChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      interventionAddress: {
-        ...formData.interventionAddress,
-        [name]: value,
-      },
+      interventionAddress: { ...formData.interventionAddress, [name]: value },
     });
   };
+
   return (
-    <form onSubmit={submit} className="w-full">
+    <form id={id} onSubmit={submit} className="w-full">
     <div className="flex flex-col items-center justify-center gap-4 mb-4">
-      <Input
-        label="Subject"
-        name="subject"
-        value={formData.subject}
-        onChange={handleChange}
-      />
-      <Textarea
-        label="Description"
-        name="description"
-        value={formData.description}
-        onChange={handleChange}
-      />
-      <Input
-        label="Intervention Date"
-        name="interventionDate"
-        type="datetime-local"
-        value={formData.interventionDate}
-        onChange={handleChange}
-      />
-      <Input
-        label="Intervention Type"
-        name="interventionType"
-        value={formData.interventionType}
-        onChange={handleChange}
-      />
-      <div className="flex flex-col items-center justify-center gap-4 w-full mb-4">
-        <h2>Intervention Address</h2>
-        <Input
-          label="Street"
-          name="street"
-          value={formData.interventionAddress.street}
-          onChange={handleChangeAddress}
+    <Input
+          label="Subject"
+          name="subject"
+          value={formData.subject}
+          onChange={handleChange}
+          required
         />
-        <Input
-          label="City"
-          name="city"
-          value={formData.interventionAddress.city}
-          onChange={handleChangeAddress}
+        <Textarea
+          label="Description"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          required
         />
+        <Select
+          label="Intervention Type"
+          name="interventionType"
+          value={formData.interventionType}
+          onChange={handleChange}
+          required
+        >
+          <SelectItem key={VIRTUAL}>Virtual</SelectItem>
+          <SelectItem key={IN_PERSON}>In Person</SelectItem>
+        </Select>
+       
         <Input
-          label="State"
-          name="state"
-          value={formData.interventionAddress.state}
-          onChange={handleChangeAddress}
+          label="Intervention Date"
+          type="date"
+          name="interventionDate"
+          value={formData.interventionDate}
+          onChange={handleChange}
         />
-        <Input
-          label="Zip"
-          name="zip"
-          value={formData.interventionAddress.zip}
-          onChange={handleChangeAddress}
-        />
+      {formData.interventionType === IN_PERSON && (
+        <>
+        <h2>In person</h2>
+          <Input
+            label="Street"
+            name="street"
+            value={formData.interventionAddress.street}
+            onChange={handleAddressChange}
+          />
+          <Input
+            label="City"
+            name="city"
+            value={formData.interventionAddress.city}
+            onChange={handleAddressChange}
+          />
+          <Input
+            label="Postal Code"
+            name="postalCode"
+            value={formData.interventionAddress.postalCode}
+            onChange={handleAddressChange}
+          />
+          <Input
+            label="Country"
+            name="country"
+            value={formData.interventionAddress.country}
+            onChange={handleAddressChange}
+          />
+        </>
+      )}
+        {/* <Select
+          label="Status"
+          name="status"
+          value={formData.status}
+          onChange={handleChange}
+          required
+        >
+          <SelectItem key={OPEN}>Open</SelectItem>
+          <SelectItem key={IN_PROGRESS}>In Progress</SelectItem>
+          <SelectItem key={COMPLETED}>Completed</SelectItem>
+        </Select> */}
         <Button
-      type="submit"
-      disabled={loading}
-      className="min-w-24 w-[20vw] bg-primary text-white mt-8 font-bold"
-    >
-      {loading ? <Spinner color="white" /> : "Submit"}
-    </Button>
+          type="submit"
+          disabled={loading}
+          className="min-w-24 w-full bg-primary text-white mt-8 font-bold"
+        >
+          {loading ? <Spinner color="white" /> : "Submit"}
+        </Button>
+        {error && <p className="text-danger">{error}</p>}
       </div>
-    </div>
-    
-    {error && <p className="text-danger">{error}</p>}
-  </form>
+    </form>
   );
 }
