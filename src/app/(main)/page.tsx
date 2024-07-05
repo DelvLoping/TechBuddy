@@ -11,7 +11,6 @@ export default function Home() {
           content="TechBuddy is a elderly care platform that connects seniors with tech-savvy volunteers."
         />
       </head>
-
       <main className="flex min-h-screen flex-col items-center">
         <ul>
           <li>
