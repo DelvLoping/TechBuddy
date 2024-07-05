@@ -26,8 +26,8 @@ export default function AuthForm({
     address: {
       street: undefined,
       city: undefined,
-      state: undefined,
-      zip: undefined,
+      country: undefined,
+      postalCode: undefined,
     },
     type: undefined,
   });
@@ -131,22 +131,25 @@ export default function AuthForm({
             </div>
             <div className="flex flex-col items-center justify-center gap-4 w-60 mb-4">
               <Input
-                label="State"
-                value={formData.address.state}
+                label="Country"
+                value={formData.address.country}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    address: { ...formData.address, state: e.target.value },
+                    address: { ...formData.address, country: e.target.value },
                   })
                 }
               />
               <Input
                 label="Zip"
-                value={formData.address.zip}
+                value={formData.address.postalCode}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    address: { ...formData.address, zip: e.target.value },
+                    address: {
+                      ...formData.address,
+                      postalCode: e.target.value,
+                    },
                   })
                 }
               />
