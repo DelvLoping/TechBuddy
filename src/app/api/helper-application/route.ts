@@ -23,7 +23,9 @@ export async function GET(req: NextRequestWithUser) {
           userId: user.id,
         },
       });
-      const helpRequestIds = helpRequests.map((helpRequest) => helpRequest.id);
+      const helpRequestIds: number[] = helpRequests.map(
+        (helpRequest) => helpRequest.id
+      );
       helpApplications = await prisma.helperApplication.findMany({
         where: {
           requestId: {
