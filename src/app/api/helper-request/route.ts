@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../middleware";
 import { ADMIN, IN_PERSON, VIRTUAL } from "@/constant";
-import _ from 'lodash'
+import _ from "lodash";
 
 export async function GET(req: NextRequest) {
   try {

@@ -13,16 +13,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
-    console.log('jwt',jwt)
-    if (pathname !== "/login" && pathname !== "/register") {
-      if (jwt && !jwtRedux) {
-        dispatch(setJWT(jwt));
-      } else if (!jwt) {
-        router.push("/login");
+    if (jwt && !jwtRedux) {
+      dispatch(setJWT(jwt));
+    }
+    if (pathname === "/login" || pathname === "/register") {
+      if (jwt) {
+        router.push("/");
       }
     } else {
-      if (jwt && jwtRedux) {
-        router.push("/");
+      if (!jwt) {
+        router.push("/login");
       }
     }
   }, [useReducer]);
