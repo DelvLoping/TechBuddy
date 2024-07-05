@@ -4,22 +4,22 @@ import { Button, Input, Textarea, Select, SelectItem } from "@nextui-org/react";
 import React, { useState } from "react";
 import { Spinner } from "@nextui-org/spinner";
 import { useSelector } from "react-redux";
-import { OPEN,VIRTUAL,IN_PERSON,} from "@/app/constant";
+import { OPEN,VIRTUAL,IN_PERSON} from "@/constant";
 
 export default function HelpRequest({ id, onSubmit }) {
   const userReducer = useSelector((state) => state.user);
   const { error, loading } = userReducer || {};
   const [formData, setFormData] = useState({
-    subject: "",
-    description: "",
+    subject: undefined,
+    description: undefined,
     interventionType: VIRTUAL, 
-    interventionDate: "",
-    reward:"",
+    interventionDate: undefined,
+    reward:undefined,
     interventionAddress: {
-      street: "",
-      city: "",
-      postalCode: "",
-      country: "",
+      street: undefined,
+      city: undefined,
+      postalCode: undefined,
+      country: undefined,
     },
     status: OPEN,
   });
@@ -75,6 +75,13 @@ export default function HelpRequest({ id, onSubmit }) {
           type="date"
           name="interventionDate"
           value={formData.interventionDate}
+          onChange={handleChange}
+        />
+        <Input
+          label="Reward"
+          type="text"
+          name="reward"
+          value={formData.reward}
           onChange={handleChange}
         />
       {formData.interventionType === IN_PERSON && (

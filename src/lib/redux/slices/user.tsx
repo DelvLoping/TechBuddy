@@ -134,8 +134,11 @@ export const userSlice = createSlice({
       localStorage.setItem("jwt", action.payload);
     },
     removeJWT: (state) => {
+      console.log(state.jwt)
       state.jwt = null;
       localStorage.removeItem("jwt");
+      console.log('ici')
+      console.log(state.jwt)
     },
     setError: (state, action) => {
       state.error = action.payload;

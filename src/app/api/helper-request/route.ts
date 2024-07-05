@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../middleware";
 import { ADMIN, IN_PERSON, VIRTUAL } from "@/constant";
+import _ from 'lodash'
 
 export async function GET(req: NextRequest) {
   try {
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    if (interventionType === VIRTUAL && interventionAddress) {
+    if (interventionType === VIRTUAL && !_.isEmpty(interventionAddress)) {
       return NextResponse.json(
         {
           message:

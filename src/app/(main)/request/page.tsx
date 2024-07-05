@@ -1,20 +1,17 @@
 "use client";
 
-import HelpRequest from "@/app/component/form/HelpRequest";
+
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { RootState } from "@/lib/redux/store";
+import HelpRequest from "@/components/form/HelpRequest";
+import axiosInstance from "@/lib/axiosInstance";
 
 export default function Page() {
-  const jwt = useSelector((state: RootState) => state.user.jwt);
 
   const submit = async (formData: any) => {
     try {
-      const response = await axios.post("/api/helper-request", formData, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      });
+      const response = await axiosInstance.post("/helper-request", formData)
       console.log("Response:", response.data);
       return response.data;
     } catch (error) {

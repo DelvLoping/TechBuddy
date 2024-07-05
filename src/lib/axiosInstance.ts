@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { removeJWT } from "./redux/slices/user";
+import { removeJWT, setJWT } from "./redux/slices/user";
 import { makeStore } from "./redux/store";
 
 const store = makeStore();
@@ -32,6 +32,7 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       if (typeof window !== "undefined") {
+        store.dispatch(setJWT('1'))
         store.dispatch(removeJWT());
       }
     }

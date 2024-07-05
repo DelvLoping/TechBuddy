@@ -13,6 +13,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
+    console.log('jwt',jwt)
     if (pathname !== "/login" && pathname !== "/register") {
       if (jwt && !jwtRedux) {
         dispatch(setJWT(jwt));
