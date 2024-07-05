@@ -30,7 +30,6 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       if (typeof window !== "undefined") {
-        store.dispatch(setJWT('1'))
         store.dispatch(removeJWT());
       }
     }
