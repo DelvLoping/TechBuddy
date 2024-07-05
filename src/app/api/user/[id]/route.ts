@@ -4,27 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../../middleware";
 import { ADMIN } from "@/constant";
+import bcrypt from "bcrypt";
 
-// model User {
-//   id                  Int                 @id @default(autoincrement())
-//   lastname            String
-//   firstname           String
-//   email               String              @unique
-//   password            String
-//   age                 Int?
-//   addressId           Int?
-//   type                UserType            @default(TECHBUDDY)
-//   signupDate          DateTime            @default(now())
-//   helpRequests        HelpRequest[]
-//   applications        HelperApplication[]
-//   chat1               Chat[]              @relation("User1Chats")
-//   chat2               Chat[]              @relation("User2Chats")
-//   messages            Message[]
-//   evaluationsGiven    Evaluation[]        @relation("EvaluatorEvaluations")
-//   evaluationsReceived Evaluation[]        @relation("EvaluateeEvaluations")
-//   aiChats             AIChat[]
-//   address             Address?            @relation(fields: [addressId], references: [id])
-// }
 export async function GET(req: NextRequest, { params }) {
   try {
     const { id } = params;
@@ -95,6 +76,9 @@ export async function PUT(req: NextRequest, { params }) {
       helpRequests,
       messages,
     } = await req.json();
+
+    const hashedPassword = await bcrypt.hash(password || "", 10);
+
     const updatedUser = await prisma.user.update({
       where: {
         id: Number(id),
@@ -103,7 +87,7 @@ export async function PUT(req: NextRequest, { params }) {
         lastname,
         firstname,
         email,
-        password,
+        password: password ? hashedPassword : undefined,
         age,
         address:
           address && address.id
