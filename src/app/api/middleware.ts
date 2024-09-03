@@ -20,7 +20,9 @@ export async function verifyToken(req: NextRequest): Promise<boolean> {
       userId: number;
     };
 
-    if (!validTokens.has(decoded.userId)) {
+    if (!validTokens.has(decoded.userId) && 
+      process.env.NODE_ENV !== "development"
+    ){
       return false;
     }
 
