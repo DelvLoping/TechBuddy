@@ -98,12 +98,20 @@ model Evaluation {
 }
 
 model AIChat {
-  id       Int      @id @default(autoincrement())
-  userId   Int
-  question String
-  answer   String
-  chatDate DateTime @default(now())
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           Int         @id @default(autoincrement())
+  userId       Int
+  creationDate DateTime    @default(now())
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages     AIMessage[]
+}
+
+model AIMessage {
+  id       Int           @id @default(autoincrement())
+  aiChatId Int
+  sender   MessageSender
+  content  String
+  sendDate DateTime      @default(now())
+  aiChat   AIChat        @relation(fields: [aiChatId], references: [id], onDelete: Cascade)
 }
 
 model Address {
@@ -145,4 +153,9 @@ enum Rate {
   THREE
   FOUR
   FIVE
+}
+
+enum MessageSender {
+  USER
+  AI
 }
