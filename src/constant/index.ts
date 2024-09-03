@@ -18,3 +18,4 @@ export const TWO = "TWO";
 export const THREE = "THREE";
 export const FOUR = "FOUR";
 export const FIVE = "FIVE";
+export const RATINGS = [ONE, TWO, THREE, FOUR, FIVE];

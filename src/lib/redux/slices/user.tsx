@@ -97,8 +97,8 @@ const logout = createAsyncThunk<
     dispatch(setError(null));
     const jwt = getState().user.jwt;
     dispatch(setUser(null));
-    dispatch(setJWT(null));
-    const response = await axios.post("/api/auth/logout", {
+    dispatch(removeJWT());
+    const response = await axios.get("/api/auth/logout", {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },

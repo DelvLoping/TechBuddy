@@ -3,7 +3,7 @@ import { Button, Checkbox, Input } from "@nextui-org/react";
 import React, { useState } from "react";
 import { Spinner } from "@nextui-org/spinner";
 import { useSelector } from "react-redux";
-import { HELPER, TECHBUDDY } from "@/app/constant";
+import { HELPER, TECHBUDDY } from "@/constant";
 import Link from "next/link";
 
 export default function AuthForm({
@@ -26,8 +26,8 @@ export default function AuthForm({
     address: {
       street: undefined,
       city: undefined,
-      state: undefined,
-      zip: undefined,
+      country: undefined,
+      postalCode: undefined,
     },
     type: undefined,
   });
@@ -131,22 +131,25 @@ export default function AuthForm({
             </div>
             <div className="flex flex-col items-center justify-center gap-4 w-60 mb-4">
               <Input
-                label="State"
-                value={formData.address.state}
+                label="Country"
+                value={formData.address.country}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    address: { ...formData.address, state: e.target.value },
+                    address: { ...formData.address, country: e.target.value },
                   })
                 }
               />
               <Input
                 label="Zip"
-                value={formData.address.zip}
+                value={formData.address.postalCode}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    address: { ...formData.address, zip: e.target.value },
+                    address: {
+                      ...formData.address,
+                      postalCode: e.target.value,
+                    },
                   })
                 }
               />
@@ -155,10 +158,11 @@ export default function AuthForm({
         </>
       )}
       <div className="flex flex-row items-start justify-center gap-4 w-full mb-4 flex-wrap">
+        {error && <p className="text-danger">{error}</p>}
         <Button
           type="submit"
           disabled={loading}
-          className="min-w-24 w-[20vw] bg-primary text-white mt-8 font-bold"
+          className="min-w-24 w-[20vw] bg-primary text-white mt-8 font-bold p-2"
           onClick={submit}
         >
           {loading ? <Spinner color="white" /> : "Submit"}
@@ -178,7 +182,6 @@ export default function AuthForm({
             </Link>
           </p>
         )}
-        {error && <p className="text-danger">{error}</p>}
       </div>
     </form>
   );
