@@ -8,6 +8,7 @@ import { ADMIN, HELPER, TECHBUDDY } from "@/constant";
 export async function GET(req: NextRequest, { params }) {
   try {
     const { id } = params;
+    console.log(id);
     const authFailed = await authenticate(req);
     if (authFailed) {
       return authFailed;
@@ -25,7 +26,6 @@ export async function GET(req: NextRequest, { params }) {
         { status: 404 }
       );
     }
-
     if (req.user.type !== ADMIN && req.user.id !== helpApplication.helperId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
