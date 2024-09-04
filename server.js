@@ -1,12 +1,12 @@
-// server.js
-const { createServer } = require("http");
-const next = require("next");
-const { Server } = require("socket.io");
-const { prisma } = require("./src/lib/prisma");
+import { PrismaClient } from '@prisma/client';
+import { createServer } from 'http';
+import next from 'next';
+import { Server } from 'socket.io';
 
-const dev = process.env.NODE_ENV !== "production";
+const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
+const prisma = new PrismaClient();
 
 app.prepare().then(() => {
   const server = createServer((req, res) => {
@@ -15,52 +15,62 @@ app.prepare().then(() => {
 
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
-      methods: ["GET", "POST"],
-      allowedHeaders: ["Authorization"],
-      credentials: true,
-    },
+      origin: 'http://localhost:3000',
+      methods: ['GET', 'POST'],
+      allowedHeaders: ['Authorization'],
+      credentials: true
+    }
   });
 
-  io.on("connection", (socket) => {
-    console.log("a user connected");
+  io.on('connection', (socket) => {
+    socket.on('joinChat', async (chatId, userId) => {
+      const chat = await prisma.chat.findFirst({
+        where: { id: Number(chatId) }
+      });
+      const isAuthorizedChat = chat.user1Id === userId || chat.user2Id === userId;
+      if (!isAuthorizedChat) {
+        return;
+      }
 
-    socket.on("joinChat", async (chatId) => {
       socket.join(chatId);
 
       try {
         const messages = await prisma.message.findMany({
           where: { chatId: Number(chatId) },
-          orderBy: { sendDate: "asc" },
+          orderBy: { sendDate: 'asc' }
         });
-        socket.emit("chatHistory", messages);
+        socket.emit('chatHistory', messages);
       } catch (error) {
-        console.error("Error fetching chat history:", error);
+        console.error('Error fetching chat history:', error);
       }
     });
 
-    socket.on("message", async ({ chatId, userId, content }) => {
+    socket.on('message', async ({ chatId, userId, content }) => {
       try {
         const message = await prisma.message.create({
           data: {
             chatId,
             userId,
-            content,
-          },
+            content
+          }
         });
-        io.to(chatId).emit("message", message);
+        io.to(chatId).emit('message', message);
       } catch (error) {
-        console.error("Error saving message:", error);
+        console.error('Error saving message:', error);
       }
     });
 
-    socket.on("disconnect", () => {
-      console.log("user disconnected");
+    socket.on('typing', ({ chatId, userId, isTyping }) => {
+      io.to(chatId).to(chatId).emit('typing', { userId, isTyping });
+    });
+
+    socket.on('disconnect', () => {
+      //console.log('user disconnected');
     });
   });
 
   server.listen(3001, (err) => {
     if (err) throw err;
-    console.log("> Ready on http://localhost:3001");
+    console.log('> Ready on http://localhost:3001');
   });
 });
