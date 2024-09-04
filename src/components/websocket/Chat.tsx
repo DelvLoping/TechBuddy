@@ -127,7 +127,7 @@ const Chat = ({ isShow = true }: ChatProps) => {
             })}
           </div>
 
-          <div className='flex flex-col rounded-r-xl border border-gray-200 w-[20rem] h-full'>
+          <div className='flex flex-col rounded-r-xl border border-gray-200 w-[20rem] h-full bg-white'>
             <div className='w-full flex justify-center items-center text-center border-b border-gray-200 p-2 font-semibold min-h-10'>
               {currentChat && getFullNames(currentChatTarget)}
             </div>
