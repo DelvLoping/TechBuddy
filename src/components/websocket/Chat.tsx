@@ -42,7 +42,6 @@ const Chat = ({ isShow = true }: ChatProps) => {
       };
 
       const handleMessage = (newMessage) => {
-        console.log('messages', newMessage);
         setMessages((prevMessages) => [...prevMessages, newMessage]);
       };
 
@@ -94,8 +93,6 @@ const Chat = ({ isShow = true }: ChatProps) => {
   };
   const handleSelectedChatChange = (chatId) => {
     setSelectedChat(chatId);
-    setMessages([]);
-    setTypingStatus('');
     setMessageInput('');
   };
   const handleKeyDown = (e) => {
