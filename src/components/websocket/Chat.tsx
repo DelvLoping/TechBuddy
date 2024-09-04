@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
-import _ from 'lodash';
+import _, { set } from 'lodash';
 import axiosInstance from '@/lib/axiosInstance';
 import { getFullNames } from '@/utils';
 import { useSelector } from 'react-redux';
@@ -48,7 +48,7 @@ const Chat = ({ isShow = true }: ChatProps) => {
 
       const handleTyping = ({ userId, isTyping }) => {
         if (userId !== id) {
-          setTypingStatus(isTyping ? `User ${userId} is typing...` : '');
+          setTypingStatus(isTyping ? `Typing...` : '');
         }
       };
 
@@ -92,6 +92,12 @@ const Chat = ({ isShow = true }: ChatProps) => {
     setMessageInput(e.target.value);
     socket.emit('typing', { chatId: selectedChat, userId: id, isTyping: true });
   };
+  const handleSelectedChatChange = (chatId) => {
+    setSelectedChat(chatId);
+    setMessages([]);
+    setTypingStatus('');
+    setMessageInput('');
+  };
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -119,7 +125,7 @@ const Chat = ({ isShow = true }: ChatProps) => {
                   className={`w-full p-2 cursor-pointer break-all text-wrap ${
                     selectedChat === chat.id ? 'bg-primary text-white' : ''
                   }`}
-                  onClick={() => setSelectedChat(chat.id)}
+                  onClick={() => handleSelectedChatChange(chat.id)}
                 >
                   {getFullNames(targetUser)}
                 </div>

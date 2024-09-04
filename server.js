@@ -23,6 +23,8 @@ app.prepare().then(() => {
   });
 
   io.on('connection', (socket) => {
+    const userChannels = new Set();
+
     socket.on('joinChat', async (chatId, userId) => {
       const chat = await prisma.chat.findFirst({
         where: { id: Number(chatId) }
@@ -32,7 +34,12 @@ app.prepare().then(() => {
         return;
       }
 
+      for (const channel of userChannels) {
+        socket.leave(channel);
+      }
+
       socket.join(chatId);
+      userChannels.add(chatId);
 
       try {
         const messages = await prisma.message.findMany({
@@ -65,7 +72,7 @@ app.prepare().then(() => {
     });
 
     socket.on('disconnect', () => {
-      //console.log('user disconnected');
+      userChannels.clear();
     });
   });
 
