@@ -3,12 +3,11 @@ import { setJWT, setUser } from '@/lib/redux/slices/user';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaHome } from 'react-icons/fa';
-import { FaPowerOff } from 'react-icons/fa6';
 import moment from 'moment';
 import axiosInstance from '@/lib/axiosInstance';
 import _ from 'lodash';
 import Chat from '@/components/websocket/Chat';
+import Navbar from '@/components/macro/Navbar';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -67,18 +66,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className='min-h-screen flex flex-col h-full'>
-      {navbarVisible && (
-        <div className='fixed bg-white flex justify-between items-center shadow-md p-4 rounded-lg w-[calc(100%-2rem)] lg:w-[calc(100%-4rem)] top-6 left-4 lg:left-8 border border-gray-200'>
-          <FaHome
-            onClick={() => router.push('/')}
-            className='cursor-pointer text-primary text-2xl'
-          />
-          <FaPowerOff
-            onClick={() => router.push('/logout')}
-            className='cursor-pointer text-danger text-2xl'
-          />
-        </div>
-      )}
+      {navbarVisible && <Navbar />}
       <div
         className={`flex justify-center items-center flex-col h-screen p-4 lg:p-8 ${
           navbarVisible && '!pt-24'
