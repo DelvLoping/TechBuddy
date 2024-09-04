@@ -1,14 +1,67 @@
-// src/app/api/helpRequest/[id]/route.ts
+// src/app/api/help-request/[id]/route.ts
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../../middleware";
-import { ADMIN } from "@/app/constant";
+import { ADMIN } from "@/constant";
+
+export async function GET(req: NextRequest, { params }) {
+  try {
+    const { id } = params;
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
+
+    const helpRequest = await prisma.helpRequest.findUnique({
+      where: {
+        id: Number(id),
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+          },
+        },
+        interventionAddress: {
+          select: {
+            id: true,
+            street: true,
+            city: true,
+            postalCode: true,
+            country: true,
+          },
+        },
+      },
+    });
+
+    if (!helpRequest) {
+      return NextResponse.json(
+        { message: "Help request not found" },
+        { status: 404 }
+      );
+    }
+    if (req.user.type !== ADMIN && helpRequest.userId !== req.user.id) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
+    }
+
+    return NextResponse.json({ helpRequest }, { status: 200 });
+  } catch (error) {
+    console.error("Error getting help request:", error);
+    return NextResponse.json(
+      { message: "Something went wrong" },
+      { status: error.status || 500 }
+    );
+  }
+}
 
 export async function PUT(req: NextRequest, { params }) {
   try {
     const { id } = params;
-    await authenticate(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
 
     const {
       subject,
@@ -100,7 +153,10 @@ export async function PUT(req: NextRequest, { params }) {
 export async function DELETE(req: NextRequest, { params }) {
   try {
     const { id } = params;
-    await authenticate(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
     const user = req.user;
 
     const helpRequest = await prisma.helpRequest.findUnique({

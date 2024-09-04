@@ -38,14 +38,14 @@ model HelpRequest {
   id                    Int                 @id @default(autoincrement())
   userId                Int
   subject               String
-  description           String?
+  description           String
   requestDate           DateTime            @default(now())
   interventionDate      DateTime?
   interventionType      InterventionType
   reward                String?
   interventionAddressId Int?
   status                RequestStatus       @default(OPEN)
-  user                  User                @relation(fields: [userId], references: [id])
+  user                  User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   applications          HelperApplication[]
   chats                 Chat[]
   evaluations           Evaluation[]
@@ -58,8 +58,8 @@ model HelperApplication {
   helperId        Int
   applicationDate DateTime          @default(now())
   status          ApplicationStatus @default(PROPOSED)
-  helpRequest     HelpRequest       @relation(fields: [requestId], references: [id])
-  helper          User              @relation(fields: [helperId], references: [id])
+  helpRequest     HelpRequest       @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  helper          User              @relation(fields: [helperId], references: [id], onDelete: Cascade)
 }
 
 model Chat {
@@ -68,9 +68,9 @@ model Chat {
   user1Id      Int
   user2Id      Int
   creationDate DateTime    @default(now())
-  helpRequest  HelpRequest @relation(fields: [requestId], references: [id])
-  user1        User        @relation("User1Chats", fields: [user1Id], references: [id])
-  user2        User        @relation("User2Chats", fields: [user2Id], references: [id])
+  helpRequest  HelpRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  user1        User        @relation("User1Chats", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2        User        @relation("User2Chats", fields: [user2Id], references: [id], onDelete: Cascade)
   messages     Message[]
 }
 
@@ -80,8 +80,8 @@ model Message {
   userId   Int
   content  String
   sendDate DateTime @default(now())
-  chat     Chat     @relation(fields: [chatId], references: [id])
-  user     User     @relation(fields: [userId], references: [id])
+  chat     Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Evaluation {
@@ -92,18 +92,26 @@ model Evaluation {
   rating         Rate
   comment        String?
   evaluationDate DateTime    @default(now())
-  helpRequest    HelpRequest @relation(fields: [requestId], references: [id])
-  evaluator      User        @relation("EvaluatorEvaluations", fields: [evaluatorId], references: [id])
-  evaluatee      User        @relation("EvaluateeEvaluations", fields: [evaluateeId], references: [id])
+  helpRequest    HelpRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  evaluator      User        @relation("EvaluatorEvaluations", fields: [evaluatorId], references: [id], onDelete: Cascade)
+  evaluatee      User        @relation("EvaluateeEvaluations", fields: [evaluateeId], references: [id], onDelete: Cascade)
 }
 
 model AIChat {
-  id       Int      @id @default(autoincrement())
-  userId   Int
-  question String
-  answer   String
-  chatDate DateTime @default(now())
-  user     User     @relation(fields: [userId], references: [id])
+  id           Int         @id @default(autoincrement())
+  userId       Int
+  creationDate DateTime    @default(now())
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages     AIMessage[]
+}
+
+model AIMessage {
+  id       Int           @id @default(autoincrement())
+  aiChatId Int
+  sender   MessageSender
+  content  String
+  sendDate DateTime      @default(now())
+  aiChat   AIChat        @relation(fields: [aiChatId], references: [id], onDelete: Cascade)
 }
 
 model Address {
@@ -145,4 +153,9 @@ enum Rate {
   THREE
   FOUR
   FIVE
+}
+
+enum MessageSender {
+  USER
+  AI
 }

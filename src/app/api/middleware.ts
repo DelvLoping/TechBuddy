@@ -20,7 +20,10 @@ export async function verifyToken(req: NextRequest): Promise<boolean> {
       userId: number;
     };
 
-    if (!validTokens.has(decoded.userId)) {
+    if (
+      !validTokens.has(decoded.userId) &&
+      process.env.NODE_ENV !== "development"
+    ) {
       return false;
     }
 
@@ -35,6 +38,7 @@ export async function verifyToken(req: NextRequest): Promise<boolean> {
 
     return true;
   } catch (error) {
+    console.log("Error verifying token:", error);
     console.error("Error verifying token:", error);
     return false;
   }
@@ -52,7 +56,8 @@ export function removeFromValidTokens(id: number) {
 
 export const authenticate = async (req: NextRequest) => {
   const isAuthenticated = await verifyToken(req);
+  console.log("isAuthenticated", isAuthenticated);
   if (!isAuthenticated) {
-    throw new Error("Unauthorized");
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 };

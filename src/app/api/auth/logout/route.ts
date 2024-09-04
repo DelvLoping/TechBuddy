@@ -1,14 +1,18 @@
 // app/api/auth/login/route.ts
 
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { removeFromValidTokens, verifyToken } from "../../middleware";
+import {
+  authenticate,
+  removeFromValidTokens,
+  verifyToken,
+} from "../../middleware";
 
 export async function GET(req: NextRequest) {
   try {
-    const isAuthenticated = await verifyToken(req);
+    const authFailed = await authenticate(req);
+    if (authFailed) {
+      return authFailed;
+    }
     const userId = req.user?.id;
     if (userId) {
       removeFromValidTokens(userId);
