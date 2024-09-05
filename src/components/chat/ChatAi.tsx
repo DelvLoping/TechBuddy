@@ -28,8 +28,10 @@ const ChatAi: React.FC = () => {
     // Fonction pour récupérer les messages de l'API
     const fetchMessages = async () => {
         try {
-            const res = await axiosInstance.get('/ai-message?aiChatId=' + aiChatId);
+            const res = await axiosInstance.get(`/ai-message?aiChatId=${aiChatId}`);
             const data = res.data;
+
+            console.log(data);
 
             if (data.aiChats && Array.isArray(data.aiChats[0]?.messages)) {
                 setMessages(data.aiChats[0].messages);
@@ -46,7 +48,7 @@ const ChatAi: React.FC = () => {
         if (!input.trim()) return;
 
         try {
-            const res = await axiosInstance.post('/api/ai-chat', {
+            const res = await axiosInstance.post('/ai-message', {
                 question: input,
                 answer: "Response from bot",
             });

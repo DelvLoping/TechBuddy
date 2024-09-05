@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
       return authFailed;
     }
     const user = req.user;
+    console.log(req.query)
     const { aiChatId } = req.query;
     if (!aiChatId) {
       return NextResponse.json(
