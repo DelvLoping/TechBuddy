@@ -9,6 +9,10 @@ import Button from "../ui/Button";
 import { IoIosSend } from "react-icons/io";
 import { IoChatbubble, IoClose } from "react-icons/io5";
 import { FaWindowMinimize } from "react-icons/fa";
+import {
+  TbLayoutSidebarLeftCollapseFilled,
+  TbLayoutSidebarLeftExpandFilled,
+} from "react-icons/tb";
 
 const socket = io("http://localhost:3001");
 type ChatProps = {
@@ -23,6 +27,7 @@ const Chat = ({ isShow = true }: ChatProps) => {
   const [typingStatus, setTypingStatus] = useState("");
   const useReducer = useSelector((state) => state.user);
   const [show, setShow] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
   const { user } = useReducer;
   const { id } = user || {};
 
@@ -126,15 +131,19 @@ const Chat = ({ isShow = true }: ChatProps) => {
     >
       {(isShow || show) && (
         <div className="flex flex-row items-center sm:h-[35rem] top-0 left-0 h-screen w-screen sm:w-fit z-[99999] sm:flex">
-          <div className="h-full w-[30%] sm:w-36 flex flex-col gap-2 sm:rounded-l-xl sm:border-gray-200 sm:border-l sm:border-b sm:border-t overflow-hidden bg-gray-100">
+          <div
+            className={`h-full ${
+              showSidebar ? "w-[40%] sm:w-36" : "hidden"
+            } flex flex-col gap-2 sm:rounded-l-xl sm:border-gray-200 sm:border-l sm:border-b sm:border-t overflow-hidden bg-gray-100
+            `}
+          >
             {_.map(conversations, (chat, index) => {
               const targetUser = chat.user1Id === id ? chat.user2 : chat.user1;
               return (
                 <div
                   key={chat.id}
-                  className={`w-full p-2 cursor-pointer break-all text-wrap ${
-                    selectedChat === chat.id ? "bg-primary text-white" : ""
-                  }`}
+                  className={`w-full p-2 cursor-pointer break-all text-wrap line-clamp-1 truncate text-sm sm:text-base
+                    ${selectedChat === chat.id ? "bg-primary text-white" : ""}`}
                   onClick={() => handleSelectedChatChange(chat.id)}
                 >
                   {getFullNames(targetUser)}
@@ -143,8 +152,23 @@ const Chat = ({ isShow = true }: ChatProps) => {
             })}
           </div>
 
-          <div className="flex flex-col sm:rounded-r-xl sm:border sm:border-gray-200 w-[70%] sm:w-[20rem] h-full bg-white">
-            <div className="w-full flex justify-center items-center text-center border-b border-gray-200 p-2 font-semibold min-h-10">
+          <div
+            className={`flex flex-col sm:rounded-r-xl sm:border sm:border-gray-200 w-full sm:w-[20rem] h-full bg-white ${
+              !showSidebar && "sm:rounded-l-xl"
+            }`}
+          >
+            <div className="relative w-full flex justify-center items-center text-center border-b border-gray-200 p-2 font-semibold min-h-10 text-sm sm:text-base">
+              {showSidebar ? (
+                <TbLayoutSidebarLeftCollapseFilled
+                  className="absolute top-2 left-2 h-6 w-6 cursor-pointer opacity-50"
+                  onClick={() => setShowSidebar(false)}
+                />
+              ) : (
+                <TbLayoutSidebarLeftExpandFilled
+                  className="absolute top-2 left-2 h-6 w-6 cursor-pointer opacity-50"
+                  onClick={() => setShowSidebar(true)}
+                />
+              )}
               {currentChat && getFullNames(currentChatTarget)}
               <IoClose
                 className="cursor-pointer sm:hidden absolute right-2 top-2 h-6 w-6 opacity-50"
@@ -178,7 +202,9 @@ const Chat = ({ isShow = true }: ChatProps) => {
             </div>
 
             <form
-              className="w-full flex items-start gap-2 bg-gray-100 p-2 rounded-br-xl"
+              className={`w-full flex items-start gap-2 bg-gray-100 p-2 rounded-br-xl ${
+                !showSidebar && "sm:rounded-bl-xl"
+              }`}
               onSubmit={handleSendMessage}
             >
               <textarea
@@ -203,7 +229,7 @@ const Chat = ({ isShow = true }: ChatProps) => {
       )}
       {!isShow && (
         <Button
-          className={`bg-primary text-white p-4 rounded-full border border-white ${
+          className={`bg-primary text-white p-3 sm:p-4 rounded-full border border-white ${
             show && "hidden sm:block"
           }`}
           onClick={() => setShow(!show)}
@@ -211,7 +237,7 @@ const Chat = ({ isShow = true }: ChatProps) => {
           {show ? (
             <FaWindowMinimize className="h-6 w-10" />
           ) : (
-            <IoChatbubble className="h-10 w-10" />
+            <IoChatbubble className="sm:h-10 sm:w-10  h-8 w-8" />
           )}
         </Button>
       )}
