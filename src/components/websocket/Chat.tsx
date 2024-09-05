@@ -7,7 +7,8 @@ import { useSelector } from "react-redux";
 import UIMessage from "./UIMessage";
 import Button from "../ui/Button";
 import { IoIosSend } from "react-icons/io";
-import { IoChatbubble } from "react-icons/io5";
+import { IoChatbubble, IoClose } from "react-icons/io5";
+import { FaWindowMinimize } from "react-icons/fa";
 
 const socket = io("http://localhost:3001");
 type ChatProps = {
@@ -118,10 +119,14 @@ const Chat = ({ isShow = true }: ChatProps) => {
   const disabled = !selectedChat || !messageInput;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 items-end">
+    <div
+      className={`fixed bottom-4 sm:!bottom-4 right-4 sm:!right-4 z-50 flex flex-col gap-2 items-end ${
+        show && "!bottom-0 !right-0 "
+      }`}
+    >
       {(isShow || show) && (
-        <div className="flex flex-row items-center h-[35rem]">
-          <div className="h-full w-36 flex flex-col gap-2 rounded-l-xl border-gray-200 border-l border-b border-t overflow-hidden bg-gray-100">
+        <div className="flex flex-row items-center sm:h-[35rem] top-0 left-0 h-screen w-screen sm:w-fit z-[99999] sm:flex">
+          <div className="h-full w-[30%] sm:w-36 flex flex-col gap-2 sm:rounded-l-xl sm:border-gray-200 sm:border-l sm:border-b sm:border-t overflow-hidden bg-gray-100">
             {_.map(conversations, (chat, index) => {
               const targetUser = chat.user1Id === id ? chat.user2 : chat.user1;
               return (
@@ -138,9 +143,13 @@ const Chat = ({ isShow = true }: ChatProps) => {
             })}
           </div>
 
-          <div className="flex flex-col rounded-r-xl border border-gray-200 w-[20rem] h-full bg-white">
+          <div className="flex flex-col sm:rounded-r-xl sm:border sm:border-gray-200 w-[70%] sm:w-[20rem] h-full bg-white">
             <div className="w-full flex justify-center items-center text-center border-b border-gray-200 p-2 font-semibold min-h-10">
               {currentChat && getFullNames(currentChatTarget)}
+              <IoClose
+                className="cursor-pointer sm:hidden absolute right-2 top-2 h-6 w-6 opacity-50"
+                onClick={() => setShow(false)}
+              />
             </div>
             <div className="flex-1 flex flex-col gap-2 py-4 px-4 overflow-y-auto bg-white justify-between">
               <div className="flex-1 flex flex-col gap-2 items-center">
@@ -194,10 +203,16 @@ const Chat = ({ isShow = true }: ChatProps) => {
       )}
       {!isShow && (
         <Button
-          className="bg-primary text-white p-4 rounded-full border border-white"
+          className={`bg-primary text-white p-4 rounded-full border border-white ${
+            show && "hidden sm:block"
+          }`}
           onClick={() => setShow(!show)}
         >
-          <IoChatbubble className="h-10 w-10" />
+          {show ? (
+            <FaWindowMinimize className="h-6 w-10" />
+          ) : (
+            <IoChatbubble className="h-10 w-10" />
+          )}
         </Button>
       )}
     </div>
