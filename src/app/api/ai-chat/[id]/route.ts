@@ -5,6 +5,23 @@ import prisma from "@/lib/prisma";
 import { authenticate } from "../../middleware";
 import { ADMIN } from "@/constant";
 
+// model AIChat {
+//   id           Int         @id @default(autoincrement())
+//   userId       Int
+//   creationDate DateTime    @default(now())
+//   user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   messages     AIMessage[]
+// }
+
+// model AIMessage {
+//   id       Int           @id @default(autoincrement())
+//   aiChatId Int
+//   sender   MessageSender
+//   content  String
+//   sendDate DateTime      @default(now())
+//   aiChat   AIChat        @relation(fields: [aiChatId], references: [id], onDelete: Cascade)
+// }
+
 export async function GET(req: NextRequest, { params }) {
   try {
     const { id } = params;
@@ -47,7 +64,7 @@ export async function PUT(req: NextRequest, { params }) {
       return authFailed;
     }
 
-    const { question, answer } = await req.json();
+    const { messages } = await req.json();
     const oldAIChat = await prisma.aIChat.findUnique({
       where: {
         id: Number(id),
@@ -71,9 +88,9 @@ export async function PUT(req: NextRequest, { params }) {
         id: Number(id),
       },
       data: {
-        question,
-        answer,
-        chatDate: new Date(),
+        messages: {
+          create: messages,
+        },
       },
     });
 
