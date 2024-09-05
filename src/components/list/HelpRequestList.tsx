@@ -1,30 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axiosInstance from "@/lib/axiosInstance";
-import { useRouter } from 'next/navigation';
 
 export default function HelpRequestList({ helpRequests }) {
   const [appliedRequests, setAppliedRequests] = useState(new Set());
-  const router = useRouter();
+  const [requests, setRequests] = useState(helpRequests);
+
+  useEffect(() => {
+    const fetchAppliedRequests = async () => {
+      try {
+        const response = await axiosInstance.get('/helper-application'); 
+        const applications = new Set(response.data.helpApplications.map(app => app.requestId));
+        setAppliedRequests(applications);
+      } catch (error) {
+        console.error('Error fetching applied requests:', error);
+      }
+    };
+
+    fetchAppliedRequests();
+  }, []);
 
   const handleApply = async (requestId) => {
+    if (appliedRequests.has(requestId)) {
+      alert("You have already applied for this request.");
+      return;
+    }
+
     try {
       const response = await axiosInstance.post('/helper-application', { requestId });
-            console.log(response)
-
       if (response.status === 201) {
         setAppliedRequests(prev => new Set(prev).add(requestId));
-        router.refresh(); 
+        setRequests(prevRequests => prevRequests.map(request => 
+          request.id === requestId ? { ...request, applied: true } : request
+        ));
       }
     } catch (error) {
-      console.error('Error applying for help request:', error);
+      if (error.response && error.response.status === 400) {
+        alert("You have already applied for this request.");
+      } else {
+        alert("Something went wrong. Please try again.");
+      }
     }
   };
 
   return (
     <div className="bg-white">
-      {helpRequests !== null ? (
+      {requests.length ? (
         <ul className="space-y-4">
-          {helpRequests.map((request) => (
+          {requests.map((request) => (
             <li key={request.id} className="p-4 border rounded shadow">
               <h2 className="text-xl font-semibold">{request.subject}</h2>
               <p>{request.description}</p>
@@ -41,7 +63,7 @@ export default function HelpRequestList({ helpRequests }) {
                 </>
               )}
               {appliedRequests.has(request.id) ? (
-                <p className="mt-4 text-green-500">Bravo, vous vous êtes positionné sur cette demande !</p>
+                <p className="mt-4 text-green-500">you have positioned on this request</p>
               ) : (
                 <button
                   onClick={() => handleApply(request.id)}
