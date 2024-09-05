@@ -6,6 +6,11 @@ export default function HelpRequestList({ helpRequests }) {
   const [requests, setRequests] = useState(helpRequests);
 
   useEffect(() => {
+    // Met à jour les demandes chaque fois que `helpRequests` change
+    setRequests(helpRequests);
+  }, [helpRequests]);
+
+  useEffect(() => {
     const fetchAppliedRequests = async () => {
       try {
         const response = await axiosInstance.get('/helper-application'); 
