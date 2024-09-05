@@ -9,6 +9,8 @@ export default function HelpRequestList({ helpRequests }) {
   const handleApply = async (requestId) => {
     try {
       const response = await axiosInstance.post('/helper-application', { requestId });
+            console.log(response)
+
       if (response.status === 201) {
         setAppliedRequests(prev => new Set(prev).add(requestId));
         router.refresh(); 
@@ -19,7 +21,7 @@ export default function HelpRequestList({ helpRequests }) {
   };
 
   return (
-    <div>
+    <div className="bg-white">
       {helpRequests !== null ? (
         <ul className="space-y-4">
           {helpRequests.map((request) => (
