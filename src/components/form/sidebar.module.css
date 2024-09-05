@@ -1,4 +1,4 @@
-.sidebar {
+/* .sidebar {
     height: 100vh;
     width: 250px;
     background-color: #202123;
@@ -42,4 +42,99 @@
   .icon {
     margin-right: 10px;
   }
-  
+   */
+
+
+  /* Styles de base pour la sidebar */
+.sidebar {
+  width: 250px; /* Largeur par défaut de la sidebar */
+  height: 100vh; /* Prend toute la hauteur de la fenêtre */
+  position: sticky; /* La sidebar reste en place lors du scroll */
+  top: 0; /* Positionnement au-dessus de la page */
+  background-color: #1e1e2f; /* Couleur de fond foncée */
+  color: #ffffff; /* Texte en blanc pour un bon contraste */
+  padding: 20px; /* Espacement interne */
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3); /* Effet d'ombre plus prononcé pour profondeur */
+  overflow-y: auto; /* Scroll interne si le contenu dépasse */
+  transition: width 0.3s ease; /* Transition douce pour l'animation du menu responsive */
+  z-index: 1000; /* Assure que la sidebar reste au-dessus des autres éléments */
+}
+
+/* Effet responsive pour les petits écrans */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 80px; /* Sidebar plus compacte pour petits écrans */
+    padding: 10px; /* Espacement réduit */
+  }
+
+  .menu li a {
+    justify-content: center; /* Centrer les éléments du menu quand l'espace est limité */
+  }
+
+  .menu li a span {
+    display: none; /* Cacher le texte pour ne montrer que les icônes sur les petits écrans */
+  }
+}
+
+/* Conteneur pour les icônes de la sidebar */
+.iconContainer {
+  margin-bottom: 30px; /* Espacement sous l'icône principale */
+  display: flex;
+  justify-content: center; /* Centrer l'icône */
+}
+
+/* Liste des éléments du menu */
+.menu {
+  list-style-type: none; /* Suppression des puces pour les listes */
+  padding: 0; /* Suppression du padding par défaut */
+  margin: 0; /* Suppression du margin par défaut */
+}
+
+/* Style pour chaque élément du menu */
+.menu li {
+  margin-bottom: 20px; /* Espacement entre les éléments de la liste */
+}
+
+/* Style pour les liens du menu */
+.menu li a {
+  display: flex; /* Pour aligner l'icône et le texte horizontalement */
+  align-items: center; /* Aligner verticalement l'icône et le texte */
+  text-decoration: none; /* Suppression de la décoration de lien (soulignement) */
+  color: inherit; /* Garde la couleur du texte hérité (ici blanc) */
+  font-size: 18px; /* Taille du texte du menu */
+  padding: 10px 15px; /* Espacement interne autour des liens */
+  border-radius: 8px; /* Légèrement arrondi pour les liens */
+  transition: background-color 0.3s ease, padding 0.3s ease; /* Transition douce pour les interactions */
+}
+
+/* Changement de fond au survol des liens */
+.menu li a:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Arrière-plan semi-transparent au hover */
+  padding-left: 25px; /* Légère animation de padding pour accentuer le hover */
+}
+
+/* Style pour les icônes */
+.icon {
+  margin-right: 15px; /* Espacement entre l'icône et le texte */
+  font-size: 24px; /* Taille des icônes */
+}
+
+/* Réduction des marges pour les petits écrans */
+@media (max-width: 768px) {
+  .icon {
+    margin-right: 0; /* Supprime l'espace pour mieux adapter l'icône à l'écran compact */
+  }
+}
+
+/* Animation de fermeture/extension de la sidebar */
+.sidebar.collapsed {
+  width: 80px; /* Réduction de la largeur de la sidebar pour les petits écrans */
+}
+
+.sidebar.collapsed .menu li a span {
+  display: none; /* Cache le texte et ne montre que les icônes */
+}
+
+.sidebar.collapsed .iconContainer {
+  margin-bottom: 15px; /* Réduit l'espacement des icônes dans la version compacte */
+}
