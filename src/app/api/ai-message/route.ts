@@ -12,8 +12,9 @@ export async function GET(req: NextRequest) {
       return authFailed;
     }
     const user = req.user;
-    console.log(req.query)
-    const { aiChatId } = req.query;
+    const url = new URL(req.url);
+    const aiChatId = url.searchParams.get("aiChatId");
+
     if (!aiChatId) {
       return NextResponse.json(
         { message: "AiChatId is required" },
