@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import "@/components/chat/ChatAi.css";
-import { Input, Button } from "@nextui-org/react";
+import { FaArrowUp } from 'react-icons/fa';
 import axiosInstance from "@/lib/axiosInstance";
 
 interface Message {
@@ -11,90 +10,99 @@ interface Message {
     sender: 'USER' | 'AI';
 }
 
-interface AIChat {
-    id: number;
-    messages: Message[];
-}
-
 const ChatAi: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
-    const aiChatId = 1;
+    const aiChatId = 1; // Spécifiez ici l'ID du chat que vous voulez gérer
 
     useEffect(() => {
         fetchMessages();
     }, []);
 
-    // Fonction pour récupérer les messages de l'API
     const fetchMessages = async () => {
         try {
             const res = await axiosInstance.get(`/ai-message?aiChatId=${aiChatId}`);
             const data = res.data;
 
-            console.log(data);
-
-            if (data.aiChats && Array.isArray(data.aiChats[0]?.messages)) {
-                setMessages(data.aiChats[0].messages);
-            } else {
-                console.error("Les données récupérées ne sont pas conformes", data);
+            if (data.aIMessages && Array.isArray(data.aIMessages)) {
+                setMessages(data.aIMessages);
             }
         } catch (error) {
             console.error("Erreur lors de la récupération des messages :", error);
         }
     };
 
-    // Fonction pour envoyer un message à l'API
     const sendMessage = async () => {
         if (!input.trim()) return;
 
         try {
-            const res = await axiosInstance.post('/ai-message', {
-                question: input,
-                answer: "Response from bot",
+            // Envoyer le message de l'utilisateur à l'API
+            await axiosInstance.post('/ai-message', {
+                aiChatId,
+                content: input,
+                sender: "USER",
             });
 
-            const newMessage = res.data;
-
-            if (newMessage.aiChat && Array.isArray(newMessage.aiChat.messages)) {
-                setMessages([...messages, ...newMessage.aiChat.messages]);
-            } else {
-                console.error("Erreur lors de l'ajout d'un nouveau message", newMessage);
-            }
-
+            // Ajouter immédiatement le message utilisateur à l'interface
+            setMessages([...messages, { id: Date.now(), content: input, sender: 'USER' }]);
             setInput('');
+
+            // Simuler la réponse du bot après un court délai (par exemple 1 seconde)
+            setTimeout(async () => {
+                const botResponse = "Voici la réponse du bot"; // Vous pouvez personnaliser cela
+
+                // Envoyer la réponse du bot à l'API
+                await axiosInstance.post('/ai-message', {
+                    aiChatId,
+                    content: botResponse,
+                    sender: "AI",
+                });
+
+                // Ajouter immédiatement la réponse du bot à l'interface
+                setMessages(prevMessages => [
+                    ...prevMessages,
+                    { id: Date.now(), content: botResponse, sender: 'AI' }
+                ]);
+
+            }, 1000); // 1 seconde de délai avant la réponse du bot
         } catch (error) {
-            console.error("Erreur lors de l'envoi du message :", error);
+            console.error("Erreur lors de l'envoi du message ou de la réponse du bot :", error);
         }
     };
 
     return (
-        <div className="chatAi-container">
-            <div className="chatAi-card">
+        <div className="w-full max-w-2xl mx-auto p-4">
+            {/* Zone de chat */}
+            <div className="w-full h-[250px] sm:h-[400px] bg-gray-200 overflow-y-auto p-4">
                 {messages.map((msg) => (
                     <div
-                        className={`chatAi-message ${msg.sender === 'USER' ? 'user-message' : 'ai-message'}`}
+                        className={`p-3 mb-3 rounded-lg min-w-[30%] sm:min-w-[20%] w-auto max-w-[70%] sm:max-w-[40%] whitespace-normal ${msg.sender === 'USER' ? 'bg-primary-200 ml-auto text-left' : 'bg-gray-300 mr-auto text-left'}`}
                         key={msg.id}
                     >
-                        <strong>{msg.sender === 'USER' ? 'You' : 'AI'}:</strong> {msg.content}
+                        {msg.content}
                     </div>
                 ))}
             </div>
-            <div className="chatAi-form">
-                <Input
+
+            {/* Input et flèche d'envoi */}
+            <div className="relative flex items-center w-full mt-4">
+                {/* Champ d'input */}
+                <input
                     type="text"
-                    label="Type a message"
+                    placeholder="Type a message"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                    className="flex-1 bg-gray-100 rounded-full py-3 px-4 pr-12 outline-none focus:ring-2 focus:ring-primary-300"
                 />
-                <Button
-                    className="chatAi-button"
-                    color="primary"
+
+                {/* Bouton flèche */}
+                <button
                     onClick={sendMessage}
-                    style={{ height: '55px' }}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-primary-500 hover:bg-primary-600 text-white rounded-full p-2"
                 >
-                    Envoyer
-                </Button>
+                    <FaArrowUp />
+                </button>
             </div>
         </div>
     );
