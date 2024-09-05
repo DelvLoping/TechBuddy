@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
-import _, { set } from "lodash";
+import _ from "lodash";
 import axiosInstance from "@/lib/axiosInstance";
 import { getFullNames } from "@/utils";
 import { useSelector } from "react-redux";
@@ -19,8 +19,9 @@ type ChatProps = {
   isShow: boolean;
 };
 const Chat = ({ isShow = true }: ChatProps) => {
+  const chatsReducer = useSelector((state) => state.chats);
+  const { chats } = chatsReducer || {};
   const messagesEndRef = useRef(null);
-  const [conversations, setConversations] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
@@ -75,11 +76,10 @@ const Chat = ({ isShow = true }: ChatProps) => {
   }, [show, messages, typingStatus]);
 
   useEffect(() => {
-    axiosInstance.get("/chat").then((res) => {
-      setConversations(res.data.chats);
-      setSelectedChat(res.data.chats[0]?.id);
-    });
-  }, []);
+    if (!_.isEmpty(chats)) {
+      setSelectedChat(_.first(chats).id);
+    }
+  }, [chats]);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -116,7 +116,7 @@ const Chat = ({ isShow = true }: ChatProps) => {
     }
   };
 
-  const currentChat = _.find(conversations, { id: selectedChat });
+  const currentChat = _.find(chats, { id: selectedChat });
   const currentChatTarget =
     !_.isEmpty(currentChat) && currentChat?.user1Id === id
       ? currentChat?.user2
@@ -137,7 +137,7 @@ const Chat = ({ isShow = true }: ChatProps) => {
             } flex flex-col gap-2 sm:rounded-l-xl sm:border-gray-200 sm:border-l sm:border-b sm:border-t overflow-hidden bg-gray-100
             `}
           >
-            {_.map(conversations, (chat, index) => {
+            {_.map(chats, (chat, index) => {
               const targetUser = chat.user1Id === id ? chat.user2 : chat.user1;
               return (
                 <div
