@@ -7,50 +7,54 @@ import axiosInstance from "@/lib/axiosInstance";
 
 interface Message {
     id: number;
-    question: string;
-    answer: string;
-    user: {
-        name: string;
-    };
+    content: string;
+    sender: 'USER' | 'AI';
+}
+
+interface AIChat {
+    id: number;
+    messages: Message[];
 }
 
 const ChatAi: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
+    const aiChatId = 1;
 
     useEffect(() => {
         fetchMessages();
     }, []);
 
+    // Fonction pour récupérer les messages de l'API
     const fetchMessages = async () => {
         try {
-            const res = await axiosInstance.get('/ai-chat'); // Utilisation de axios pour récupérer les messages
+            const res = await axiosInstance.get('/ai-message?aiChatId=' + aiChatId);
             const data = res.data;
 
-            // Vérifiez si data.aiChats est un tableau
-            if (Array.isArray(data.aiChats)) {
-                setMessages(data.aiChats);
+            if (data.aiChats && Array.isArray(data.aiChats[0]?.messages)) {
+                setMessages(data.aiChats[0].messages);
             } else {
-                console.error("Les données récupérées ne sont pas un tableau", data);
+                console.error("Les données récupérées ne sont pas conformes", data);
             }
         } catch (error) {
             console.error("Erreur lors de la récupération des messages :", error);
         }
     };
 
+    // Fonction pour envoyer un message à l'API
     const sendMessage = async () => {
         if (!input.trim()) return;
 
         try {
-            const res = await axiosInstance.post('/ai-chat', {
+            const res = await axiosInstance.post('/api/ai-chat', {
                 question: input,
-                answer: "Response from bot", // Remplacez cela par votre logique de réponse du bot si nécessaire
+                answer: "Response from bot",
             });
 
             const newMessage = res.data;
 
-            if (newMessage.aiChat) {
-                setMessages([...messages, newMessage.aiChat]);
+            if (newMessage.aiChat && Array.isArray(newMessage.aiChat.messages)) {
+                setMessages([...messages, ...newMessage.aiChat.messages]);
             } else {
                 console.error("Erreur lors de l'ajout d'un nouveau message", newMessage);
             }
@@ -65,9 +69,11 @@ const ChatAi: React.FC = () => {
         <div className="chatAi-container">
             <div className="chatAi-card">
                 {messages.map((msg) => (
-                    <div className="chatAi-message" key={msg.id}>
-                        <strong>{msg.user?.name || "Unknown"}:</strong> {msg.question} <br />
-                        <em>{msg.answer}</em>
+                    <div
+                        className={`chatAi-message ${msg.sender === 'USER' ? 'user-message' : 'ai-message'}`}
+                        key={msg.id}
+                    >
+                        <strong>{msg.sender === 'USER' ? 'You' : 'AI'}:</strong> {msg.content}
                     </div>
                 ))}
             </div>
@@ -85,7 +91,7 @@ const ChatAi: React.FC = () => {
                     onClick={sendMessage}
                     style={{ height: '55px' }}
                 >
-                    Rechercher
+                    Envoyer
                 </Button>
             </div>
         </div>
