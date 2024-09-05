@@ -25,8 +25,8 @@ model User {
   signupDate          DateTime            @default(now())
   helpRequests        HelpRequest[]
   applications        HelperApplication[]
-  chat1               Chat[]              @relation("User1Chats")
-  chat2               Chat[]              @relation("User2Chats")
+  chatsAsUser1               Chat[]              @relation("User1Chats")
+  chatsAsUser2               Chat[]              @relation("User2Chats")
   messages            Message[]
   evaluationsGiven    Evaluation[]        @relation("EvaluatorEvaluations")
   evaluationsReceived Evaluation[]        @relation("EvaluateeEvaluations")
