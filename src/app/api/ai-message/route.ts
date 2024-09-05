@@ -12,17 +12,21 @@ export async function GET(req: NextRequest) {
       return authFailed;
     }
     const user = req.user;
+    const { aiChatId } = req.query;
+    if (!aiChatId) {
+      return NextResponse.json(
+        { message: "AiChatId is required" },
+        { status: 400 }
+      );
+    }
 
     let aIMessages;
-
     if (user.type === ADMIN) {
       aIMessages = await prisma.aIMessage.findMany();
     } else {
       aIMessages = await prisma.aIMessage.findMany({
         where: {
-          aiChat: {
-            userId: user.id,
-          },
+          aiChatId: Number(aiChatId),
         },
       });
     }
