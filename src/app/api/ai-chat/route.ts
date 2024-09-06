@@ -200,6 +200,7 @@ export async function POST(req: NextRequest) {
       console.error("Échec de l'authentification");
       return authFailed;
     }
+<<<<<<< HEAD
 
     const { question, answer } = await req.json();
     const user = req.user;
@@ -218,6 +219,11 @@ export async function POST(req: NextRequest) {
     const aiChat = await prisma.aIChat.create({
       data: {
         userId: user.id,
+=======
+    const aiChat = await prisma.aIChat.create({
+      data: {
+        userId: req.user.id,
+>>>>>>> origin/dev-vic
       },
     });
 

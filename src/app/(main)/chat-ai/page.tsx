@@ -1,10 +1,9 @@
 import React from 'react';
-import Chat from '@/components/ChatAi';
+import Chat from '@/components/chat/ChatAi';
 
-export default function Home() {
+export default function ChatAi() {
     return (
-        <div>
-            <h1>Classic Chat Application</h1>
+        <div style={{ width: '100%' }}>
             <Chat />
         </div>
     );
