@@ -1,64 +1,58 @@
 "use client";
 
 import { Button, Input, Textarea, Select, SelectItem } from "@nextui-org/react";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Spinner } from "@nextui-org/spinner";
 import { useSelector } from "react-redux";
-import { OPEN,VIRTUAL,IN_PERSON} from "@/constant";
-import axios from "axios";
+import { OPEN, VIRTUAL, IN_PERSON } from "@/constant";
 import axiosInstance from "@/lib/axiosInstance";
 
 export default function HelpRequest({ id }) {
-  const userReducer = useSelector((state) => state.user);
-  const { loading } = userReducer || {};
+  const { loading } = useSelector((state) => state.user) || {};
   const [error, setError] = useState("");
+  const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
   const [formData, setFormData] = useState({
-    subject: undefined,
-    description: undefined,
-    interventionType: VIRTUAL, 
-    interventionDate: undefined,
-    reward:undefined,
+    subject: "",
+    description: "",
+    interventionType: VIRTUAL,
+    interventionDate: "",
+    reward: "",
     interventionAddress: {
-      street: undefined,
-      city: undefined,
-      postalCode: undefined,
-      country: undefined,
+      street: "",
+      city: "",
+      postalCode: "",
+      country: "",
     },
     status: OPEN,
   });
 
-  const [submissionSuccess, setSubmissionSuccess] = useState(false); 
-
   const submit = async (e) => {
     e.preventDefault();
     try {
-      await axiosInstance.post("/helper-request", formData) 
-      setSubmissionSuccess(true)   
+      await axiosInstance.post("/helper-request", formData);
+      setSubmissionSuccess(true);
     } catch (error) {
-      if(axios.isAxiosError(error) && error.response.data){
-        setError(error.response.data.message)
-      }
+      setError(error?.response?.data?.message || "An error occurred");
     }
-  }
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
   };
 
-  const handleAddressChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      interventionAddress: { ...formData.interventionAddress, [name]: value },
-    });
-  };
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  const handleAddressChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      interventionAddress: { ...prev.interventionAddress, [name]: value },
+    }));
+  }, []);
 
   return (
-   
     <div className="w-full">
-      {!submissionSuccess && ( 
+      {!submissionSuccess ? (
         <form id={id} onSubmit={submit} className="w-full">
           <div className="flex flex-col items-center justify-center gap-4 mb-4">
             <Input
@@ -82,8 +76,12 @@ export default function HelpRequest({ id }) {
               onChange={handleChange}
               required
             >
-              <SelectItem key={VIRTUAL}>Virtual</SelectItem>
-              <SelectItem key={IN_PERSON}>In Person</SelectItem>
+              <SelectItem key={VIRTUAL} value={VIRTUAL}>
+                Virtual
+              </SelectItem>
+              <SelectItem key={IN_PERSON} value={IN_PERSON}>
+                In Person
+              </SelectItem>
             </Select>
 
             <Input
@@ -100,49 +98,33 @@ export default function HelpRequest({ id }) {
               value={formData.reward}
               onChange={handleChange}
             />
+
             {formData.interventionType === IN_PERSON && (
               <>
                 <h2>In person</h2>
-                <Input
-                  label="Street"
-                  name="street"
-                  value={formData.interventionAddress.street}
-                  onChange={handleAddressChange}
-                />
-                <Input
-                  label="City"
-                  name="city"
-                  value={formData.interventionAddress.city}
-                  onChange={handleAddressChange}
-                />
-                <Input
-                  label="Postal Code"
-                  name="postalCode"
-                  value={formData.interventionAddress.postalCode}
-                  onChange={handleAddressChange}
-                />
-                <Input
-                  label="Country"
-                  name="country"
-                  value={formData.interventionAddress.country}
-                  onChange={handleAddressChange}
-                />
+                {["street", "city", "postalCode", "country"].map((field) => (
+                  <Input
+                    key={field}
+                    label={field.charAt(0).toUpperCase() + field.slice(1)}
+                    name={field}
+                    value={formData.interventionAddress[field]}
+                    onChange={handleAddressChange}
+                  />
+                ))}
               </>
             )}
 
             <Button
               type="submit"
               disabled={loading}
-              className="min-w-24 w-full bg-primary text-white mt-8 font-bold"
+              className="text-white bg-primary hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 w-full py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             >
               {loading ? <Spinner color="white" /> : "Submit"}
             </Button>
             {error && <p className="text-danger">{error}</p>}
           </div>
         </form>
-      )}
-
-      {submissionSuccess && ( 
+      ) : (
         <div className="text-green-600 text-center font-bold mt-4">
           Your help request has been submitted successfully!
         </div>

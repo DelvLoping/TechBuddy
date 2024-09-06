@@ -4,20 +4,39 @@ import axiosInstance from "@/lib/axiosInstance";
 export default function HelpRequestList({ helpRequests }) {
   const [appliedRequests, setAppliedRequests] = useState(new Set());
   const [requests, setRequests] = useState(helpRequests);
+  const [addresses, setAddresses] = useState({}); // Stocker les adresses récupérées
+  const [loadingApplications, setLoadingApplications] = useState(true); 
 
+  const fetchAddressById = async (addressId) => {
+    try {
+      const response = await axiosInstance.get(`/address/${addressId}`);
+      return response.data.address;
+    } catch (error) {
+      console.error('Error fetching address:', error);
+      return null;
+    }
+  };
+  
   useEffect(() => {
-    // Met à jour les demandes chaque fois que `helpRequests` change
     setRequests(helpRequests);
+    helpRequests.forEach(async (request) => {
+      if (request.interventionAddressId) {
+        const address = await fetchAddressById(request.interventionAddressId);
+        setAddresses((prev) => ({ ...prev, [request.id]: address }));
+      }
+    });
   }, [helpRequests]);
 
   useEffect(() => {
     const fetchAppliedRequests = async () => {
       try {
-        const response = await axiosInstance.get('/helper-application'); 
+        const response = await axiosInstance.get('/helper-application');
         const applications = new Set(response.data.helpApplications.map(app => app.requestId));
         setAppliedRequests(applications);
       } catch (error) {
         console.error('Error fetching applied requests:', error);
+      } finally {
+        setLoadingApplications(false);
       }
     };
 
@@ -49,7 +68,9 @@ export default function HelpRequestList({ helpRequests }) {
 
   return (
     <div className="bg-white">
-      {requests.length ? (
+      {loadingApplications ? (  
+        <p>Loading requests...</p>
+      ) : requests.length ? (
         <ul className="space-y-4">
           {requests.map((request) => (
             <li key={request.id} className="p-4 border rounded shadow">
@@ -58,17 +79,17 @@ export default function HelpRequestList({ helpRequests }) {
               <p><strong>Intervention Type:</strong> {request.interventionType}</p>
               <p><strong>Intervention Date:</strong> {new Date(request.interventionDate).toLocaleDateString()}</p>
               <p><strong>Status:</strong> {request.status}</p>
-              {request.interventionType === "IN_PERSON" && request.interventionAddressId && (
+              {request.interventionType === "IN_PERSON" && addresses[request.id] && (
                 <>
                   <p><strong>Address:</strong></p>
-                  <p>{request.interventionAddress?.street || "Street not provided"}</p>
-                  <p>
-                    {request.interventionAddress?.city || "City not provided"}, {request.interventionAddress?.postalCode || "Postal Code not provided"}, {request.interventionAddress?.country || "Country not provided"}
-                  </p>
+                  <p>{addresses[request.id].street || "Street not provided"}</p>
+                  <p>{addresses[request.id].city || "City not provided"}</p>
+                  <p>{addresses[request.id].postalCode || "Postal Code not provided"}</p>
+                  <p>{addresses[request.id].country || "Country not provided"}</p>
                 </>
               )}
               {appliedRequests.has(request.id) ? (
-                <p className="mt-4 text-green-500">you have positioned on this request</p>
+                <p className="mt-4 text-green-500">You have applied for this request</p>
               ) : (
                 <button
                   onClick={() => handleApply(request.id)}

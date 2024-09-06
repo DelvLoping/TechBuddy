@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../middleware";
-import { ADMIN, IN_PERSON, VIRTUAL } from "@/constant";
+import { ADMIN, HELPER, IN_PERSON, VIRTUAL } from "@/constant";
 import _ from "lodash";
 
 export async function GET(req: NextRequest) {
@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
     let helpRequests;
     let totalRequests;
 
-    if (user.type === ADMIN) {
+    if (user.type === ADMIN || user.type === HELPER) {
       helpRequests = await prisma.helpRequest.findMany({
         where: filters,
         skip,
