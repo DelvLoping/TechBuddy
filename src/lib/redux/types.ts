@@ -1,4 +1,4 @@
-import { Chat, User } from "@prisma/client";
+import { Chat, HelpRequest, User } from '@prisma/client';
 
 export interface UserState {
   user: User | null;
@@ -9,6 +9,8 @@ export interface UserState {
 
 export interface ChatsState {
   chats: Chat[];
-  error: string | null;
-  loading: boolean;
+}
+
+export interface HelpRequestsState {
+  helpRequests: HelpRequest[];
 }
