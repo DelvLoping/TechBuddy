@@ -8,10 +8,11 @@ import axiosInstance from '@/lib/axiosInstance';
 import _ from 'lodash';
 import Chat from '@/components/websocket/Chat';
 import Navbar from '@/components/macro/Navbar';
-import { setChats } from '@/lib/redux/slices/chats';
+import { reloadChats, setChats } from '@/lib/redux/slices/chats';
 import { Spinner } from '@nextui-org/react';
-import { setHelpRequests } from '@/lib/redux/slices/helpRequests';
+import { reloadHelpRequests, setHelpRequests } from '@/lib/redux/slices/helpRequests';
 import { IoArrowBack } from 'react-icons/io5';
+import { ToastContainer } from 'react-toastify';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -41,12 +42,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       axiosInstance.get('/user/current').then((res) => {
         dispatch(setUser(res.data));
       });
-      axiosInstance.get('/chat').then((res) => {
-        dispatch(setChats(res.data.chats));
-      });
-      axiosInstance.get('/help-request').then((res) => {
-        dispatch(setHelpRequests(res.data.helpRequests));
-      });
+      dispatch(reloadChats());
+      dispatch(reloadHelpRequests());
     }
   }, [user, pathname, jwtRedux]);
 
@@ -54,27 +51,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   const pathSegments = pathname.split('/').filter((segment) => segment);
 
-  const renderBreadcrumb = () => {
+  const goBack = () => {
     if (pathSegments.length < 2) return null;
 
-    const breadcrumb = pathSegments.map((segment, index) => {
-      const href = '/' + pathSegments.slice(0, index + 1).join('/');
-      const isLast = index === pathSegments.length - 1;
-      return (
-        <span key={href} className={`mr-2 text-primary ${isLast && 'font-bold'}`}>
-          {!isLast ? (
-            <a href={href} className='hover:underline'>
-              {segment}
-            </a>
-          ) : (
-            segment
-          )}
-          {!isLast && ' / '}
-        </span>
-      );
-    });
-
-    return <div className='w-full flex flex-row items-start ms-2 mb-4'>{breadcrumb}</div>;
+    return (
+      <div
+        className='w-full flex flex-row items-center ms-2 mb-4 cursor-pointer text-primary gap-1 font-semibold'
+        onClick={() => router.back()}
+      >
+        <IoArrowBack className='stroke-2' />
+        <p>Back</p>
+      </div>
+    );
   };
 
   return (
@@ -85,10 +73,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           navbarVisible ? '!pt-24' : 'h-screen'
         }`}
       >
-        {navbarVisible && renderBreadcrumb()}
+        {navbarVisible && goBack()}
         {navbarVisible && _.isEmpty(user) ? <Spinner color='primary' /> : children}
         {navbarVisible && <Chat isShow={false} />}
       </div>
+      <ToastContainer />
       <footer
         className={`${
           !navbarVisible && 'hidden'

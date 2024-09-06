@@ -25,5 +25,5 @@
 
 body {
   background-image: url('/img/background-transparent.png');
-  height: 100vh;
+  min-height: 100vh;
 }

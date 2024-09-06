@@ -1,29 +1,20 @@
+import { Button } from '@nextui-org/react';
 import { HelpRequest } from '@prisma/client';
 import moment from 'moment';
-import { useSelector } from 'react-redux';
-
-// model HelpRequest {
-//     id                    Int                 @id @default(autoincrement())
-//     userId                Int
-//     subject               String
-//     description           String
-//     requestDate           DateTime            @default(now())
-//     interventionDate      DateTime?
-//     interventionType      InterventionType
-//     reward                String?
-//     interventionAddressId Int?
-//     status                RequestStatus       @default(OPEN)
-//     user                  User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-//     applications          HelperApplication[]
-//     chats                 Chat[]
-//     evaluations           Evaluation[]
-//     interventionAddress   Address?            @relation(fields: [interventionAddressId], references: [id])
-//   }
+import { FaCheckCircle, FaPen } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { MdDelete } from 'react-icons/md';
+import axiosInstance from '@/lib/axiosInstance';
+import { reloadHelpRequests } from '@/lib/redux/slices/helpRequests';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 type HelpRequestDetailsProps = {
   helpRequest: HelpRequest;
 };
 const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
+  const dispatch = useDispatch();
+  const router = useRouter();
   const userReducer = useSelector((state) => state.user);
   const { user } = userReducer || {};
   const {
@@ -50,6 +41,26 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
       color = 'text-warning';
       break;
   }
+  const deleteHelpRequest = async () => {
+    try {
+      await axiosInstance.delete(`/help-request/${id}`);
+      dispatch(reloadHelpRequests());
+      toast.success('Help request deleted successfully');
+    } catch (error) {
+      toast.error('Failed to delete help request');
+    }
+  };
+
+  const markAsCompleted = async () => {
+    try {
+      await axiosInstance.put(`/help-request/${id}`, { status: 'COMPLETED' });
+      dispatch(reloadHelpRequests());
+      toast.success('Help request marked as completed');
+    } catch (error) {
+      toast.error('Failed to mark help request as completed');
+    }
+  };
+
   return (
     <div
       key={id + 'HelpRequest'}
@@ -82,6 +93,31 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
           <p className='text-sm sm:text-base'>
             <span className=''>Intervention Address</span> : {interventionAddressId}
           </p>
+          <div className='flex flex-row items-center justify-end w-full gap-2'>
+            <Button
+              className='bg-danger text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit'
+              onClick={deleteHelpRequest}
+            >
+              <MdDelete className='h-4 w-4 sm:h-5 sm:w-5' />
+              Delete
+            </Button>
+            {helpRequest.status === 'COMPLETED' ? null : (
+              <Button
+                className='bg-success text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit'
+                onClick={markAsCompleted}
+              >
+                <FaCheckCircle className='text-white h-4 w-4 sm:h-5 sm:w-5' />
+                Complete
+              </Button>
+            )}
+            <Button
+              className='bg-primary text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit'
+              onClick={() => router.push(`/help-request/${id}/edit`)}
+            >
+              <FaPen className='h-4 w-4 sm:h-5 sm:w-5' />
+              Edit
+            </Button>
+          </div>
         </>
       )}
     </div>

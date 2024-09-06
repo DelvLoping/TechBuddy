@@ -9,8 +9,12 @@ export interface UserState {
 
 export interface ChatsState {
   chats: Chat[];
+  error: string | null;
+  loading: boolean;
 }
 
 export interface HelpRequestsState {
   helpRequests: HelpRequest[];
+  error: string | null;
+  loading: boolean;
 }
