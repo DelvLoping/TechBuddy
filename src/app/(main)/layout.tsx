@@ -70,7 +70,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {navbarVisible && <Navbar />}
       <div
         className={`flex justify-center items-center flex-col p-4 lg:p-8 ${
-          navbarVisible ? '!pt-24' : 'h-screen'
+          navbarVisible ? '!pt-28' : 'h-screen'
         }`}
       >
         {navbarVisible && goBack()}

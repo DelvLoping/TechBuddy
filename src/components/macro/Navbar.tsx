@@ -18,7 +18,7 @@ const Navbar = () => {
         </h1>
         <FaPowerOff
           onClick={() => router.push('/logout')}
-          className='cursor-pointer text-danger h-8 w-8'
+          className='cursor-pointer text-danger h-7 w-7'
         />
       </div>
     </div>

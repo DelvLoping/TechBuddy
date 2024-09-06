@@ -8,6 +8,8 @@ import axiosInstance from '@/lib/axiosInstance';
 import { reloadHelpRequests } from '@/lib/redux/slices/helpRequests';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import { formatAddress } from '@/utils';
+import _ from 'lodash';
 
 type HelpRequestDetailsProps = {
   helpRequest: HelpRequest;
@@ -27,7 +29,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
     reward,
     interventionDate,
     interventionType,
-    interventionAddressId
+    interventionAddress
   } = helpRequest;
   let color = '';
   switch (helpRequest.status) {
@@ -90,12 +92,14 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
             <span className=''>Intervention Type</span> :{' '}
             <span className='font-semibold'>{interventionType}</span>
           </p>
-          <p className='text-sm sm:text-base'>
-            <span className=''>Intervention Address</span> : {interventionAddressId}
-          </p>
-          <div className='flex flex-row items-center justify-end w-full gap-2'>
+          {interventionType === 'IN_PERSON' && !_.isEmpty(interventionAddress) && (
+            <p className='text-sm sm:text-base'>
+              <span className=''>Intervention Address</span> : {formatAddress(interventionAddress)}
+            </p>
+          )}
+          <div className='flex flex-row items-center justify-between w-full gap-2'>
             <Button
-              className='bg-danger text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit'
+              className='bg-danger text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit text-sm:text-base'
               onClick={deleteHelpRequest}
             >
               <MdDelete className='h-4 w-4 sm:h-5 sm:w-5' />
@@ -103,7 +107,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
             </Button>
             {helpRequest.status === 'COMPLETED' ? null : (
               <Button
-                className='bg-success text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit'
+                className='bg-success text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit text-sm:text-base'
                 onClick={markAsCompleted}
               >
                 <FaCheckCircle className='text-white h-4 w-4 sm:h-5 sm:w-5' />
@@ -111,8 +115,8 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
               </Button>
             )}
             <Button
-              className='bg-primary text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit'
-              onClick={() => router.push(`/help-request/${id}/edit`)}
+              className='bg-primary text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit text-sm:text-base'
+              onClick={() => router.push(`/help-request/${id}`)}
             >
               <FaPen className='h-4 w-4 sm:h-5 sm:w-5' />
               Edit

@@ -67,6 +67,24 @@ const Chat = ({ isShow = true }: ChatProps) => {
   }, [selectedChat, id]);
 
   useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setShowSidebar(false);
+      } else {
+        setShowSidebar(true);
+      }
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'auto' });
     }
@@ -127,7 +145,7 @@ const Chat = ({ isShow = true }: ChatProps) => {
       }`}
     >
       {(isShow || show) && (
-        <div className='flex flex-row items-center sm:h-[35rem] sm:w-[29rem] top-0 left-0 h-screen w-screen sm:w-fit z-[99999] sm:flex'>
+        <div className='flex flex-row items-center sm:h-[35rem] sm:w-[29rem] top-0 left-0 h-screen w-screen z-[99999] sm:flex'>
           <div
             className={`h-full ${
               showSidebar ? 'w-[40%]' : 'hidden'

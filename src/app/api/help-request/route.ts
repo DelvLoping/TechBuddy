@@ -46,6 +46,17 @@ export async function GET(req: NextRequest) {
     if (user.type === ADMIN) {
       helpRequests = await prisma.helpRequest.findMany({
         where: filters,
+        include: {
+          interventionAddress: {
+            select: {
+              id: true,
+              street: true,
+              city: true,
+              postalCode: true,
+              country: true
+            }
+          }
+        },
         skip,
         take: pageSize,
         orderBy: {
@@ -61,6 +72,18 @@ export async function GET(req: NextRequest) {
           userId: user.id,
           ...filters
         },
+        include: {
+          interventionAddress: {
+            select: {
+              id: true,
+              street: true,
+              city: true,
+              postalCode: true,
+              country: true
+            }
+          }
+        },
+
         skip,
         take: pageSize,
         orderBy: {

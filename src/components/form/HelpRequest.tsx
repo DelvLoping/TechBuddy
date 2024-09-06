@@ -158,29 +158,33 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
                 />
                 {formData.interventionType === IN_PERSON && (
                   <>
-                    <h2>In person</h2>
+                    <h2>Intervention address</h2>
+                    <p className='text-gray-500 text-xs'>
+                      For your safety, we recommend, if possible, choosing a public location with
+                      people around if you are alone.
+                    </p>
                     <Input
                       label='Street'
                       name='street'
-                      value={formData.interventionAddress.street}
+                      value={formData.interventionAddress?.street}
                       onChange={handleAddressChange}
                     />
                     <Input
                       label='City'
                       name='city'
-                      value={formData.interventionAddress.city}
+                      value={formData.interventionAddress?.city}
                       onChange={handleAddressChange}
                     />
                     <Input
                       label='Postal Code'
                       name='postalCode'
-                      value={formData.interventionAddress.postalCode}
+                      value={formData.interventionAddress?.postalCode}
                       onChange={handleAddressChange}
                     />
                     <Input
                       label='Country'
                       name='country'
-                      value={formData.interventionAddress.country}
+                      value={formData.interventionAddress?.country}
                       onChange={handleAddressChange}
                     />
                   </>
