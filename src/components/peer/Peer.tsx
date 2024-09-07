@@ -208,7 +208,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
   return (
     <div
       className={`flex flex-col justify-center items-center h-full gap-4 ${
-        isFullScreen ? 'fixed top-0 left-0 w-screen h-screen z-50 bg-black p-4' : ''
+        isFullScreen && 'sm:flex-row fixed top-0 left-0 w-screen h-screen z-50 bg-black p-4'
       }`}
     >
       {chat ? (
@@ -216,13 +216,23 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
           isOpen ? (
             <>
               <video
-                className={`${isFullScreen ? ' h-full' : 'w-full'}`}
+                className={`${isFullScreen ? 'h-full' : 'h-full'} w-full`}
                 playsInline
                 ref={remoteVideoRef}
                 autoPlay
               />
-              <video className='w-full sm:w-36' playsInline ref={myVideoRef} autoPlay muted />
-              <div className='flex flex-row items-center justify-center gap-4'>
+              <video
+                className={`w-full sm:w-36 ${isFullScreen && 'w-36'}`}
+                playsInline
+                ref={myVideoRef}
+                autoPlay
+                muted
+              />
+              <div
+                className={`flex flex-row items-center justify-center gap-4 ${
+                  isFullScreen && 'sm:absolute bottom-6'
+                }`}
+              >
                 <Button
                   onClick={toggleCamera}
                   className={`p-3 !min-w-[0px] bg-primary text-white w-fit rounded-full
