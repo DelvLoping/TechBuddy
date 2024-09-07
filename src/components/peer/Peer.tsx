@@ -101,7 +101,6 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
         }
 
         newPeer.on('call', (call) => {
-          console.log('Incoming call from', call.peer);
           call.answer(stream);
           call.on('stream', (remoteStream) => {
             if (remoteVideoRef.current) {
