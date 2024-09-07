@@ -97,7 +97,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
               <span className=''>Intervention Address</span> : {formatAddress(interventionAddress)}
             </p>
           )}
-          <div className='flex flex-row items-center justify-between w-full gap-2'>
+          <div className='flex flex-row items-center justify-between sm:justify-end w-full gap-2'>
             <Button
               className='bg-danger text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit text-sm:text-base'
               onClick={deleteHelpRequest}

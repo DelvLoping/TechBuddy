@@ -44,7 +44,9 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
         .then((res) => {
           const helpRequest = res.data.helpRequest;
           helpRequest.interventionType = helpRequest.interventionType || VIRTUAL;
-          helpRequest.interventionDate = moment(helpRequest.interventionDate).format('YYYY-MM-DD');
+          helpRequest.interventionDate = moment(helpRequest.interventionDate).format(
+            'YYYY-MM-DD HH:mm'
+          );
           setFormData(helpRequest);
         })
         .catch((error: any) => {
@@ -85,7 +87,6 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setFormData({ ...formData, [name]: value });
   };
 
@@ -97,7 +98,6 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
     });
   };
 
-  console.log(formData);
   return (
     <div className='w-full'>
       {error ? (
@@ -142,9 +142,17 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
                   </SelectItem>
                 </Select>
 
+                {/* <DatePicker
+        label="Event Date"
+        variant="bordered"
+        hideTimeZone
+        showMonthAndYearPickers
+        defaultValue={now(getLocalTimeZone())}
+      /> */}
+
                 <Input
                   label='Intervention Date'
-                  type='date'
+                  type='datetime-local'
                   name='interventionDate'
                   value={formData.interventionDate}
                   onChange={handleChange}

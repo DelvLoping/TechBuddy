@@ -32,7 +32,6 @@ export async function GET(req: NextRequest) {
         applications: true,
         chatsAsUser1: true,
         chatsAsUser2: true,
-        messages: true,
         evaluationsGiven: true,
         evaluationsReceived: true,
         aiChats: true,

@@ -5,6 +5,7 @@ import { getFullNames } from '@/utils';
 import { Avatar, Button, Card } from '@nextui-org/react';
 import { HelpRequest } from '@prisma/client';
 import { useRouter } from 'next/navigation';
+import { FaPlus } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 
 export default function Dashboard() {
@@ -38,9 +39,10 @@ export default function Dashboard() {
                     Your help Requests
                   </h3>
                   <Button
-                    className='text-white bg-primary rounded-xl py-1 px-2'
+                    className='bg-primary text-white p-2 w-fit rounded-xl flex flex-row items-center justify-center h-fit text-sm:text-base'
                     onClick={() => router.push('/help-request')}
                   >
+                    <FaPlus className='text-white h-4 w-4 sm:h-5 sm:w-5' />
                     Add new
                   </Button>
                 </div>
