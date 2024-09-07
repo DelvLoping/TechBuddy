@@ -3,9 +3,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../middleware";
+import { NextRequestWithUser } from "../type";
 import { ADMIN, TECHBUDDY } from "@/constant";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
@@ -22,7 +23,9 @@ export async function GET(req: NextRequest) {
           userId: user.id,
         },
       });
-      const helpRequestIds = helpRequests.map((helpRequest) => helpRequest.id);
+      const helpRequestIds: number[] = helpRequests.map(
+        (helpRequest) => helpRequest.id
+      );
       helpApplications = await prisma.helperApplication.findMany({
         where: {
           requestId: {
@@ -48,7 +51,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {

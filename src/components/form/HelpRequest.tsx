@@ -59,7 +59,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
 
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
-  const submit = async (e) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       if (isEdit) {
@@ -85,12 +85,12 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
     }
   }, [submissionSuccess]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleAddressChange = (e) => {
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,

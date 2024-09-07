@@ -17,7 +17,7 @@ import { ToastContainer } from 'react-toastify';
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const useReducer = useSelector((state) => state.user);
+  const useReducer = useSelector((state: any) => state.user);
   const { jwt: jwtRedux, user } = useReducer;
   const dispatch = useDispatch();
 

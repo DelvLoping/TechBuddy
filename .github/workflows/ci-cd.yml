@@ -23,10 +23,54 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Build and push
+      - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile
           push: true
           tags: "${{ secrets.DOCKER_USERNAME }}/techbuddy:latest"
+
+      - name: Deploy to production server
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            # Pull the latest Docker image
+            docker pull ${{ secrets.DOCKER_USERNAME }}/techbuddy:latest
+
+            # Create a Docker Compose file for the production setup
+            echo 'version: "3.8"
+            services:
+              web:
+                image: ${{ secrets.DOCKER_USERNAME }}/techbuddy:latest
+                ports:
+                  - "80:3000"
+                depends_on:
+                  - db
+                environment:
+                  NODE_ENV: production
+                  DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/techbuddy
+
+              db:
+                image: postgres:latest
+                environment:
+                  POSTGRES_USER: ${POSTGRES_USER}
+                  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+                  POSTGRES_DB: techbuddy
+                volumes:
+                  - pgdata:/var/lib/postgresql/data
+                ports:
+                  - "5432:5432"
+
+            volumes:
+              pgdata:' > docker-compose.prod.yml
+
+            # Stop and remove existing containers
+            docker-compose -f docker-compose.prod.yml down
+
+            # Start new containers
+            docker-compose -f docker-compose.prod.yml up -d

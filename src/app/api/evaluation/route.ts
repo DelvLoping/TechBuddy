@@ -3,9 +3,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../middleware";
+import { NextRequestWithUser } from "../type";
 import { ADMIN, RATINGS } from "@/constant";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
@@ -42,7 +43,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {

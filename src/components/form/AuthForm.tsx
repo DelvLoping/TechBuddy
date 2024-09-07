@@ -6,6 +6,21 @@ import { useSelector } from 'react-redux';
 import { HELPER, TECHBUDDY } from '@/constant';
 import Link from 'next/link';
 
+export interface IformData {
+  email: string;
+  password: string;
+  firstname?: string;
+  lastname?: string;
+  age?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    country?: string;
+    postalCode?: string;
+  };
+  type?: string;
+}
+
 export default function AuthForm({
   id,
   onSubmit,
@@ -15,9 +30,9 @@ export default function AuthForm({
   onSubmit: (formData: any) => Promise<void>;
   register?: boolean;
 }) {
-  const userReducer = useSelector((state) => state.user);
+  const userReducer = useSelector((state: any) => state.user);
   const { jwt, user, error, loading } = userReducer || {};
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<IformData>({
     email: '',
     password: '',
     firstname: '',
