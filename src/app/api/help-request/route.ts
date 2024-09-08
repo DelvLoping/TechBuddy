@@ -3,7 +3,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authenticate } from '../middleware';
-import { ADMIN, IN_PERSON, VIRTUAL } from '@/constant';
+import { IN_PERSON, VIRTUAL } from '@/constant';
 import _ from 'lodash';
 import { NextRequestWithUser } from '../type';
 
@@ -41,63 +41,28 @@ export async function GET(req: NextRequestWithUser) {
       ...(dateTo && { requestDate: { lte: new Date(dateTo) } })
     };
 
-    let helpRequests;
-    let totalRequests;
-
-    if (user.type === ADMIN) {
-      helpRequests = await prisma.helpRequest.findMany({
-        where: filters,
-        include: {
-          interventionAddress: {
-            select: {
-              id: true,
-              street: true,
-              city: true,
-              postalCode: true,
-              country: true
-            }
+    const helpRequests = await prisma.helpRequest.findMany({
+      where: filters,
+      include: {
+        interventionAddress: {
+          select: {
+            id: true,
+            street: true,
+            city: true,
+            postalCode: true,
+            country: true
           }
-        },
-        skip,
-        take: pageSize,
-        orderBy: {
-          [sortBy]: sortOrder
         }
-      });
-      totalRequests = await prisma.helpRequest.count({
-        where: filters
-      });
-    } else {
-      helpRequests = await prisma.helpRequest.findMany({
-        where: {
-          userId: user.id,
-          ...filters
-        },
-        include: {
-          interventionAddress: {
-            select: {
-              id: true,
-              street: true,
-              city: true,
-              postalCode: true,
-              country: true
-            }
-          }
-        },
-
-        skip,
-        take: pageSize,
-        orderBy: {
-          [sortBy]: sortOrder
-        }
-      });
-      totalRequests = await prisma.helpRequest.count({
-        where: {
-          userId: user.id,
-          ...filters
-        }
-      });
-    }
+      },
+      skip,
+      take: pageSize,
+      orderBy: {
+        [sortBy]: sortOrder
+      }
+    });
+    const totalRequests = await prisma.helpRequest.count({
+      where: filters
+    });
 
     const totalPages = Math.ceil(totalRequests / pageSize);
 

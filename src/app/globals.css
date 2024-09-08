@@ -25,28 +25,10 @@
 body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
-}
-
-body::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: relative;
   background-image: url('/img/background-transparent.png');
-  background-size: cover; /* Adjust this based on your image */
+  background-size: cover; /* Ajustez en fonction de votre image */
   background-position: center;
-  z-index: -1;
-  animation: rotate 120s linear infinite;
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }

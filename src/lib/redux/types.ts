@@ -1,4 +1,4 @@
-import { Chat, HelpRequest, User, UserType } from '@prisma/client';
+import { Chat, HelperApplication, HelpRequest, User, UserType } from '@prisma/client';
 
 export interface UserState {
   user: UserType | null;
@@ -15,6 +15,12 @@ export interface ChatsState {
 
 export interface HelpRequestsState {
   helpRequests: HelpRequest[];
+  error: string | null;
+  loading: boolean;
+}
+
+export interface helperApplicationState {
+  helperApplication: HelperApplication[];
   error: string | null;
   loading: boolean;
 }

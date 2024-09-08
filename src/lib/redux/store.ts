@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './slices/user';
 import chatsReducer from './slices/chats';
 import helpRequests from './slices/helpRequests';
+import helperApplication from './slices/helperApplication';
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
     chats: chatsReducer,
-    helpRequests: helpRequests
+    helpRequests: helpRequests,
+    helperApplication: helperApplication
   }
 });
 
