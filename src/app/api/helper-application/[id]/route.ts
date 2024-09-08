@@ -29,7 +29,6 @@ export async function GET(
         { status: 404 }
       );
     }
-
     if (req.user.type !== ADMIN && req.user.id !== helpApplication.helperId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }

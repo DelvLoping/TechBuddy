@@ -1,10 +1,10 @@
 // src/app/api/chat/route.ts
 
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { authenticate } from "../middleware";
-import { NextRequestWithUser } from "../type";
-import { ADMIN, HELPER, TECHBUDDY } from "@/constant";
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { authenticate } from '../middleware';
+import { NextRequestWithUser } from '../type';
+import { ADMIN, HELPER, TECHBUDDY } from '@/constant';
 
 export async function GET(req: NextRequestWithUser) {
   try {
@@ -17,29 +17,28 @@ export async function GET(req: NextRequestWithUser) {
     let chats;
 
     if (user.type === ADMIN) {
-      chats = await prisma.chat.findMany();
+      chats = await prisma.chat.findMany({
+        include: {
+          user1: { select: { id: true, firstname: true, lastname: true } },
+          user2: { select: { id: true, firstname: true, lastname: true } }
+        }
+      });
     } else {
       chats = await prisma.chat.findMany({
         where: {
-          OR: [
-            {
-              user1Id: user.id,
-            },
-            {
-              user2Id: user.id,
-            },
-          ],
+          OR: [{ user1Id: user.id }, { user2Id: user.id }]
         },
+        include: {
+          user1: { select: { id: true, firstname: true, lastname: true } },
+          user2: { select: { id: true, firstname: true, lastname: true } }
+        }
       });
     }
 
     return NextResponse.json({ chats }, { status: 200 });
   } catch (error) {
-    console.error("Error fetching chats:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error('Error fetching chats:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }
 
@@ -55,7 +54,7 @@ export async function POST(req: NextRequestWithUser) {
 
     if (!requestId || !user2Id) {
       return NextResponse.json(
-        { message: "Request ID and user2 ID are required" },
+        { message: 'Request ID and user2 ID are required' },
         { status: 400 }
       );
     }
@@ -64,16 +63,13 @@ export async function POST(req: NextRequestWithUser) {
       data: {
         requestId: Number(requestId),
         user1Id: user.type === TECHBUDDY ? user.id : user2Id,
-        user2Id: user.type === HELPER ? user.id : user2Id,
-      },
+        user2Id: user.type === HELPER ? user.id : user2Id
+      }
     });
 
     return NextResponse.json({ chat }, { status: 201 });
   } catch (error) {
-    console.error("Error creating chat:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error('Error creating chat:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }
