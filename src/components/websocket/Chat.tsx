@@ -11,6 +11,7 @@ import { IoChatbubble, IoClose } from 'react-icons/io5';
 import { FaWindowMinimize } from 'react-icons/fa';
 import { TbLayoutSidebarLeftCollapseFilled, TbLayoutSidebarLeftExpandFilled } from 'react-icons/tb';
 import { Chat as ChatType } from '@prisma/client';
+console.log(process.env.NEXT_PUBLIC_SOCKET_URL);
 const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL);
 type ChatProps = {
   isShow: boolean;
