@@ -1,31 +1,50 @@
 // api/middleware.ts
 
-import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
-import prisma from "@/lib/prisma";
+import { NextRequest, NextResponse } from 'next/server';
+import jwt from 'jsonwebtoken';
+import prisma from '@/lib/prisma';
+import { NextRequestWithUser } from './type';
 
 const validTokens = new Map<number, string>();
 
-export async function verifyToken(req: NextRequest): Promise<boolean> {
+export async function verifyToken(req: NextRequestWithUser): Promise<boolean> {
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return false;
     }
-    const token = authHeader.split(" ")[1];
+    const token = authHeader.split(' ')[1];
     if (!token) {
       return false;
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as unknown as {
       userId: number;
     };
 
-    if (!validTokens.has(decoded.userId)) {
+    if (!validTokens.has(decoded.userId) && process.env.NODE_ENV !== 'development') {
       return false;
     }
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
+      select: {
+        id: true,
+        lastname: true,
+        firstname: true,
+        email: true,
+        age: true,
+        addressId: true,
+        type: true,
+        signupDate: true,
+        helpRequests: true,
+        applications: true,
+        chatsAsUser1: true,
+        chatsAsUser2: true,
+        evaluationsGiven: true,
+        evaluationsReceived: true,
+        aiChats: true,
+        address: true
+      }
     });
     if (!user) {
       return false;
@@ -35,7 +54,8 @@ export async function verifyToken(req: NextRequest): Promise<boolean> {
 
     return true;
   } catch (error) {
-    console.error("Error verifying token:", error);
+    console.log('Error verifying token:', error);
+    console.error('Error verifying token:', error);
     return false;
   }
 }
@@ -50,9 +70,9 @@ export function removeFromValidTokens(id: number) {
   validTokens.delete(id);
 }
 
-export const authenticate = async (req: NextRequest) => {
+export const authenticate = async (req: NextRequestWithUser) => {
   const isAuthenticated = await verifyToken(req);
   if (!isAuthenticated) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 };

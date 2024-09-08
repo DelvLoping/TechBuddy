@@ -16,7 +16,6 @@
   }
 }
 
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -25,5 +24,6 @@
 
 body {
   background-image: url('/img/background-transparent.png');
-  height: 100vh;
+  animation: rotate 120s linear infinite;
+  min-height: 100vh;
 }

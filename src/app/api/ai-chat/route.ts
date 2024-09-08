@@ -3,9 +3,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { authenticate } from "../middleware";
+import { NextRequestWithUser } from "../type";
 import { ADMIN } from "@/constant";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
@@ -35,28 +36,15 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
       return authFailed;
     }
-
-    const { question, answer } = await req.json();
-    const user = req.user;
-
-    if (!question || !answer) {
-      return NextResponse.json(
-        { message: "Question and answer are required" },
-        { status: 400 }
-      );
-    }
-
     const aiChat = await prisma.aIChat.create({
       data: {
-        userId: user.id,
-        question,
-        answer,
+        userId: req.user.id,
       },
     });
 
