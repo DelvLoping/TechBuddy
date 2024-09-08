@@ -2,16 +2,20 @@ import { PrismaClient } from '@prisma/client';
 import { createServer } from 'http';
 import next from 'next';
 import { Server } from 'socket.io';
+import cors from 'cors';
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 const prisma = new PrismaClient();
 const allowedOrigin = dev ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_ORIGIN;
-
 app.prepare().then(() => {
   const server = createServer((req, res) => {
-    handle(req, res);
+    cors({
+      origin: allowedOrigin,
+      methods: ['GET', 'POST'],
+      credentials: true
+    })(req, res, () => handle(req, res));
   });
 
   const io = new Server(server, {
