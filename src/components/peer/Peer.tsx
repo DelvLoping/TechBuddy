@@ -10,6 +10,7 @@ import { HiOutlineVideoCamera, HiOutlineVideoCameraSlash } from 'react-icons/hi2
 import { TbMicrophone, TbMicrophoneOff } from 'react-icons/tb';
 import { LuScreenShare, LuScreenShareOff } from 'react-icons/lu';
 import { GoScreenFull, GoScreenNormal } from 'react-icons/go';
+import helpRequests from '@/lib/redux/slices/helpRequests';
 
 type PeerPageProps = {
   chatId: string | number;
@@ -58,6 +59,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
                 helpRequest.applications,
                 (apply) => apply.helperId === chat.user2Id
               );
+              console.log(helpRequest, helperApply);
               if (
                 moment(helpRequest.interventionDate).isBefore(moment()) &&
                 helpRequest.status !== 'COMPLETED' &&
@@ -206,6 +208,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
     }
   };
 
+  console.log(chat, isAuthorized, isOpen);
   return (
     <div
       className={`flex flex-col justify-center items-center h-full gap-4 ${
