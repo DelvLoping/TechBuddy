@@ -88,42 +88,43 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
     });
 
     setPeer(newPeer);
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices
+        .getUserMedia({
+          video: true,
+          audio: true
+        })
+        .then((stream) => {
+          setStream(stream);
+          if (myVideoRef.current) {
+            myVideoRef.current.srcObject = stream;
+          }
 
-    navigator.mediaDevices
-      .getUserMedia({
-        video: true,
-        audio: true
-      })
-      .then((stream) => {
-        setStream(stream);
-        if (myVideoRef.current) {
-          myVideoRef.current.srcObject = stream;
-        }
-
-        newPeer.on('call', (call) => {
-          call.answer(stream);
-          call.on('stream', (remoteStream) => {
-            if (remoteVideoRef.current) {
-              remoteVideoRef.current.srcObject = remoteStream;
-            }
+          newPeer.on('call', (call) => {
+            call.answer(stream);
+            call.on('stream', (remoteStream) => {
+              if (remoteVideoRef.current) {
+                remoteVideoRef.current.srcObject = remoteStream;
+              }
+            });
+            setCurrentCall(call);
           });
-          setCurrentCall(call);
+
+          if (peerIdToCall) {
+            const call = newPeer.call(peerIdToCall, stream);
+            setCurrentCall(call);
+
+            call.on('stream', (remoteStream) => {
+              if (remoteVideoRef.current) {
+                remoteVideoRef.current.srcObject = remoteStream;
+              }
+            });
+          }
+        })
+        .catch((err) => {
+          console.error('Error accessing media devices', err);
         });
-
-        if (peerIdToCall) {
-          const call = newPeer.call(peerIdToCall, stream);
-          setCurrentCall(call);
-
-          call.on('stream', (remoteStream) => {
-            if (remoteVideoRef.current) {
-              remoteVideoRef.current.srcObject = remoteStream;
-            }
-          });
-        }
-      })
-      .catch((err) => {
-        console.error('Error accessing media devices', err);
-      });
+    }
 
     return () => {
       if (newPeer) {
