@@ -17,8 +17,8 @@ type HelpRequestProps = {
 };
 export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
   const isEdit = !!idHelpRequest;
-  const dispatch = useDispatch();
-  const userReducer = useSelector((state) => state.user);
+  const dispatch: any = useDispatch();
+  const userReducer = useSelector((state: any) => state.user);
   const { loading } = userReducer || {};
   const [error, setError] = useState('');
   const router = useRouter();

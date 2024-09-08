@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 const Navbar = () => {
   const router = useRouter();
-  const useReducer = useSelector((state) => state.user);
+  const useReducer = useSelector((state: any) => state.user);
   const { user } = useReducer || {};
   const fullName = getFullNames(user);
   return (

@@ -1,29 +1,12 @@
 // src/app/api/ai-chat/route.ts
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authenticate } from '../../middleware';
 import { NextRequestWithUser } from '../../type';
 import { ADMIN } from '@/constant';
 
-// model AIChat {
-//   id           Int         @id @default(autoincrement())
-//   userId       Int
-//   creationDate DateTime    @default(now())
-//   user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-//   messages     AIMessage[]
-// }
-
-// model AIMessage {
-//   id       Int           @id @default(autoincrement())
-//   aiChatId Int
-//   sender   MessageSender
-//   content  String
-//   sendDate DateTime      @default(now())
-//   aiChat   AIChat        @relation(fields: [aiChatId], references: [id], onDelete: Cascade)
-// }
-
-export async function GET(req: NextRequest, { params }) {
+export async function GET(req: NextRequestWithUser, { params }) {
   try {
     const { id } = params;
     const authFailed = await authenticate(req);

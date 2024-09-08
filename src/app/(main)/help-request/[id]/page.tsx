@@ -9,7 +9,7 @@ export default function Page() {
       <h1 className='text-lg sm:text-4xl font-bold text-secondary text-center'>
         Edit your request
       </h1>
-      <HelpRequest id='userSlice' idHelpRequest={id} />
+      <HelpRequest id='userSlice' idHelpRequest={String(id)} />
     </div>
   );
 }
