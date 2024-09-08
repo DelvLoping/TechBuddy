@@ -63,8 +63,8 @@ jobs:
                 depends_on:
                   - db
                 environment:
-                NODE_ENV: production
-                DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/techbuddy
+                  NODE_ENV: production
+                  DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/techbuddy
 
               peerserver:
                 image: ${{ secrets.DOCKER_USERNAME }}/techbuddy:latest
