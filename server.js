@@ -7,6 +7,7 @@ const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
 const prisma = new PrismaClient();
+const allowedOrigin = dev ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_ORIGIN;
 
 app.prepare().then(() => {
   const server = createServer((req, res) => {
@@ -15,7 +16,7 @@ app.prepare().then(() => {
 
   const io = new Server(server, {
     cors: {
-      origin: 'http://localhost:3000',
+      origin: allowedOrigin,
       methods: ['GET', 'POST'],
       allowedHeaders: ['Authorization'],
       credentials: true

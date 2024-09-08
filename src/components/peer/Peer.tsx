@@ -48,11 +48,14 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
   useEffect(() => {
     if (chat) {
       const users = [chat.user1Id, chat.user2Id];
+      console.log(users, user.id);
       if (users.includes(user.id)) {
+        console.log('authorized');
         setIsAuthorized(true);
         axiosInstance
           .get(`/help-request/${chat.requestId}`)
           .then((res) => {
+            console.log(res.data);
             if (res.data) {
               const helpRequest = res.data.helpRequest;
               const helperApply = _.find(

@@ -17,5 +17,5 @@ app.use('/peer', peerServer);
 
 server.listen(9000, (err) => {
   if (err) throw err;
-  console.log('> Ready on http://localhost:9000');
+  console.log('> Ready on' + process.env.NEXT_PUBLIC_ORIGIN + ':9000');
 });
