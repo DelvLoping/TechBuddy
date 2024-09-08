@@ -66,7 +66,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className='min-h-screen flex flex-col h-full'>
+    <div className='min-h-screen flex flex-col h-full flex flex-col justify-between'>
       {navbarVisible && <Navbar />}
       <div
         className={`flex justify-center items-center flex-col p-4 lg:p-8 ${

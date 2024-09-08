@@ -15,18 +15,24 @@ export async function GET(req: NextRequestWithUser) {
     const user = req.user;
 
     let chats;
+    const url = new URL(req.url);
+    const helpRequestId = url.searchParams.get('helpRequestId');
 
     if (user.type === ADMIN) {
       chats = await prisma.chat.findMany({
         include: {
           user1: { select: { id: true, firstname: true, lastname: true } },
           user2: { select: { id: true, firstname: true, lastname: true } }
+        },
+        where: {
+          requestId: Number(helpRequestId) || undefined
         }
       });
     } else {
       chats = await prisma.chat.findMany({
         where: {
-          OR: [{ user1Id: user.id }, { user2Id: user.id }]
+          OR: [{ user1Id: user.id }, { user2Id: user.id }],
+          AND: [{ requestId: Number(helpRequestId) || undefined }]
         },
         include: {
           user1: { select: { id: true, firstname: true, lastname: true } },

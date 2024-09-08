@@ -68,6 +68,29 @@ export async function PUT(req: NextRequestWithUser, { params }: { params: { id: 
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
+    if (status === 'ACCEPTED') {
+      const chat = await prisma.chat.create({
+        data: {
+          requestId: Number(helpRequest.id),
+          user1Id: Number(helpRequest.userId),
+          user2Id: Number(oldHelpApplication.helperId)
+        }
+      });
+
+      if (!chat) {
+        return NextResponse.json({ message: 'Error creating chat' }, { status: 500 });
+      }
+    }
+
+    if (status !== 'ACCEPTED') {
+      await prisma.chat.deleteMany({
+        where: {
+          requestId: helpRequest.id,
+          user2Id: oldHelpApplication.helperId
+        }
+      });
+    }
+
     const helpApplication = await prisma.helperApplication.update({
       where: {
         id: Number(id)

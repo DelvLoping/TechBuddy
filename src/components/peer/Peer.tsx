@@ -82,7 +82,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
 
   useEffect(() => {
     const newPeer = new Peer(myId, {
-      host: 'localhost',
+      host: '/',
       port: 9000,
       path: '/peer'
     });

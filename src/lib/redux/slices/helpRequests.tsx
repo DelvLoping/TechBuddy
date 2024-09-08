@@ -17,7 +17,7 @@ const reloadHelpRequests = createAsyncThunk<
   try {
     dispatch(setError(null));
     dispatch(setLoading(true));
-    const response = await axiosInstance.get('/help-request');
+    const response = await axiosInstance.get('/help-request/current');
     return response.data.helpRequests;
   } catch (error: any) {
     if (error.response && error.response.data && error.response.data.message) {

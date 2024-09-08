@@ -16,8 +16,9 @@ export default function Dashboard() {
   const helpRequestsReducer = useSelector((state: any) => state.helpRequests);
   const { helpRequests } = helpRequestsReducer || {};
   const router = useRouter();
+  const isTechBuddy = type === 'TECHBUDDY';
   return (
-    <div className='w-full flex flex-col min-h-screen'>
+    <div className='w-full flex flex-col'>
       <div className='flex flex-col gap-8 w-full'>
         <div className='w-full flex flex-row justify-center'>
           <Card>
@@ -30,13 +31,28 @@ export default function Dashboard() {
             </div>
           </Card>
         </div>
+        {!isTechBuddy && (
+          <div
+            className='w-full flex flex-row justify-center cursor-pointer'
+            onClick={() => router.push('/help-request')}
+          >
+            <Card>
+              <div className='p-4 px-8 text-center flex flex-col items-center'>
+                <h3 className='text-lg sm:text-xl font-bold text-secondary'>You are a helper</h3>
+                <p className='text-gray-500'>
+                  You can help others by responding to their help requests here
+                </p>
+              </div>
+            </Card>
+          </div>
+        )}
         <div className='w-full flex flex-col sm:flex-row justify-center gap-4'>
           <div className='w-full sm:w-2/3 md:w-3/4'>
             <Card>
               <div className='flex flex-col gap-4 p-4'>
                 <div className='flex flex-row justify-between items-center'>
                   <h3 className='text-lg sm:text-2xl text-black/80 font-bold'>
-                    Your help Requests
+                    {isTechBuddy ? 'Your Help Requests' : 'Help Requests applied'}
                   </h3>
                   <Button
                     className='bg-primary text-white p-2 w-fit rounded-xl flex flex-row items-center justify-center h-fit text-sm:text-base'

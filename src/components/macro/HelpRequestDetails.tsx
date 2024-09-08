@@ -1,5 +1,5 @@
 import { Button } from '@nextui-org/react';
-import { Address, HelpRequest } from '@prisma/client';
+import { Address, Chat, HelpRequest } from '@prisma/client';
 import moment from 'moment';
 import { FaCheckCircle, FaPen } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,6 +10,8 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import { formatAddress } from '@/utils';
 import _ from 'lodash';
+import { use, useEffect, useState } from 'react';
+import { HiOutlineVideoCamera } from 'react-icons/hi2';
 
 type HelpRequestDetailsProps = {
   helpRequest: HelpRequest & {
@@ -33,6 +35,18 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
     interventionType,
     interventionAddress
   } = helpRequest;
+  const [chat, setChat] = useState<Chat | null>(null);
+
+  useEffect(() => {
+    if (id) {
+      axiosInstance.get(`/chat?helpRequestId=${id}`).then((res) => {
+        if (res.data) {
+          setChat(res.data.chat);
+        }
+      });
+    }
+  }, [id]);
+
   let color = '';
   switch (helpRequest.status) {
     case 'OPEN':
@@ -98,6 +112,17 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
             <p className='text-sm sm:text-base'>
               <span className=''>Intervention Address</span> : {formatAddress(interventionAddress)}
             </p>
+          )}
+          {interventionType === 'VIRTUAL' && chat && (
+            <div className='flex flex-row items-center justify-end sm:justify-end w-full gap-2'>
+              <Button
+                className='bg-white text-primary border border-primary p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit text-sm:text-base'
+                onClick={() => router.push(`/chat/${chat.id}`)}
+              >
+                <HiOutlineVideoCamera className='h-4 w-4 sm:h-5 sm:w-5' />
+                Intervention Meet
+              </Button>
+            </div>
           )}
           <div className='flex flex-row items-center justify-between sm:justify-end w-full gap-2'>
             <Button
