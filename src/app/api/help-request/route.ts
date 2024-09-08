@@ -1,12 +1,13 @@
 // src/app/api/help-request/route.ts
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authenticate } from '../middleware';
 import { ADMIN, IN_PERSON, VIRTUAL } from '@/constant';
 import _ from 'lodash';
+import { NextRequestWithUser } from '../type';
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
@@ -117,7 +118,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {

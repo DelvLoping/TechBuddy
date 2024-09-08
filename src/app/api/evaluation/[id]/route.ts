@@ -1,15 +1,12 @@
 // src/app/api/evaluation/[id]/route.ts
 
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { authenticate } from "../../middleware";
-import { NextRequestWithUser } from "../../type";
-import { ADMIN, RATINGS } from "@/constant";
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { authenticate } from '../../middleware';
+import { NextRequestWithUser } from '../../type';
+import { ADMIN, RATINGS } from '@/constant';
 
-export async function GET(
-  req: NextRequestWithUser,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: NextRequestWithUser, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
     const authFailed = await authenticate(req);
@@ -19,15 +16,12 @@ export async function GET(
 
     const evaluation = await prisma.evaluation.findUnique({
       where: {
-        id: Number(id),
-      },
+        id: Number(id)
+      }
     });
 
     if (!evaluation) {
-      return NextResponse.json(
-        { message: "Evaluation not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: 'Evaluation not found' }, { status: 404 });
     }
     if (
       evaluation.evaluatorId !== req.user.id &&
@@ -35,25 +29,19 @@ export async function GET(
       req.user.type !== ADMIN
     ) {
       return NextResponse.json(
-        { message: "You are not authorized to view this evaluation" },
+        { message: 'You are not authorized to view this evaluation' },
         { status: 403 }
       );
     }
 
     return NextResponse.json({ evaluation }, { status: 200 });
   } catch (error: any) {
-    console.error("Error getting evaluation:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: error.status || 500 }
-    );
+    console.error('Error getting evaluation:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: error.status || 500 });
   }
 }
 
-export async function PUT(
-  req: NextRequestWithUser,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(req: NextRequestWithUser, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
     const authFailed = await authenticate(req);
@@ -64,48 +52,39 @@ export async function PUT(
     const { rating, comment } = await req.json();
     const oldEvaluation = await prisma.evaluation.findUnique({
       where: {
-        id: Number(id),
+        id: Number(id)
       },
       select: {
-        evaluatorId: true,
-      },
+        evaluatorId: true
+      }
     });
     if (!oldEvaluation) {
-      return NextResponse.json(
-        { message: "Evaluation not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: 'Evaluation not found' }, { status: 404 });
     }
     if (oldEvaluation.evaluatorId !== req.user.id && req.user.type !== ADMIN) {
       return NextResponse.json(
-        { message: "You are not authorized to edit this evaluation" },
+        { message: 'You are not authorized to edit this evaluation' },
         { status: 403 }
       );
     }
     const evaluation = await prisma.evaluation.update({
       where: {
-        id: Number(id),
+        id: Number(id)
       },
       data: {
         rating: rating,
-        comment: comment,
-      },
+        comment: comment
+      }
     });
 
     return NextResponse.json({ evaluation }, { status: 200 });
   } catch (error: any) {
-    console.error("Error updating evaluation:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: error.status || 500 }
-    );
+    console.error('Error updating evaluation:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: error.status || 500 });
   }
 }
 
-export async function DELETE(
-  req: NextRequestWithUser,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: NextRequestWithUser, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
     const authFailed = await authenticate(req);
@@ -115,42 +94,33 @@ export async function DELETE(
 
     const evaluation = await prisma.evaluation.findUnique({
       where: {
-        id: Number(id),
+        id: Number(id)
       },
       select: {
-        evaluatorId: true,
-      },
+        evaluatorId: true
+      }
     });
 
     if (!evaluation) {
-      return NextResponse.json(
-        { message: "Evaluation not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: 'Evaluation not found' }, { status: 404 });
     }
 
     if (evaluation.evaluatorId !== req.user.id && req.user.type !== ADMIN) {
       return NextResponse.json(
-        { message: "You are not authorized to delete this evaluation" },
+        { message: 'You are not authorized to delete this evaluation' },
         { status: 403 }
       );
     }
 
     await prisma.evaluation.delete({
       where: {
-        id: Number(id),
-      },
+        id: Number(id)
+      }
     });
 
-    return NextResponse.json(
-      { message: "Evaluation deleted" },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: 'Evaluation deleted' }, { status: 200 });
   } catch (error: any) {
-    console.error("Error deleting evaluation:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: error.status || 500 }
-    );
+    console.error('Error deleting evaluation:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: error.status || 500 });
   }
 }
