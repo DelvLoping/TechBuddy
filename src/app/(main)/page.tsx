@@ -9,11 +9,11 @@ import { FaPlus } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 
 export default function Dashboard() {
-  const userReducer = useSelector((state) => state.user);
+  const userReducer = useSelector((state: any) => state.user);
   const { user } = userReducer || {};
   const { lastname, firstname, email, age, type } = user || {};
   const fullname = getFullNames(user);
-  const helpRequestsReducer = useSelector((state) => state.helpRequests);
+  const helpRequestsReducer = useSelector((state: any) => state.helpRequests);
   const { helpRequests } = helpRequestsReducer || {};
   const router = useRouter();
   return (
@@ -22,7 +22,7 @@ export default function Dashboard() {
         <div className='w-full flex flex-row justify-center'>
           <Card>
             <div className='p-4 px-8 text-center flex flex-col items-center'>
-              <Avatar text={`${firstname?.[0]}${lastname?.[0]}`} size='xl' className='mb-4' />
+              <Avatar size='lg' className='mb-4' />
               <p className='text-primary'>{type}</p>
               <h3 className='text-lg sm:text-xl font-bold text-secondary'>{fullname}</h3>
               <p className='text-sm text-gray-500'>{email}</p>

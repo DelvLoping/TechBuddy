@@ -7,7 +7,7 @@ export default function Page() {
   const { id } = useParams();
   return (
     <div className='flex flex-col items-center gap-10 w-full p-4 h-full mb-10'>
-      <PeerPage chatId={id} />
+      <PeerPage chatId={String(id)} />
     </div>
   );
 }

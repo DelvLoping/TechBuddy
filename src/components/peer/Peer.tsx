@@ -19,7 +19,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const [peer, setPeer] = useState<Peer | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const userReducer = useSelector((state) => state.user);
+  const userReducer = useSelector((state: any) => state.user);
   const { user } = userReducer || {};
   const myId = String(user.id);
   const [peerIdToCall, setPeerIdToCall] = useState<string | null>(null);

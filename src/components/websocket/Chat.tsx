@@ -10,19 +10,20 @@ import { IoIosSend } from 'react-icons/io';
 import { IoChatbubble, IoClose } from 'react-icons/io5';
 import { FaWindowMinimize } from 'react-icons/fa';
 import { TbLayoutSidebarLeftCollapseFilled, TbLayoutSidebarLeftExpandFilled } from 'react-icons/tb';
+import { Chat as ChatType } from '@prisma/client';
 const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL);
 type ChatProps = {
   isShow: boolean;
 };
 const Chat = ({ isShow = true }: ChatProps) => {
-  const chatsReducer = useSelector((state) => state.chats);
+  const chatsReducer = useSelector((state: any) => state.chats);
   const { chats } = chatsReducer || {};
   const messagesEndRef = useRef(null);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState('');
   const [typingStatus, setTypingStatus] = useState('');
-  const useReducer = useSelector((state) => state.user);
+  const useReducer = useSelector((state: any) => state.user);
   const [show, setShow] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
   const { user } = useReducer;
@@ -91,7 +92,10 @@ const Chat = ({ isShow = true }: ChatProps) => {
 
   useEffect(() => {
     if (!_.isEmpty(chats)) {
-      setSelectedChat(_.first(chats).id);
+      const firstChat: ChatType = _.first(chats);
+      if (firstChat && firstChat.id) {
+        setSelectedChat(firstChat.id);
+      }
     }
   }, [chats]);
 

@@ -1,16 +1,13 @@
 // src/app/api/user/[id]/route.ts
 
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { authenticate } from "../../middleware";
-import { NextRequestWithUser } from "../../type";
-import { ADMIN } from "@/constant";
-import bcrypt from "bcrypt";
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { authenticate } from '../../middleware';
+import { NextRequestWithUser } from '../../type';
+import { ADMIN } from '@/constant';
+import bcrypt from 'bcrypt';
 
-export async function GET(
-  req: NextRequestWithUser,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: NextRequestWithUser, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
     const authFailed = await authenticate(req);
@@ -19,33 +16,27 @@ export async function GET(
     }
 
     if (req.user.type !== ADMIN && req.user.id !== Number(id)) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
       where: {
-        id: Number(id),
-      },
+        id: Number(id)
+      }
     });
 
     if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
     return NextResponse.json({ user }, { status: 200 });
   } catch (error: any) {
-    console.error("Error getting user:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: error.status || 500 }
-    );
+    console.error('Error getting user:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: error.status || 500 });
   }
 }
 
-export async function PUT(
-  req: NextRequestWithUser,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(req: NextRequestWithUser, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
     const authFailed = await authenticate(req);
@@ -54,17 +45,17 @@ export async function PUT(
     }
 
     if (req.user.type !== ADMIN && req.user.id !== Number(id)) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
       where: {
-        id: Number(id),
-      },
+        id: Number(id)
+      }
     });
 
     if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
     const {
@@ -76,19 +67,19 @@ export async function PUT(
       address,
       aiChats,
       applications,
-      chat1,
-      chat2,
+      chatsAsUser1,
+      chatsAsUser2,
       evaluationsGiven,
       evaluationsReceived,
       helpRequests,
-      messages,
+      messages
     } = await req.json();
 
-    const hashedPassword = await bcrypt.hash(password || "", 10);
+    const hashedPassword = await bcrypt.hash(password || '', 10);
 
     const updatedUser = await prisma.user.update({
       where: {
-        id: Number(id),
+        id: Number(id)
       },
       data: {
         lastname,
@@ -100,35 +91,29 @@ export async function PUT(
           address && address.id
             ? {
                 connect: {
-                  id: address.id,
-                },
+                  id: address.id
+                }
               }
             : undefined,
         aiChats,
         applications,
-        chat1,
-        chat2,
+        chatsAsUser1,
+        chatsAsUser2,
         evaluationsGiven,
         evaluationsReceived,
         helpRequests,
-        messages,
-      },
+        messages
+      }
     });
 
     return NextResponse.json({ user: updatedUser }, { status: 200 });
   } catch (error: any) {
-    console.error("Error updating user:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: error.status || 500 }
-    );
+    console.error('Error updating user:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: error.status || 500 });
   }
 }
 
-export async function DELETE(
-  req: NextRequestWithUser,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: NextRequestWithUser, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
     const authFailed = await authenticate(req);
@@ -137,31 +122,28 @@ export async function DELETE(
     }
 
     if (req.user.type !== ADMIN) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
       where: {
-        id: Number(id),
-      },
+        id: Number(id)
+      }
     });
 
     if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
     await prisma.user.delete({
       where: {
-        id: Number(id),
-      },
+        id: Number(id)
+      }
     });
 
-    return NextResponse.json({ message: "User deleted" }, { status: 200 });
+    return NextResponse.json({ message: 'User deleted' }, { status: 200 });
   } catch (error: any) {
-    console.error("Error deleting user:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: error.status || 500 }
-    );
+    console.error('Error deleting user:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: error.status || 500 });
   }
 }

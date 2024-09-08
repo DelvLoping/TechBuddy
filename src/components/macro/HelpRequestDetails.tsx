@@ -1,5 +1,5 @@
 import { Button } from '@nextui-org/react';
-import { HelpRequest } from '@prisma/client';
+import { Address, HelpRequest } from '@prisma/client';
 import moment from 'moment';
 import { FaCheckCircle, FaPen } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,12 +12,14 @@ import { formatAddress } from '@/utils';
 import _ from 'lodash';
 
 type HelpRequestDetailsProps = {
-  helpRequest: HelpRequest;
+  helpRequest: HelpRequest & {
+    interventionAddress?: Address | null;
+  };
 };
 const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
-  const dispatch = useDispatch();
+  const dispatch: any = useDispatch();
   const router = useRouter();
-  const userReducer = useSelector((state) => state.user);
+  const userReducer = useSelector((state: any) => state.user);
   const { user } = userReducer || {};
   const {
     id,

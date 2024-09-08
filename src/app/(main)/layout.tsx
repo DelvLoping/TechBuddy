@@ -19,7 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const useReducer = useSelector((state: any) => state.user);
   const { jwt: jwtRedux, user } = useReducer;
-  const dispatch = useDispatch();
+  const dispatch: any = useDispatch();
 
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');

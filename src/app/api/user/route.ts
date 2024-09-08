@@ -1,6 +1,6 @@
 // src/app/api/user/route.ts
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authenticate } from '../middleware';
 import { NextRequestWithUser } from '../type';

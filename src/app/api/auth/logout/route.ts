@@ -1,8 +1,8 @@
 // app/api/auth/login/route.ts
 
-import { NextRequest, NextResponse } from "next/server";
-import { authenticate, removeFromValidTokens } from "../../middleware";
-import { NextRequestWithUser } from "../../type";
+import { NextResponse } from 'next/server';
+import { authenticate, removeFromValidTokens } from '../../middleware';
+import { NextRequestWithUser } from '../../type';
 
 export async function GET(req: NextRequestWithUser) {
   try {
@@ -13,15 +13,12 @@ export async function GET(req: NextRequestWithUser) {
     const userId = req.user?.id;
     if (userId) {
       removeFromValidTokens(userId);
-      return NextResponse.json({ message: "User logged out" }, { status: 200 });
+      return NextResponse.json({ message: 'User logged out' }, { status: 200 });
     } else {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
   } catch (error: any) {
-    console.error("Error during logout:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error('Error during logout:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }

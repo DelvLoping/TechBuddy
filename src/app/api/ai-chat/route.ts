@@ -1,10 +1,10 @@
 // src/app/api/ai-chat/route.ts
 
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { authenticate } from "../middleware";
-import { NextRequestWithUser } from "../type";
-import { ADMIN } from "@/constant";
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { authenticate } from '../middleware';
+import { NextRequestWithUser } from '../type';
+import { ADMIN } from '@/constant';
 
 export async function GET(req: NextRequestWithUser) {
   try {
@@ -21,18 +21,15 @@ export async function GET(req: NextRequestWithUser) {
     } else {
       aiChats = await prisma.aIChat.findMany({
         where: {
-          userId: user.id,
-        },
+          userId: user.id
+        }
       });
     }
 
     return NextResponse.json({ aiChats }, { status: 200 });
   } catch (error) {
-    console.error("Error fetching AI chats:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error('Error fetching AI chats:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }
 
@@ -44,16 +41,13 @@ export async function POST(req: NextRequestWithUser) {
     }
     const aiChat = await prisma.aIChat.create({
       data: {
-        userId: req.user.id,
-      },
+        userId: req.user.id
+      }
     });
 
     return NextResponse.json({ aiChat }, { status: 201 });
   } catch (error) {
-    console.error("Error creating AI chat:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error('Error creating AI chat:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }
