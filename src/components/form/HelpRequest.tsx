@@ -142,14 +142,6 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
                   </SelectItem>
                 </Select>
 
-                {/* <DatePicker
-        label="Event Date"
-        variant="bordered"
-        hideTimeZone
-        showMonthAndYearPickers
-        defaultValue={now(getLocalTimeZone())}
-      /> */}
-
                 <Input
                   label='Intervention Date'
                   type='datetime-local'

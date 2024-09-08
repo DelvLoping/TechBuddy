@@ -13,6 +13,7 @@ import { Spinner } from '@nextui-org/react';
 import { reloadHelpRequests, setHelpRequests } from '@/lib/redux/slices/helpRequests';
 import { IoArrowBack } from 'react-icons/io5';
 import { ToastContainer } from 'react-toastify';
+import { reloadHelperApplication } from '@/lib/redux/slices/helperApplication';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -44,6 +45,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       });
       dispatch(reloadChats());
       dispatch(reloadHelpRequests());
+      dispatch(reloadHelperApplication());
     }
   }, [user, pathname, jwtRedux]);
 

@@ -76,6 +76,14 @@ export async function PUT(req: NextRequestWithUser, { params }: { params: { id: 
           user2Id: Number(oldHelpApplication.helperId)
         }
       });
+      await prisma.helpRequest.update({
+        where: {
+          id: Number(oldHelpApplication.requestId)
+        },
+        data: {
+          status: 'IN_PROGRESS'
+        }
+      });
 
       if (!chat) {
         return NextResponse.json({ message: 'Error creating chat' }, { status: 500 });
@@ -87,6 +95,15 @@ export async function PUT(req: NextRequestWithUser, { params }: { params: { id: 
         where: {
           requestId: helpRequest.id,
           user2Id: oldHelpApplication.helperId
+        }
+      });
+
+      await prisma.helpRequest.update({
+        where: {
+          id: helpRequest.id
+        },
+        data: {
+          status: 'OPEN'
         }
       });
     }
