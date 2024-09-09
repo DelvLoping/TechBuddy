@@ -4,8 +4,10 @@ import express from 'express';
 import cors from 'cors';
 import http from 'http';
 import { config } from 'dotenv';
-config();
-console.log(process.env.POSTGRES_USER);
+config({
+  path: ['.env.local', '.env']
+});
+console.log(process.env.DATABASE_URL);
 const app = express();
 const prisma = new PrismaClient();
 const allowOrigin =

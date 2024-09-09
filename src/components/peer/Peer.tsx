@@ -48,21 +48,21 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
   useEffect(() => {
     if (chat) {
       const users = [chat.user1Id, chat.user2Id];
-      console.log(users, user.id);
+      console.log(' user list', users, user.id);
       if (users.includes(user.id)) {
         console.log('authorized');
         setIsAuthorized(true);
-        axiosInstance
+        const req = axiosInstance
           .get(`/help-request/${chat.requestId}`)
           .then((res) => {
-            console.log(res.data);
+            console.log('res', res.data);
             if (res.data) {
               const helpRequest = res.data.helpRequest;
               const helperApply = _.find(
                 helpRequest.applications,
                 (apply) => apply.helperId === chat.user2Id
               );
-              console.log(helpRequest, helperApply);
+              console.log('if data', helpRequest, helperApply);
               if (
                 moment(helpRequest.interventionDate).isBefore(moment()) &&
                 helpRequest.status !== 'COMPLETED' &&
@@ -75,12 +75,14 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
             }
           })
           .catch((error) => {
+            console.error('Error getting help request', error);
             if (error.response && error.response.data) {
               if (error.response.data.message.includes('Unauthorized')) {
                 setIsAuthorized(false);
               }
             }
           });
+        console.log('promise', req);
       }
     }
   }, [chat]);
@@ -93,7 +95,9 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
     });
 
     setPeer(newPeer);
+    console.log('peer', newPeer);
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      console.log('getUserMedia supported');
       navigator.mediaDevices
         .getUserMedia({
           video: true,
