@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import axiosInstance from '@/lib/axiosInstance';
 import _ from 'lodash';
-import Chat from '@/components/websocket/Chat';
 import Navbar from '@/components/macro/Navbar';
 import { reloadChats, setChats } from '@/lib/redux/slices/chats';
 import { Spinner } from '@nextui-org/react';
@@ -15,6 +14,7 @@ import { IoArrowBack } from 'react-icons/io5';
 import { ToastContainer } from 'react-toastify';
 import { reloadHelperApplication } from '@/lib/redux/slices/helperApplication';
 import 'react-toastify/dist/ReactToastify.min.css';
+import WebSocketChat from '@/components/websocket/WebSocketChat';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -50,7 +50,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }
   }, [user, pathname, jwtRedux]);
 
-  const navbarVisible = pathname !== '/login' && pathname !== '/register' && pathname !== '/logout';
+  const navbarVisible =
+    pathname !== '/login' &&
+    pathname !== '/register' &&
+    pathname !== '/logout' &&
+    pathname !== '/chat-ai';
 
   const pathSegments = pathname.split('/').filter((segment) => segment);
 
@@ -78,7 +82,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       >
         {navbarVisible && goBack()}
         {navbarVisible && _.isEmpty(user) ? <Spinner color='primary' /> : children}
-        {navbarVisible && <Chat isShow={false} />}
+        {navbarVisible && <WebSocketChat isShow={false} />}
       </div>
       <ToastContainer />
       <footer
