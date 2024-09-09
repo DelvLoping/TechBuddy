@@ -91,7 +91,8 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
     const newPeer = new Peer(myId, {
       host: '/',
       port: 9000,
-      path: '/peer'
+      path: '/peer',
+      secure: true
     });
 
     setPeer(newPeer);
