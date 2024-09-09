@@ -12,7 +12,7 @@ import { FaWindowMinimize } from 'react-icons/fa';
 import { TbLayoutSidebarLeftCollapseFilled, TbLayoutSidebarLeftExpandFilled } from 'react-icons/tb';
 import { Chat as ChatType } from '@prisma/client';
 console.log(process.env.NEXT_PUBLIC_SOCKET_URL);
-const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL);
+let socket;
 type ChatProps = {
   isShow: boolean;
 };
@@ -31,39 +31,42 @@ const Chat = ({ isShow = true }: ChatProps) => {
   const { id } = user || {};
 
   useEffect(() => {
-    if (selectedChat && id) {
-      if (socket) {
-        socket.removeAllListeners('chatHistory');
-        socket.removeAllListeners('message');
-        socket.removeAllListeners('typing');
-      }
-      if (!_.isEmpty(messages)) {
-        setMessages([]);
-      }
-      socket.emit('joinChat', selectedChat, id);
-
-      const handleChatHistory = (historicalMessages) => {
-        setMessages(historicalMessages);
-      };
-
-      const handleMessage = (newMessage) => {
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-      };
-
-      const handleTyping = ({ userId, isTyping }) => {
-        if (userId !== id) {
-          setTypingStatus(isTyping ? `Typing...` : '');
+    if (typeof window !== 'undefined') {
+      socket = io(process.env.NEXT_PUBLIC_SOCKET_URL);
+      if (selectedChat && id) {
+        if (socket) {
+          socket.removeAllListeners('chatHistory');
+          socket.removeAllListeners('message');
+          socket.removeAllListeners('typing');
         }
-      };
+        if (!_.isEmpty(messages)) {
+          setMessages([]);
+        }
+        socket.emit('joinChat', selectedChat, id);
 
-      socket.on('chatHistory', handleChatHistory);
-      socket.on('message', handleMessage);
-      socket.on('typing', handleTyping);
-      return () => {
-        socket.off('chatHistory', handleChatHistory);
-        socket.off('message', handleMessage);
-        socket.off('typing', handleTyping);
-      };
+        const handleChatHistory = (historicalMessages) => {
+          setMessages(historicalMessages);
+        };
+
+        const handleMessage = (newMessage) => {
+          setMessages((prevMessages) => [...prevMessages, newMessage]);
+        };
+
+        const handleTyping = ({ userId, isTyping }) => {
+          if (userId !== id) {
+            setTypingStatus(isTyping ? `Typing...` : '');
+          }
+        };
+
+        socket.on('chatHistory', handleChatHistory);
+        socket.on('message', handleMessage);
+        socket.on('typing', handleTyping);
+        return () => {
+          socket.off('chatHistory', handleChatHistory);
+          socket.off('message', handleMessage);
+          socket.off('typing', handleTyping);
+        };
+      }
     }
   }, [selectedChat, id]);
 
