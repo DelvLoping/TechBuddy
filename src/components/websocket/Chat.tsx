@@ -32,7 +32,10 @@ const Chat = ({ isShow = true }: ChatProps) => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      socket = io(process.env.NEXT_PUBLIC_SOCKET_URL);
+      socket = io(process.env.NEXT_PUBLIC_SOCKET_URL, {
+        transports: ['websocket'],
+        secure: true
+      });
       if (selectedChat && id) {
         if (socket) {
           socket.removeAllListeners('chatHistory');
