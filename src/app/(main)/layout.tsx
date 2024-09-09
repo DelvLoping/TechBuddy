@@ -14,6 +14,7 @@ import { reloadHelpRequests, setHelpRequests } from '@/lib/redux/slices/helpRequ
 import { IoArrowBack } from 'react-icons/io5';
 import { ToastContainer } from 'react-toastify';
 import { reloadHelperApplication } from '@/lib/redux/slices/helperApplication';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();

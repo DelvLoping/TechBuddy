@@ -96,6 +96,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
 
     setPeer(newPeer);
     console.log('peer', newPeer);
+    console.log(navigator, navigator.mediaDevices);
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       console.log('getUserMedia supported');
       navigator.mediaDevices
