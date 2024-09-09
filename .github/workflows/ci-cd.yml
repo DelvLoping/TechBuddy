@@ -48,7 +48,7 @@ jobs:
               web:
                 image: ${{ secrets.DOCKER_USERNAME }}/techbuddy:latest
                 ports:
-                  - "80:3000"
+                  - "3000:3000"
                 depends_on:
                   - db
                 environment:
@@ -83,6 +83,19 @@ jobs:
                   - pgdata:/var/lib/postgresql/data
                 ports:
                   - "5432:5432"
+
+              nginx:
+                image: nginx:latest
+                volumes:
+                  - ./nginx.conf:/etc/nginx/nginx.conf
+                  - /etc/nginx/ssl:/etc/nginx/certs
+                ports:
+                  - "80:80"
+                  - "443:443"
+                depends_on:
+                  - web
+                  - websocket
+                  - peerserver
 
             volumes:
               pgdata:' > docker-compose.prod.yml
