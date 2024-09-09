@@ -160,7 +160,7 @@ export default function AuthForm({
         </>
       )}
       <div className='flex flex-row items-start justify-center gap-4 w-full mb-4 flex-wrap'>
-        {error && <p className='text-danger'>{error}</p>}
+        {error && <p className='w-full text-danger text-center'>{error}</p>}
         <Button
           type='submit'
           disabled={loading}

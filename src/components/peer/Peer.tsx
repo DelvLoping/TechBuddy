@@ -90,9 +90,9 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
   useEffect(() => {
     const newPeer = new Peer(myId, {
       host: '/',
-      port: 9000,
+      port: process.env.NODE_ENV === 'production' ? 443 : 9000,
       path: '/peer',
-      secure: true
+      secure: process.env.NODE_ENV === 'production'
     });
 
     setPeer(newPeer);

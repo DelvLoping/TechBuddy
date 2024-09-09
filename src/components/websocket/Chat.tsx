@@ -34,7 +34,7 @@ const Chat = ({ isShow = true }: ChatProps) => {
     if (typeof window !== 'undefined') {
       socket = io(process.env.NEXT_PUBLIC_SOCKET_URL, {
         transports: ['websocket'],
-        secure: true
+        secure: process.env.NODE_ENV === 'production'
       });
       if (selectedChat && id) {
         if (socket) {
