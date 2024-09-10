@@ -1,4 +1,4 @@
-import { Message } from '@prisma/client';
+import { AIMessage, Message } from '@prisma/client';
 import moment from 'moment';
 
 export const getFullNames = (user: any) => {
@@ -11,14 +11,20 @@ export const getFullNames = (user: any) => {
     .join(' ');
 };
 
-export const shouldDisplayTime = (currentMessage: Message, nextMessage: Message | null) => {
+export const shouldDisplayTime = (
+  currentMessage: Message | AIMessage,
+  nextMessage: Message | AIMessage | null
+) => {
   if (!nextMessage) {
     return true;
   }
   return moment(nextMessage.sendDate).diff(currentMessage.sendDate, 'minutes') > 60;
 };
 
-export const shouldDisplayDate = (currentMessage: Message, nextMessage: Message | null) => {
+export const shouldDisplayDate = (
+  currentMessage: Message | AIMessage,
+  nextMessage: Message | AIMessage | null
+) => {
   if (!nextMessage) {
     return false;
   }

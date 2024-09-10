@@ -111,7 +111,7 @@ const WebSocketChat = ({ isShow = true }: ChatProps) => {
         isShow={isShow}
         show={show}
         chats={chats}
-        id={id}
+        userId={id}
         selectedChat={selectedChat}
         messages={messages}
         typingStatus={typingStatus}

@@ -3,7 +3,7 @@ import { IoClose } from 'react-icons/io5';
 import { TbLayoutSidebarLeftCollapseFilled, TbLayoutSidebarLeftExpandFilled } from 'react-icons/tb';
 import UIMessage from '../websocket/UIMessage';
 import _, { set } from 'lodash';
-import { Chat, Message, User } from '@prisma/client';
+import { AIChat, AIMessage, Chat, Message, User } from '@prisma/client';
 import {
   ChangeEvent,
   FormEvent,
@@ -13,8 +13,10 @@ import {
   useRef,
   useState
 } from 'react';
-import { Button } from '@nextui-org/react';
+import { Button, Spinner } from '@nextui-org/react';
 import { IoIosSend } from 'react-icons/io';
+import moment from 'moment';
+import { FaPlus } from 'react-icons/fa';
 
 type ChatComponentProps = {
   className?: string;
@@ -23,12 +25,13 @@ type ChatComponentProps = {
   inputClassName?: string;
   show: boolean;
   isShow: boolean;
-  chats: Chat[];
-  id: number;
+  chats: Chat[] | AIChat[];
+  userId: number;
   selectedChat: number;
-  messages: Message[];
+  messages: Message[] | AIMessage[];
   typingStatus?: string;
   disabled?: boolean;
+  loading?: boolean;
   onSelectedChatChange: (chatId: number) => void;
   onSendMessage: (
     e: FormEvent<HTMLFormElement> | KeyboardEvent<HTMLTextAreaElement>,
@@ -37,6 +40,7 @@ type ChatComponentProps = {
   onInputChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onBlur?: () => void;
   onClose: (show: boolean) => void;
+  isAI?: boolean;
 };
 const ChatComponent = ({
   className,
@@ -46,16 +50,18 @@ const ChatComponent = ({
   show,
   isShow,
   chats,
-  id,
+  userId,
   selectedChat,
   messages,
   typingStatus,
   disabled = false,
+  loading = false,
   onSelectedChatChange,
   onSendMessage,
   onInputChange,
   onBlur,
-  onClose
+  onClose,
+  isAI
 }: ChatComponentProps) => {
   const [showSidebar, setShowSidebar] = useState(true);
   const messagesEndRef = useRef(null);
@@ -85,11 +91,15 @@ const ChatComponent = ({
     }
   }, [show, messages, typingStatus]);
 
-  const currentChat: Chat & { user1?: User; user2?: User } = _.find(chats, { id: selectedChat });
-  const currentChatTarget =
-    !_.isEmpty(currentChat) && currentChat?.user1Id === id
-      ? currentChat?.user2
-      : currentChat?.user1;
+  const currentChat: any = _.find(chats, {
+    id: selectedChat
+  });
+
+  const currentChatTarget = isAI
+    ? 'AI'
+    : !_.isEmpty(currentChat) && currentChat?.user1Id === userId
+    ? currentChat?.user2
+    : currentChat?.user1;
 
   const handleInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setMessageInput(e.target.value);
@@ -128,8 +138,18 @@ const ChatComponent = ({
             } flex flex-col sm:rounded-l-xl sm:border-gray-200 sm:border-l sm:border-b sm:border-t overflow-hidden bg-gray-100 ${sidebarClassName}
         `}
           >
+            {isAI && (
+              <div
+                className={`flex flex-row w-full p-2 cursor-pointer break-all truncate text-sm sm:text-base items-center gap-2
+                ${selectedChat === 0 ? 'bg-primary text-white' : ''}`}
+                onClick={() => handleSelectedChatChange(0)}
+              >
+                <FaPlus className='h-4 w-4' />
+                New Chat
+              </div>
+            )}
             {_.map(chats, (chat: Chat & { user1: User; user2: User }) => {
-              const targetUser = chat.user1Id === id ? chat.user2 : chat.user1;
+              const targetUser = chat.user1Id === userId ? chat.user2 : chat.user1;
               return (
                 <div
                   key={chat.id}
@@ -137,7 +157,9 @@ const ChatComponent = ({
                 ${selectedChat === chat.id ? 'bg-primary text-white' : ''}`}
                   onClick={() => handleSelectedChatChange(chat.id)}
                 >
-                  {getFullNames(targetUser)}
+                  {isAI
+                    ? moment(chat.creationDate).format('YYYY-MM-DD HH:mm')
+                    : getFullNames(targetUser)}
                 </div>
               );
             })}
@@ -160,7 +182,7 @@ const ChatComponent = ({
                   onClick={() => setShowSidebar(true)}
                 />
               )}
-              {currentChat && getFullNames(currentChatTarget)}
+              {isAI ? 'Buddy' : currentChat && getFullNames(currentChatTarget)}
               <IoClose
                 className='cursor-pointer sm:hidden absolute right-2 top-2 h-6 w-6 opacity-50'
                 onClick={() => onClose(false)}
@@ -168,17 +190,22 @@ const ChatComponent = ({
             </div>
             <div className='flex-1 flex flex-col gap-2 py-4 px-4 overflow-y-auto bg-white justify-between'>
               <div className='flex-1 flex flex-col gap-2 items-center'>
-                {_.map(messages, (msg, index) => (
+                {_.map(messages, (msg: AIMessage | Message, index) => (
                   <UIMessage
                     key={msg.id}
                     message={msg}
-                    userId={id}
+                    userId={userId}
                     nextMessage={messages[index + 1]}
+                    isAI={isAI}
                   />
                 ))}
               </div>
-              {_.isEmpty(messages) && (
-                <div className='w-full flex justify-center text-gray-400'>No messages</div>
+              {loading ? (
+                <Spinner color='primary' />
+              ) : (
+                _.isEmpty(messages) && (
+                  <div className='w-full flex justify-center text-gray-400'>No messages</div>
+                )
               )}
 
               <div ref={messagesEndRef}>

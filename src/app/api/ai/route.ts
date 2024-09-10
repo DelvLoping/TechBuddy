@@ -16,7 +16,6 @@ export async function POST(req: NextRequestWithUser) {
     const user = req.user;
     const { userPrompt, context } = await req.json();
 
-    console.log('userPrompt', userPrompt);
     if (!userPrompt) {
       return NextResponse.json({ message: 'Prompt is required' }, { status: 400 });
     }
