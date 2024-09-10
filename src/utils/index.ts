@@ -27,3 +27,13 @@ export const shouldDisplayDate = (currentMessage: Message, nextMessage: Message 
     moment(nextMessage.sendDate).diff(currentMessage.sendDate, 'minutes') > 30
   );
 };
+
+export const formatAddress = (address: {
+  city: string;
+  country: string;
+  postalCode: string;
+  street: string;
+}) => {
+  const { city, country, postalCode, street } = address;
+  return [street, city, postalCode, country].filter(Boolean).join(', ');
+};

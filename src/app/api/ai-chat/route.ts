@@ -1,11 +1,12 @@
 // src/app/api/ai-chat/route.ts
 
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { authenticate } from "../middleware";
-import { ADMIN } from "@/constant";
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { authenticate } from '../middleware';
+import { NextRequestWithUser } from '../type';
+import { ADMIN } from '@/constant';
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
@@ -20,52 +21,33 @@ export async function GET(req: NextRequest) {
     } else {
       aiChats = await prisma.aIChat.findMany({
         where: {
-          userId: user.id,
-        },
+          userId: user.id
+        }
       });
     }
 
     return NextResponse.json({ aiChats }, { status: 200 });
   } catch (error) {
-    console.error("Error fetching AI chats:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error('Error fetching AI chats:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
       return authFailed;
     }
-
-    const { question, answer } = await req.json();
-    const user = req.user;
-
-    if (!question || !answer) {
-      return NextResponse.json(
-        { message: "Question and answer are required" },
-        { status: 400 }
-      );
-    }
-
     const aiChat = await prisma.aIChat.create({
       data: {
-        userId: user.id,
-        question,
-        answer,
-      },
+        userId: req.user.id
+      }
     });
 
     return NextResponse.json({ aiChat }, { status: 201 });
   } catch (error) {
-    console.error("Error creating AI chat:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error('Error creating AI chat:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }

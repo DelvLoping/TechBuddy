@@ -20,7 +20,7 @@ export default function HelpRequestsPage() {
   useEffect(() => {
     const fetchHelpRequests = async () => {
       try {
-        const response = await axiosInstance.get("/helper-request");
+        const response = await axiosInstance.get("/help-request");
         setHelpRequests(response.data.helpRequests); // Assuming this returns requests with helper applications
       } catch (error) {
         setError("Failed to load help requests.");

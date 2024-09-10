@@ -1,11 +1,12 @@
 // src/app/api/address/route.ts
 
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { authenticate } from "../middleware";
-import { ADMIN, HELPER, TECHBUDDY } from "@/constant";
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { authenticate } from '../middleware';
+import { NextRequestWithUser } from '../type';
+import { ADMIN, HELPER, TECHBUDDY } from '@/constant';
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
@@ -25,28 +26,25 @@ export async function GET(req: NextRequest) {
             {
               users: {
                 some: {
-                  id: user.id,
-                },
-              },
+                  id: user.id
+                }
+              }
             },
             {
               requests: {
                 some: {
-                  userId: user.id,
-                },
-              },
-            },
-          ],
-        },
+                  userId: user.id
+                }
+              }
+            }
+          ]
+        }
       });
     }
 
     return NextResponse.json({ addresses }, { status: 200 });
   } catch (error) {
-    console.error("Error fetching addresses:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error('Error fetching addresses:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }
