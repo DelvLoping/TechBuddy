@@ -1,7 +1,7 @@
 'use client';
 import React from 'react'
 import FAQ from '@/components/macro/Faq';
-import { dataQuestions, apiQuestions, pricingQuestions } from '@/constant/questions';
+import { dataQuestions, apiQuestions, pricingQuestions, technologieQuestions, internetQuestions, phoneQuestions, securityQuestions, accessibilityQuestions, proceduresQuestions, processQuestions, otherQuestions } from '@/constant/questions';
 
 
 export default function Page() {
@@ -40,6 +40,62 @@ export default function Page() {
               questions={pricingQuestions}
               questionClassName='gap-6'
               isDefaultOpen={true}
+            />
+          </div>
+          <div className='bg-white rounded-xl border border-lavender shadow-md'>
+            <FAQ
+              title={'Technology in General'}
+              questions={technologieQuestions}
+              questionClassName='gap-6'
+              isDefaultOpen={false}
+            />
+          </div>
+          <div className='bg-white rounded-xl border border-lavender shadow-md'>
+            <FAQ
+              title={'the Internet'}
+              questions={internetQuestions}
+              questionClassName='gap-6'
+              isDefaultOpen={false}
+            />
+          </div>
+          <div className='bg-white rounded-xl border border-lavender shadow-md'>
+            <FAQ
+              title={'the Internet'}
+              questions={phoneQuestions}
+              questionClassName='gap-6'
+              isDefaultOpen={false}
+            />
+          </div>
+          <div className='bg-white rounded-xl border border-lavender shadow-md'>
+            <FAQ
+              title={'the Internet'}
+              questions={securityQuestions}
+              questionClassName='gap-6'
+              isDefaultOpen={false}
+            />
+          </div>
+          <div className='bg-white rounded-xl border border-lavender shadow-md'>
+            <FAQ
+              title={'the Internet'}
+              questions={processQuestions}
+              questionClassName='gap-6'
+              isDefaultOpen={false}
+            />
+          </div>
+          <div className='bg-white rounded-xl border border-lavender shadow-md'>
+            <FAQ
+              title={'the Internet'}
+              questions={accessibilityQuestions}
+              questionClassName='gap-6'
+              isDefaultOpen={false}
+            />
+          </div>
+          <div className='bg-white rounded-xl border border-lavender shadow-md'>
+            <FAQ
+              title={'the Internet'}
+              questions={proceduresQuestions}
+              questionClassName='gap-6'
+              isDefaultOpen={false}
             />
           </div>
         </div>.
