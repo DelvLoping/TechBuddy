@@ -3,6 +3,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Spinner } from "@nextui-org/react";
 import axiosInstance from "@/lib/axiosInstance";
 import HelpRequestList from "@/components/list/HelpRequestList";
+import _ from "lodash";
 
 export default function HelpRequestsPage() {
   const [helpRequests, setHelpRequests] = useState([]);
@@ -16,12 +17,18 @@ export default function HelpRequestsPage() {
     sortBy: "requestDate",
     sortOrder: "asc",
   });
+  const statusOptions = [
+    { value: "", label: "All Status" },
+    { value: "OPEN", label: "OPEN" },
+    { value: "IN_PROGRESS", label: "IN PROGRESS" },
+    { value: "COMPLETED", label: "COMPLETED" }
+  ];
 
   useEffect(() => {
     const fetchHelpRequests = async () => {
       try {
         const response = await axiosInstance.get("/help-request");
-        setHelpRequests(response.data.helpRequests); // Assuming this returns requests with helper applications
+        setHelpRequests(response.data.helpRequests); 
       } catch (error) {
         setError("Failed to load help requests.");
       } finally {
@@ -32,7 +39,7 @@ export default function HelpRequestsPage() {
     const fetchUserType = async () => {
       try {
         const response = await axiosInstance.get("/user/current");
-        setUserType(response.data.type); // Assuming "/user/current" returns user type
+        setUserType(response.data.type); 
       } catch (error) {
         setError("Failed to load user data.");
       }
@@ -97,10 +104,12 @@ export default function HelpRequestsPage() {
           onChange={handleFilterChange}
           className="p-2 border rounded-large m-2"
         >
-          <option value="">All Status</option>
-          <option value="OPEN">OPEN</option>
-          <option value="IN_PROGRESS">IN PROGRESS</option>
-          <option value="COMPLETED">COMPLETED</option>
+          {_.map(statusOptions, status=> (
+            <option key={status.value} value={status.value}>
+              {status.label}
+            </option>
+          ))
+          }
         </select>
         <select
           name="interventionType"
