@@ -48,21 +48,17 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
   useEffect(() => {
     if (chat) {
       const users = [chat.user1Id, chat.user2Id];
-      console.log(' user list', users, user.id);
       if (users.includes(user.id)) {
-        console.log('authorized');
         setIsAuthorized(true);
         const req = axiosInstance
           .get(`/help-request/${chat.requestId}`)
           .then((res) => {
-            console.log('res', res.data);
             if (res.data) {
               const helpRequest = res.data.helpRequest;
               const helperApply = _.find(
                 helpRequest.applications,
                 (apply) => apply.helperId === chat.user2Id
               );
-              console.log('if data', helpRequest, helperApply);
               if (
                 moment(helpRequest.interventionDate).isBefore(moment()) &&
                 helpRequest.status !== 'COMPLETED' &&
@@ -82,7 +78,6 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
               }
             }
           });
-        console.log('promise', req);
       }
     }
   }, [chat]);
@@ -96,10 +91,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
     });
 
     setPeer(newPeer);
-    console.log('peer', newPeer);
-    console.log(navigator, navigator.mediaDevices);
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      console.log('getUserMedia supported');
       navigator.mediaDevices
         .getUserMedia({
           video: true,
@@ -217,7 +209,6 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
     }
   };
 
-  console.log(chat, isAuthorized, isOpen);
   return (
     <div
       className={`flex flex-col justify-center items-center h-full gap-4 ${

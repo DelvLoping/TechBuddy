@@ -100,7 +100,6 @@ const ChatComponent = ({
     e: FormEvent<HTMLFormElement> | KeyboardEvent<HTMLTextAreaElement>
   ) => {
     e.preventDefault();
-    console.log('handleSendMessage');
     onSendMessage(e, messageInput);
     setMessageInput('');
   };
