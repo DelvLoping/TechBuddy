@@ -4,6 +4,7 @@ import ChatComponent from '@/components/macro/ChatComponent';
 import axiosInstance from '@/lib/axiosInstance';
 import { AIChat, AIMessage } from '@prisma/client';
 import _ from 'lodash';
+import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -25,7 +26,10 @@ export default function Page() {
       axiosInstance
         .get('/ai-chat')
         .then((res) => {
-          setAiChats(res.data.aiChats);
+          const chatsList = res.data.aiChats;
+          if (chatsList.length > 0) {
+            setAiChats(chatsList.sort((a, b) => moment(b.createdAt).diff(moment(a.createdAt))));
+          }
         })
         .catch((err) => {
           toast.error('Error fetching AI Chats');
@@ -77,18 +81,21 @@ export default function Page() {
               return res.data.aiChat;
             }
           });
+          setAiChats([currentChat, ...aiChats]);
           setSelectedChat(currentChat.id);
         }
         setTypingStatus('Typing...');
+        let oldMessages = messages;
         await axiosInstance
           .post('/ai-message', { aiChatId: currentChat.id, content: message, sender: 'USER' })
           .then((res) => {
             if (res.data) {
-              setMessages([...messages, res.data.aIMessage]);
+              oldMessages = [...oldMessages, res.data.aIMessage];
+              setMessages(oldMessages);
             }
           });
 
-        const context = _.map(messages, (msg: AIMessage) => {
+        const context = _.map(oldMessages, (msg: AIMessage) => {
           return {
             role: msg.sender === 'USER' ? 'user' : 'assistant',
             content: msg.content
@@ -114,7 +121,8 @@ export default function Page() {
           })
           .then((res) => {
             if (res.data) {
-              setMessages([...messages, res.data.aIMessage]);
+              oldMessages = [...oldMessages, res.data.aIMessage];
+              setMessages(oldMessages);
             }
           });
         setTypingStatus('');
@@ -133,6 +141,8 @@ export default function Page() {
         sidebarClassName='!w-[15%] !min-w-[10rem]'
         formClassName='!p-10 !justify-center !bg-transparent'
         inputClassName='!max-w-[30rem] rounded-xl'
+        messagesCoreClassName='max-w-[55rem] mx-auto'
+        listMessagesClassName='!gap-8'
         isShow={true}
         show={show}
         chats={aiChats}

@@ -9,6 +9,8 @@ import { FaPlus } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import HelperApplicationDetails from '@/components/macro/HelperApplicationDetails';
+import ChatBot from '@/assets/images/chatbot.png';
+import Image from 'next/image';
 
 export default function Dashboard() {
   const userReducer = useSelector((state: any) => state.user);
@@ -35,6 +37,22 @@ export default function Dashboard() {
             </div>
           </Card>
         </div>
+        {isTechBuddy && (
+          <div
+            className='w-full flex flex-row justify-center cursor-pointer'
+            onClick={() => router.push('/chat-ai')}
+          >
+            <Card className='p-4 px-8 bg-primary text-white w-full sm:w-fit flex flex-row items-center gap-4'>
+              <div className=' text-center flex flex-col items-center'>
+                <Image src={ChatBot} alt='chatbot' width={100} height={100} />
+              </div>
+              <div className='text-center flex flex-col items-start gap-2'>
+                <h3 className='text-lg sm:text-2xl font-bold'>You need help ?</h3>
+                <p className=''>Buddy is here to help you 24/7. Click here to chat with Buddy</p>
+              </div>
+            </Card>
+          </div>
+        )}
         {isTechBuddy && (
           <div className='w-full flex flex-col sm:flex-row justify-center gap-4'>
             <div className='w-full sm:w-2/3 md:w-3/4'>

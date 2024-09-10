@@ -1,7 +1,7 @@
-import { shouldDisplayDate, shouldDisplayTime } from '@/utils';
+import markdownToHtml, { shouldDisplayDate, shouldDisplayTime } from '@/utils';
 import { AIMessage, Message } from '@prisma/client';
 import moment from 'moment';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import _ from 'lodash';
 
 type UIMessageProps = {
@@ -17,10 +17,24 @@ const UIMessage = ({ message, userId, nextMessage, isAI }: UIMessageProps) => {
   const isShouldDisplayTime = shouldDisplayTime(message, nextMessage);
   const isShouldDisplayDate = shouldDisplayDate(message, nextMessage);
   const [displayTime, setDisplayTime] = useState(false);
+  const [contentHtml, setContentHtml] = useState<string | null>(null);
+
+  useEffect(() => {
+    const convertMarkdown = async () => {
+      let htmlContent = message.content;
+      if (message.content && isAI) {
+        htmlContent = await markdownToHtml(message.content);
+      }
+      setContentHtml(htmlContent);
+    };
+
+    convertMarkdown();
+  }, [message.content]);
 
   const onClick = () => {
     setDisplayTime(!displayTime);
   };
+
   let alignClass = '';
   let colorClass = '';
   if (isAI) {
@@ -45,12 +59,10 @@ const UIMessage = ({ message, userId, nextMessage, isAI }: UIMessageProps) => {
     <>
       <div key={message.id} className={`w-full flex flex-col ${alignClass}`}>
         <p
-          className={`w-fit rounded-xl p-2 break-all text-wrap text-sm sm:text-base
-            ${colorClass} `}
+          className={`w-fit rounded-xl p-2 text-wrap text-sm sm:text-base ${colorClass}`}
           onClick={onClick}
-        >
-          {message.content}
-        </p>
+          dangerouslySetInnerHTML={{ __html: contentHtml || message.content }}
+        />
         {(isShouldDisplayTime || displayTime) && (
           <span className='text-xs text-gray-400'>{moment(message.sendDate).format('HH:mm')}</span>
         )}

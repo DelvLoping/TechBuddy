@@ -17,12 +17,16 @@ import { Button, Spinner } from '@nextui-org/react';
 import { IoIosSend } from 'react-icons/io';
 import moment from 'moment';
 import { FaPlus } from 'react-icons/fa';
+import ChatBot from '@/assets/images/chatbot.png';
+import Image from 'next/image';
 
 type ChatComponentProps = {
   className?: string;
   sidebarClassName?: string;
   formClassName?: string;
   inputClassName?: string;
+  messagesCoreClassName?: string;
+  listMessagesClassName?: string;
   show: boolean;
   isShow: boolean;
   chats: Chat[] | AIChat[];
@@ -47,6 +51,8 @@ const ChatComponent = ({
   sidebarClassName,
   formClassName,
   inputClassName,
+  messagesCoreClassName,
+  listMessagesClassName,
   show,
   isShow,
   chats,
@@ -182,14 +188,22 @@ const ChatComponent = ({
                   onClick={() => setShowSidebar(true)}
                 />
               )}
-              {isAI ? 'Buddy' : currentChat && getFullNames(currentChatTarget)}
+              {isAI ? (
+                <div className='flex flex-col items-center gap-2'>
+                  <Image src={ChatBot} alt='chatbot' width={50} height={50} />
+                </div>
+              ) : (
+                currentChat && getFullNames(currentChatTarget)
+              )}
               <IoClose
                 className='cursor-pointer sm:hidden absolute right-2 top-2 h-6 w-6 opacity-50'
                 onClick={() => onClose(false)}
               />
             </div>
-            <div className='flex-1 flex flex-col gap-2 py-4 px-4 overflow-y-auto bg-white justify-between'>
-              <div className='flex-1 flex flex-col gap-2 items-center'>
+            <div
+              className={`flex-1 flex flex-col gap-2 py-4 px-4 overflow-y-auto bg-white justify-between ${messagesCoreClassName}`}
+            >
+              <div className={`flex-1 flex flex-col gap-2 items-center ${listMessagesClassName}`}>
                 {_.map(messages, (msg: AIMessage | Message, index) => (
                   <UIMessage
                     key={msg.id}
