@@ -1,4 +1,5 @@
-// schema.prisma
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -21,12 +22,13 @@ model User {
   signupDate          DateTime            @default(now())
   helpRequests        HelpRequest[]
   applications        HelperApplication[]
-  chatsAsUser1               Chat[]              @relation("User1Chats")
-  chatsAsUser2               Chat[]              @relation("User2Chats")
+  chatsAsUser1        Chat[]              @relation("User1Chats")
+  chatsAsUser2        Chat[]              @relation("User2Chats")
   messages            Message[]
   evaluationsGiven    Evaluation[]        @relation("EvaluatorEvaluations")
   evaluationsReceived Evaluation[]        @relation("EvaluateeEvaluations")
   aiChats             AIChat[]
+  completedChats      CompletedChat[]     // Relation avec les chats terminés
   address             Address?            @relation(fields: [addressId], references: [id])
 }
 
@@ -96,8 +98,9 @@ model Evaluation {
 model AIChat {
   id           Int         @id @default(autoincrement())
   userId       Int
-  creationDate DateTime    @default(now())
-  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title        String?      // Champ optionnel pour stocker le titre du chat
+  creationDate DateTime     @default(now())
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   messages     AIMessage[]
 }
 
@@ -108,6 +111,15 @@ model AIMessage {
   content  String
   sendDate DateTime      @default(now())
   aiChat   AIChat        @relation(fields: [aiChatId], references: [id], onDelete: Cascade)
+}
+
+model CompletedChat {
+  id           Int         @id @default(autoincrement())  // ID unique pour chaque chat terminé
+  userId       Int
+  firstmessage String       // Stocke le premier message de la conversation
+  chatContent  Json         // Stocke tous les messages en format JSON
+  creationDate DateTime     @default(now())               // Date de fin de la conversation
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Address {

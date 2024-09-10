@@ -1,10 +1,34 @@
-import React from 'react';
-import Chat from '@/components/chat/ChatAi';
+// import React from 'react';
+// import Sidebar from '@/components/Sidebar';
+// import ChatAi from '@/components/chat/ChatAi';
 
-export default function ChatAi() {
+// const ChatAiPage = () => {
+//     return (
+//         <div className="flex">
+//             <Sidebar />
+//             <div style={{ flex: 1 }}>
+//                 <ChatAi />
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default ChatAiPage;
+
+
+import React from 'react';
+import Sidebar from '@/components/Sidebar';
+import ChatAi from '@/components/chat/ChatAi';
+
+const ChatAiPage = () => {
     return (
-        <div style={{ width: '100%' }}>
-            <Chat />
+        <div className="flex">
+            {/* <Sidebar /> */}
+            <div style={{ flex: 1 }}>
+                <ChatAi />
+            </div>
         </div>
     );
-}
+};
+
+export default ChatAiPage;

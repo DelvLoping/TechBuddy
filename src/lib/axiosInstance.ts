@@ -3,7 +3,7 @@ import { removeJWT, setJWT } from "./redux/slices/user";
 import { store } from "./redux/store";
 
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL ,
 });
 
 axiosInstance.interceptors.request.use(
