@@ -1,11 +1,12 @@
 // src/app/api/chat/route.ts
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authenticate } from '../middleware';
+import { NextRequestWithUser } from '../type';
 import { ADMIN, HELPER, TECHBUDDY } from '@/constant';
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
@@ -14,18 +15,24 @@ export async function GET(req: NextRequest) {
     const user = req.user;
 
     let chats;
+    const url = new URL(req.url);
+    const helpRequestId = url.searchParams.get('helpRequestId');
 
     if (user.type === ADMIN) {
       chats = await prisma.chat.findMany({
         include: {
           user1: { select: { id: true, firstname: true, lastname: true } },
           user2: { select: { id: true, firstname: true, lastname: true } }
+        },
+        where: {
+          requestId: Number(helpRequestId) || undefined
         }
       });
     } else {
       chats = await prisma.chat.findMany({
         where: {
-          OR: [{ user1Id: user.id }, { user2Id: user.id }]
+          OR: [{ user1Id: user.id }, { user2Id: user.id }],
+          AND: [{ requestId: Number(helpRequestId) || undefined }]
         },
         include: {
           user1: { select: { id: true, firstname: true, lastname: true } },
@@ -41,7 +48,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {

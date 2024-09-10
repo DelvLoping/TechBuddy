@@ -1,12 +1,13 @@
 // api/middleware.ts
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import prisma from '@/lib/prisma';
+import { NextRequestWithUser } from './type';
 
 const validTokens = new Map<number, string>();
 
-export async function verifyToken(req: NextRequest): Promise<boolean> {
+export async function verifyToken(req: NextRequestWithUser): Promise<boolean> {
   try {
     const authHeader = req.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -16,7 +17,7 @@ export async function verifyToken(req: NextRequest): Promise<boolean> {
     if (!token) {
       return false;
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as unknown as {
       userId: number;
     };
 
@@ -39,7 +40,6 @@ export async function verifyToken(req: NextRequest): Promise<boolean> {
         applications: true,
         chatsAsUser1: true,
         chatsAsUser2: true,
-        messages: true,
         evaluationsGiven: true,
         evaluationsReceived: true,
         aiChats: true,
@@ -70,7 +70,7 @@ export function removeFromValidTokens(id: number) {
   validTokens.delete(id);
 }
 
-export const authenticate = async (req: NextRequest) => {
+export const authenticate = async (req: NextRequestWithUser) => {
   const isAuthenticated = await verifyToken(req);
   if (!isAuthenticated) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });

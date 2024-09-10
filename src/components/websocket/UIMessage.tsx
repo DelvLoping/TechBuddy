@@ -2,6 +2,7 @@ import { shouldDisplayDate, shouldDisplayTime } from '@/utils';
 import { Message } from '@prisma/client';
 import moment from 'moment';
 import { useState } from 'react';
+import _ from 'lodash';
 
 type UIMessageProps = {
   message: Message;
@@ -28,7 +29,7 @@ const UIMessage = ({ message, userId, nextMessage }: UIMessageProps) => {
         }`}
       >
         <p
-          className={`w-fit rounded-xl p-2 break-all text-wrap
+          className={`w-fit rounded-xl p-2 break-all text-wrap text-sm sm:text-base
             ${message.userId === userId ? 'bg-primary text-white' : 'bg-gray-100'}`}
           onClick={onClick}
         >

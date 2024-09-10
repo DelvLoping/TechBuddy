@@ -1,11 +1,12 @@
 // src/app/api/message/route.ts
 
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { authenticate } from "../middleware";
-import { ADMIN } from "@/constant";
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { authenticate } from '../middleware';
+import { NextRequestWithUser } from '../type';
+import { ADMIN } from '@/constant';
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
@@ -20,22 +21,19 @@ export async function GET(req: NextRequest) {
     } else {
       messages = await prisma.message.findMany({
         where: {
-          userId: user.id,
-        },
+          userId: user.id
+        }
       });
     }
 
     return NextResponse.json({ messages }, { status: 200 });
   } catch (error) {
-    console.error("Error fetching messages:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error('Error fetching messages:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
@@ -46,26 +44,20 @@ export async function POST(req: NextRequest) {
     const user = req.user;
 
     if (!chatId || !content) {
-      return NextResponse.json(
-        { message: "Chat ID and content are required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: 'Chat ID and content are required' }, { status: 400 });
     }
 
     const message = await prisma.message.create({
       data: {
         chatId: Number(chatId),
         userId: user.id,
-        content,
-      },
+        content
+      }
     });
 
     return NextResponse.json({ message }, { status: 201 });
   } catch (error) {
-    console.error("Error creating message:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error('Error creating message:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }
