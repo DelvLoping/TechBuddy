@@ -19,10 +19,12 @@ import moment from 'moment';
 import { FaPlus } from 'react-icons/fa';
 import ChatBot from '@/assets/images/chatbot.png';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 type ChatComponentProps = {
   className?: string;
   sidebarClassName?: string;
+  messagesDivClassName?: string;
   formClassName?: string;
   inputClassName?: string;
   messagesCoreClassName?: string;
@@ -49,6 +51,7 @@ type ChatComponentProps = {
 const ChatComponent = ({
   className,
   sidebarClassName,
+  messagesDivClassName,
   formClassName,
   inputClassName,
   messagesCoreClassName,
@@ -72,7 +75,7 @@ const ChatComponent = ({
   const [showSidebar, setShowSidebar] = useState(true);
   const messagesEndRef = useRef(null);
   const [messageInput, setMessageInput] = useState('');
-
+  const router = useRouter();
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) {
@@ -146,7 +149,7 @@ const ChatComponent = ({
           >
             {isAI && (
               <div
-                className={`flex flex-row w-full p-2 cursor-pointer break-all truncate text-sm sm:text-base items-center gap-2
+                className={`flex flex-row w-full p-2 cursor-pointer break-all truncate text-sm sm:text-base items-center gap-2 opacity-60
                 ${selectedChat === 0 ? 'bg-primary text-white' : ''}`}
                 onClick={() => handleSelectedChatChange(0)}
               >
@@ -174,7 +177,7 @@ const ChatComponent = ({
           <div
             className={`flex flex-col sm:rounded-r-xl sm:border sm:border-gray-200 w-full h-full bg-white ${
               !showSidebar && 'sm:rounded-l-xl'
-            }`}
+            } ${messagesDivClassName}`}
           >
             <div className='relative w-full flex justify-center items-center text-center border-b border-gray-200 p-2 px-8 font-semibold min-h-10 text-sm sm:text-base'>
               {showSidebar ? (
@@ -196,8 +199,12 @@ const ChatComponent = ({
                 currentChat && getFullNames(currentChatTarget)
               )}
               <IoClose
-                className='cursor-pointer sm:hidden absolute right-2 top-2 h-6 w-6 opacity-50'
-                onClick={() => onClose(false)}
+                className={`cursor-pointer ${
+                  !isAI && 'sm:hidden'
+                } absolute right-2 top-2 h-6 w-6 opacity-50`}
+                onClick={() => {
+                  isAI ? router.push('/') : onClose(false);
+                }}
               />
             </div>
             <div

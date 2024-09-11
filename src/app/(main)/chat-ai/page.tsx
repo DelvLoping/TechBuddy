@@ -138,7 +138,8 @@ export default function Page() {
     <div className='fixed !w-screen !h-screen !p-0'>
       <ChatComponent
         className='!w-full !h-full'
-        sidebarClassName='!w-[15%] !min-w-[10rem]'
+        sidebarClassName='!w-[15%] !min-w-[10rem] !rounded-none'
+        messagesDivClassName='!rounded-none'
         formClassName='!p-10 !justify-center !bg-transparent'
         inputClassName='!max-w-[30rem] rounded-xl'
         messagesCoreClassName='max-w-[55rem] mx-auto'

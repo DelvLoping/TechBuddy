@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 import _ from 'lodash';
 import { useSelector } from 'react-redux';
-import Button from '../ui/Button';
+import Button from '@/components/form/Button';
 import { IoChatbubble } from 'react-icons/io5';
 import { FaWindowMinimize } from 'react-icons/fa';
 import { Chat as ChatType } from '@prisma/client';
-import ChatComponent from '../macro/ChatComponent';
+import ChatComponent from '@/components/macro/ChatComponent';
 
 let socket;
 type ChatProps = {
@@ -132,7 +132,7 @@ const WebSocketChat = ({ isShow = true }: ChatProps) => {
           {show ? (
             <FaWindowMinimize className='h-6 w-10' />
           ) : (
-            <IoChatbubble className='sm:h-10 sm:w-10  h-8 w-8' />
+            <IoChatbubble className={`sm:h-10 sm:w-10  h-8 w-8`} />
           )}
         </Button>
       )}

@@ -3,6 +3,8 @@ import { AIMessage, Message } from '@prisma/client';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import _ from 'lodash';
+import ChatBot from '@/assets/images/chatbot.png';
+import Image from 'next/image';
 
 type UIMessageProps = {
   message: Message | AIMessage;
@@ -58,14 +60,27 @@ const UIMessage = ({ message, userId, nextMessage, isAI }: UIMessageProps) => {
   return (
     <>
       <div key={message.id} className={`w-full flex flex-col ${alignClass}`}>
-        <p
-          className={`w-fit rounded-xl p-2 text-wrap text-sm sm:text-base ${colorClass}`}
-          onClick={onClick}
-          dangerouslySetInnerHTML={{ __html: contentHtml || message.content }}
-        />
-        {(isShouldDisplayTime || displayTime) && (
-          <span className='text-xs text-gray-400'>{moment(message.sendDate).format('HH:mm')}</span>
-        )}
+        <div className='flex flex-row gap-1'>
+          {isAI && message.sender === 'AI' && (
+            <Image
+              src={ChatBot}
+              alt='chatbot'
+              width={10}
+              height={10}
+              className='rounded-full h-7 w-7 border border-gray-200'
+            />
+          )}
+          <p
+            className={`w-fit rounded-xl p-2 text-wrap text-sm sm:text-base ${colorClass}`}
+            onClick={onClick}
+            dangerouslySetInnerHTML={{ __html: contentHtml || message.content }}
+          />
+          {(isShouldDisplayTime || displayTime) && (
+            <span className='text-xs text-gray-400'>
+              {moment(message.sendDate).format('HH:mm')}
+            </span>
+          )}
+        </div>
       </div>
       {isShouldDisplayDate && (
         <span className='text-xs text-gray-400'>

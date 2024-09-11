@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'TechBuddy - Chat AI',
-  description: 'Chat with our AI to get help with your problems!'
+  title: 'TechBuddy - Cookie Policy',
+  description: 'Cookie policy for using TechBuddy services.'
 };
+
 export default function Layout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }

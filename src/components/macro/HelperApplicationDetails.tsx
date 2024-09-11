@@ -1,23 +1,21 @@
 import { Button } from '@nextui-org/react';
-import { HelperApplication, HelpRequest } from '@prisma/client';
-import { useDispatch, useSelector } from 'react-redux';
-import { useRouter } from 'next/navigation';
+import { HelperApplication, HelpRequest, User } from '@prisma/client';
+import { useDispatch } from 'react-redux';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import axiosInstance from '@/lib/axiosInstance';
 import { reloadHelperApplication } from '@/lib/redux/slices/helperApplication';
 import { toast } from 'react-toastify';
+import { getFullNames } from '@/utils';
 
 type HelperApplicationDetailsProps = {
-  helperApplication: HelperApplication;
+  helperApplication: HelperApplication & { helper?: User };
 };
 const HelperApplicationDetails = ({ helperApplication }: HelperApplicationDetailsProps) => {
   const dispatch: any = useDispatch();
-  const router = useRouter();
-  const userReducer = useSelector((state: any) => state.user);
-  const { user } = userReducer || {};
   const [helpRequest, setHelpRequest] = useState<HelpRequest | null>(null);
-  const { id } = helperApplication || {};
+  const { id, helper } = helperApplication || {};
+  const fullname = getFullNames(helper);
   useEffect(() => {
     const { requestId } = helperApplication || {};
     if (requestId) {
@@ -43,7 +41,7 @@ const HelperApplicationDetails = ({ helperApplication }: HelperApplicationDetail
   }
   const Accept = async () => {
     try {
-      const res = await axiosInstance.put(`/helper-application/${id}`, {
+      await axiosInstance.put(`/helper-application/${id}`, {
         status: 'ACCEPTED'
       });
       dispatch(reloadHelperApplication());
@@ -56,7 +54,7 @@ const HelperApplicationDetails = ({ helperApplication }: HelperApplicationDetail
 
   const Reject = async () => {
     try {
-      const res = await axiosInstance.put(`/helper-application/${id}`, {
+      await axiosInstance.put(`/helper-application/${id}`, {
         status: 'REJECTED'
       });
       dispatch(reloadHelperApplication());
@@ -73,8 +71,10 @@ const HelperApplicationDetails = ({ helperApplication }: HelperApplicationDetail
       className='flex flex-col p-4 border-b border-gray-300 last:border-none gap-2'
     >
       <div className='flex flex-row justify-between items-start'></div>
+      <h1 className='text-lg font-bold'>
+        {fullname} <span className='font-normal'>veux vous aider !</span>
+      </h1>
       <p className='text-base '>{helpRequest?.subject}</p>
-      <p className='text-sm'>{helpRequest?.description}</p>
       <p className={`text-sm ${color}`}>{helperApplication.status}</p>
       {helperApplication.status === 'PROPOSED' && (
         <div className='flex flex-row w-full justify-end items-end'>
