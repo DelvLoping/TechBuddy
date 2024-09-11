@@ -70,7 +70,7 @@ const HelperApplicationDetails = ({ helperApplication }: HelperApplicationDetail
   return (
     <div
       key={id + 'HelperApplication'}
-      className='flex flex-col p-4 border-b border-gray-300 last:border-none gap-2'
+      className='flex flex-col p-4 border-b border-gray-300 last:border-none gap-2 '
     >
       <div className='flex flex-row justify-between items-start'></div>
       <p className='text-base '>{helpRequest?.subject}</p>
