@@ -17,7 +17,7 @@ const contexteGlobal = {
 };
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const applySystemOnContext = (context) => {
+const applySystemOnContext = (context: any[]) => {
   if (!context[0] || context[0].content !== contexteGlobal.content) {
     if (context[0]?.role === 'system') {
       context[0] = contexteGlobal;
@@ -28,14 +28,14 @@ const applySystemOnContext = (context) => {
   return context;
 };
 
-const trimContextHistory = (context) => {
+const trimContextHistory = (context: any[]) => {
   if (context.length > 6) {
     context = context.slice(context.length - 6, context.length);
   }
   return context;
 };
 
-const calculateTokenUsage = (messages) => {
+const calculateTokenUsage = (messages: [key: string, value: string][]) => {
   let numTokens = 0;
 
   for (const message of messages) {
@@ -51,13 +51,13 @@ const calculateTokenUsage = (messages) => {
   return numTokens;
 };
 
-const handleTokenLimitExceeded = (tokenUsage) => {
+const handleTokenLimitExceeded = (tokenUsage: number) => {
   if (tokenUsage > 5000) {
     throw new Error('Token limit exceeded');
   }
 };
 
-async function callAPIOpenAI(userInput, context = []) {
+async function callAPIOpenAI(userInput: string, context: any[]) {
   let updatedContext = context;
 
   updatedContext = trimContextHistory(updatedContext);
@@ -81,7 +81,7 @@ async function callAPIOpenAI(userInput, context = []) {
        */
       handleTokenLimitExceeded(tokenUsage);
 
-      const response = await openai.chat.completions.create(requestBody);
+      const response: any = await openai.chat.completions.create(requestBody);
       updatedContext.push(response.choices[0].message);
       return updatedContext;
     } catch (error) {

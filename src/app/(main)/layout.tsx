@@ -60,7 +60,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const pathSegments = pathname.split('/').filter((segment) => segment);
 
   const goBack = () => {
-    if (pathSegments.length < 2) return null;
+    if (pathSegments.length < 1) return null;
 
     return (
       <div
@@ -94,7 +94,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <footer
           className={`${
             !navbarVisible && 'hidden'
-          } w-full bg-primary border-t border-gray-200 p-4 text-center mt-auto`}
+          } w-full bg-primary border-t border-gray-200 p-4 text-center mt-auto `}
         >
           <div className='flex flex-col gap-4 justify-center'>
             <div className='w-full flex flex-row justify-center gap-4 text-white p-4 whitespace-nowrap flex-wrap'>

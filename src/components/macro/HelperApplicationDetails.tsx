@@ -47,7 +47,6 @@ const HelperApplicationDetails = ({ helperApplication }: HelperApplicationDetail
       dispatch(reloadHelperApplication());
       toast.success('Helper Application Accepted');
     } catch (error) {
-      console.log(error);
       toast.error('Error Accepting Helper Application');
     }
   };
@@ -60,7 +59,6 @@ const HelperApplicationDetails = ({ helperApplication }: HelperApplicationDetail
       dispatch(reloadHelperApplication());
       toast.success('Helper Application Rejected');
     } catch (error) {
-      console.log(error);
       toast.error('Error Rejecting Helper Application');
     }
   };

@@ -1,9 +1,10 @@
 import { HelpRequest } from '@prisma/client';
-import AILink from '@/components/macro/Home/AiLink';
 import HelpRequestsLink from '@/components/macro/Home/HelpRequestsLink';
 import HelpRequestsList from '@/components/macro/Home/HelpRequestsList';
 import Profile from '@/components/macro/Home/Profile';
 import FaqLink from '@/components/macro/Home/FaqLink';
+import AILink from '@/components/macro/Home/AILink';
+
 type HomeHelperProps = {
   helpRequests: HelpRequest[];
 };

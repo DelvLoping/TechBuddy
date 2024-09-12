@@ -1,18 +1,6 @@
 'use client';
-
-import HelpRequestDetails from '@/components/macro/HelpRequestDetails';
-import { getFullNames } from '@/utils';
-import { Avatar, Button, Card } from '@nextui-org/react';
-import { HelpRequest } from '@prisma/client';
-import { useRouter } from 'next/navigation';
-import { FaPlus } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
-import HelperApplicationList from '@/components/macro/Home/HelperApplicationsList';
-import HelpRequestsLink from '@/components/macro/Home/HelpRequestsLink';
-import AILink from '@/components/macro/Home/AiLink';
-import HelpRequestsList from '@/components/macro/Home/HelpRequestsList';
-import Profile from '@/components/macro/Home/Profile';
 import HomeHelper from '@/components/macro/Home/HomeHelper';
 import HomeTechBuddy from '@/components/macro/Home/HomeTechBuddy';
 

@@ -40,7 +40,7 @@ const UIMessage = ({ message, userId, nextMessage, isAI }: UIMessageProps) => {
   let alignClass = '';
   let colorClass = '';
   if (isAI) {
-    if (message.sender === 'AI') {
+    if ('sender' in message && message.sender === 'AI') {
       alignClass = 'items-start';
       colorClass = 'bg-gray-100';
     } else {
@@ -48,7 +48,7 @@ const UIMessage = ({ message, userId, nextMessage, isAI }: UIMessageProps) => {
       colorClass = 'bg-primary text-white';
     }
   } else {
-    if (message.userId !== userId) {
+    if ('userId' in message && message.userId !== userId) {
       alignClass = 'items-start';
       colorClass = 'bg-gray-100';
     } else {
@@ -61,7 +61,7 @@ const UIMessage = ({ message, userId, nextMessage, isAI }: UIMessageProps) => {
     <>
       <div key={message.id} className={`w-full flex flex-col ${alignClass}`}>
         <div className='flex flex-row gap-1'>
-          {isAI && message.sender === 'AI' && (
+          {isAI && 'sender' in message && message.sender === 'AI' && (
             <Image
               src={ChatBot}
               alt='chatbot'

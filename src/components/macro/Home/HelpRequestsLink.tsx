@@ -11,10 +11,10 @@ const HelpRequestsLink = () => {
         className='w-full sm:w-2/3 md:w-3/4  cursor-pointer'
         onClick={() => router.push('/help-request/all')}
       >
-        <Card className='w-full bg-white text-secondary p-4 px-8 flex flex-col sm:flex-row items-center gap-4 md:justify-center'>
+        <Card className='w-full bg-purple text-white p-4 px-8 flex flex-col sm:flex-row items-center gap-4 md:justify-center'>
           <div className='text-center sm:text-start flex flex-col items-center sm:items-start gap-4'>
             <h3 className='text-lg sm:text-xl md:text-2xl font-bold'>Browse Help Requests</h3>
-            <p className='text-xs sm:text-sm md:text-base text-black'>
+            <p className='text-xs sm:text-sm md:text-base text-white'>
               Browse all help requests and find the one you can help with
             </p>
           </div>
