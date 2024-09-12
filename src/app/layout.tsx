@@ -16,6 +16,8 @@ const BackgroundShapes = () => {
           <div className={styles.bubble}></div>
           <div className={styles.square}></div>
           <div className={styles.triangle}></div>
+          <div className={styles.spiral}></div>
+          <div className={styles.cross}></div>
         </React.Fragment>
       ))}
     </div>

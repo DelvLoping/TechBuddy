@@ -122,7 +122,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
   return (
     <div
       key={id + 'HelpRequest'}
-      className='flex flex-col p-4 border border-gray-200 last:border-none gap-2 mt-6 shadow-md rounded-large'
+      className='flex flex-col p-4 border border-gray-200 last:border-none gap-2  rounded-large'
     >
       <div className='flex justify-between items-start'>
         <h4 className='text-base sm:text-xl font-semibold leading-none'>{subject}</h4>
@@ -131,6 +131,9 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
         </p>
       </div>
       <p className='text-sm sm:text-base text-secondary'>{description}</p>
+      <p className='text-sm sm:text-base'>
+          <span className='underline text-dark'>Intervention Type</span> : {interventionType}
+      </p>      
       <p className='text-sm sm:text-base'>
         <span className='underline'>Status</span> : <span className={`${color}`}>{status}</span>
       </p>

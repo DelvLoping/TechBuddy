@@ -32,6 +32,7 @@ export default function Dashboard() {
               <h3 className='text-lg sm:text-xl font-bold text-secondary'>{fullname}</h3>
               <p className='text-sm text-gray-500'>{email}</p>
               {age && <p className='text-secondary'>{age} years old</p>}
+              <Button className="bg-primary text-center-white p-2 w-fit rounded-xl" onClick={() => router.push(`/user`)}>Edit Profile </Button>
             </div>
           </Card>
         </div>

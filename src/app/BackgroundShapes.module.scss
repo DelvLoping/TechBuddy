@@ -1,6 +1,8 @@
 $bubble-count: 60;
 $triangle-count: 60;
 $square-count: 60;
+$spiral-count: 60;
+$cross-count: 60;
 $sway-type: "sway-left-to-right", "sway-right-to-left";
 
 @function random_range($min, $max) {
@@ -63,7 +65,6 @@ $sway-type: "sway-left-to-right", "sway-right-to-left";
     transform: rotate(360deg);
   }
 }
-
 // Conteneur pour les bulles
 .bubbles {
   position: fixed;
@@ -75,7 +76,7 @@ $sway-type: "sway-left-to-right", "sway-right-to-left";
   z-index: -1;
 }
 
-// Styles des bulles
+// Styles des bulles (seulement le contour)
 .bubble {
   position: absolute;
   left: var(--bubble-left-offset);
@@ -84,19 +85,8 @@ $sway-type: "sway-left-to-right", "sway-right-to-left";
   width: var(--bubble-radius);
   height: var(--bubble-radius);
   border-radius: 50%;
+  border: 2px solid hsla(183, 94%, 76%, 0.7); // Utilisation de bordures pour les contours
   animation: move-around var(--bubble-move-duration) ease-in-out infinite;
-
-  &::before {
-    position: absolute;
-    content: '';
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: hsla(183, 94%, 76%, 0.3);
-    border-radius: inherit;
-    animation: var(--bubble-sway-type) var(--bubble-sway-duration) ease-in-out alternate infinite;
-  }
 
   @for $i from 1 through $bubble-count {
     &:nth-child(#{$i}) {
@@ -120,35 +110,45 @@ $sway-type: "sway-left-to-right", "sway-right-to-left";
   z-index: -1; 
 }
 
-// Styles des triangles
+.triangle:after {
+  position: absolute;
+  content: "";
+  width: 0;
+  height: 0;
+  margin-top: 1px;
+  margin-left: 2px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid white;
+}
+
+.triangle:before {
+  position: absolute;
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 12px solid rgb(255, 194, 80);
+}
+
+// Styles des triangles (seulement le contour)
 .triangle {
   position: absolute;
   left: var(--triangle-left-offset);
   bottom: var(--triangle-bottom-offset);
   width: 0;
   height: 0;
-  border-left: var(--triangle-size) solid transparent;
-  border-right: var(--triangle-size) solid transparent;
-  border-bottom: calc(var(--triangle-size) * 2) solid hsla(32, 93%, 76%, 0.3);
+  color: transparent;
+  font-size: 200px; 
   animation: move-around var(--triangle-move-duration) ease-in-out infinite;
-
-  &::before {
-    position: absolute;
-    content: '';
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: hsla(70, 82%, 48%, 0.3);
-    animation: var(--triangle-sway-type) var(--triangle-sway-duration) ease-in-out alternate infinite;
-  }
 
   @for $i from 1 through $triangle-count {
     &:nth-child(#{$i}) {
       --triangle-left-offset: #{random_range(0vw, 100vw)};
       --triangle-bottom-offset: #{random_range(-75vh, 100vh)};
       --triangle-size: #{random_range(1vw, 5vw)};
-      --triangle-move-duration: #{random_range(25s, 50s)}; // Durée plus longue
+      --triangle-move-duration: #{random_range(25s, 50s)};
       --triangle-sway-duration: #{random_range(20s, 30s)};
     }
   }
@@ -165,14 +165,15 @@ $sway-type: "sway-left-to-right", "sway-right-to-left";
   z-index: -1;
 }
 
-// Styles des carrés
+// Styles des carrés (seulement le contour)
 .square {
   position: absolute;
   left: var(--square-left-offset);
   bottom: var(--square-bottom-offset);
   width: var(--square-size);
   height: var(--square-size);
-  background:#CDEAC0;
+  border: 2px solid hsla(120, 60%, 70%, 0.7); // Carré avec bordure uniquement
+  background: none; // Pas de fond
   animation: move-around var(--square-move-duration) ease-in-out infinite;
 
   @for $i from 1 through $square-count {
@@ -180,8 +181,92 @@ $sway-type: "sway-left-to-right", "sway-right-to-left";
       --square-left-offset: #{random_range(0vw, 100vw)};
       --square-bottom-offset: #{random_range(0vh, 100vh)};
       --square-size: #{random_range(1vw, 5vw)};
-      --square-move-duration: #{random_range(25s, 50s)}; // Durée plus longue
+      --square-move-duration: #{random_range(25s, 50s)};
       --square-sway-duration: #{random_range(20s, 30s)};
+    }
+  }
+}
+
+// Conteneur pour les spirales
+.spirals {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+// Styles des spirales (seulement le contour)
+.spiral {
+  position: absolute;
+  left: var(--spiral-left-offset);
+  bottom: var(--spiral-bottom-offset);
+  width: var(--spiral-size);
+  height: var(--spiral-size);
+  border: 2px solid hsla(210, 76%, 72%, 0.7);  // Spirale avec bordure
+  border-radius: 50%;
+  animation: rotate var(--spiral-move-duration) linear infinite, move-around var(--spiral-move-duration) ease-in-out infinite;
+
+  @for $i from 1 through $spiral-count {
+    &:nth-child(#{$i}) {
+      --spiral-left-offset: #{random_range(0vw, 100vw)};
+      --spiral-bottom-offset: #{random_range(0vh, 100vh)};
+      --spiral-size: #{random_range(2vw, 6vw)};
+      --spiral-move-duration: #{random_range(25s, 50s)};
+      --spiral-sway-duration: #{random_range(20s, 30s)};
+    }
+  }
+}
+
+// Conteneur pour les croix
+.crosses {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+// Styles des croix (seulement le contour)
+.cross {
+  position: absolute;
+  left: var(--cross-left-offset);
+  bottom: var(--cross-bottom-offset);
+  width: var(--cross-size);
+  height: var(--cross-size);
+  background: none; // Pas de fond
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: move-around var(--cross-move-duration) ease-in-out infinite;
+
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    background: hsla(345, 85%, 65%, 0.7); // Croisement avec bordures
+  }
+
+  &::before {
+    width: 100%;
+    height: 2px; // Barre horizontale fine
+  }
+
+  &::after {
+    width: 2px; // Barre verticale fine
+    height: 100%;
+  }
+
+  @for $i from 1 through $cross-count {
+    &:nth-child(#{$i}) {
+      --cross-left-offset: #{random_range(0vw, 100vw)};
+      --cross-bottom-offset: #{random_range(0vh, 100vh)};
+      --cross-size: #{random_range(2vw, 6vw)};
+      --cross-move-duration: #{random_range(30s, 60s)};
+      --cross-sway-duration: #{random_range(20s, 30s)};
     }
   }
 }
