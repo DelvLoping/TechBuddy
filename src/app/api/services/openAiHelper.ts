@@ -15,7 +15,7 @@ const contexteGlobal = {
     
     Provide explanations in a clear and simple manner, avoiding technical jargon whenever possible.`
 };
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || '' });
 
 const applySystemOnContext = (context: any[]) => {
   if (!context[0] || context[0].content !== contexteGlobal.content) {
