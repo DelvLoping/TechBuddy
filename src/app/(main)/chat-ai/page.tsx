@@ -28,7 +28,8 @@ export default function Page() {
         .then((res) => {
           const chatsList = res.data.aiChats;
           if (chatsList.length > 0) {
-            setAiChats(chatsList.sort((a, b) => moment(b.createdAt).diff(moment(a.createdAt))));
+            const newAiChats = _.orderBy(chatsList, ['creationDate'], ['desc']);
+            setAiChats(newAiChats);
           }
         })
         .catch((err) => {
@@ -81,7 +82,8 @@ export default function Page() {
               return res.data.aiChat;
             }
           });
-          setAiChats([currentChat, ...aiChats]);
+          const newAiChats = _.orderBy([currentChat, ...aiChats], ['creationDate'], ['desc']);
+          setAiChats(newAiChats);
           setSelectedChat(currentChat.id);
         }
         setTypingStatus('Typing...');

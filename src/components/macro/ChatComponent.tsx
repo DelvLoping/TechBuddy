@@ -144,12 +144,12 @@ const ChatComponent = ({
           <div
             className={`h-full ${
               showSidebar ? 'w-[40%]' : 'hidden'
-            } flex flex-col sm:rounded-l-xl sm:border-gray-200 sm:border-l sm:border-b sm:border-t overflow-hidden bg-gray-100 ${sidebarClassName}
+            } flex flex-col sm:rounded-l-xl sm:border-gray-200 sm:border-l sm:border-b sm:border-t overflow-hidden bg-gray-100 overflow-y-auto  ${sidebarClassName}
         `}
           >
             {isAI && (
               <div
-                className={`flex flex-row w-full p-2 cursor-pointer break-all truncate text-sm sm:text-base items-center gap-2 opacity-60
+                className={`flex flex-row w-full p-2 cursor-pointer break-all text-sm sm:text-base items-center gap-2 opacity-60 
                 ${selectedChat === 0 ? 'bg-primary text-white' : ''}`}
                 onClick={() => handleSelectedChatChange(0)}
               >
@@ -162,7 +162,7 @@ const ChatComponent = ({
               return (
                 <div
                   key={chat.id}
-                  className={`w-full p-2 cursor-pointer break-all truncate text-sm sm:text-base
+                  className={`w-full p-2 cursor-pointer break-all text-sm sm:text-base 
                 ${selectedChat === chat.id ? 'bg-primary text-white' : ''}`}
                   onClick={() => handleSelectedChatChange(chat.id)}
                 >
@@ -208,7 +208,7 @@ const ChatComponent = ({
               />
             </div>
             <div
-              className={`flex-1 flex flex-col gap-2 py-4 px-4 overflow-y-auto bg-white justify-between ${messagesCoreClassName}`}
+              className={`flex-1 flex flex-col gap-2 py-4 px-4 overflow-y-auto bg-white justify-between w-full ${messagesCoreClassName}`}
             >
               <div className={`flex-1 flex flex-col gap-2 items-center ${listMessagesClassName}`}>
                 {_.map(messages, (msg: AIMessage | Message, index) => (
