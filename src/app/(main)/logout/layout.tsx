@@ -1,8 +1,8 @@
-import { Metadata } from "next";
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "TechBuddy | Logout",
-  description: "Logout from your TechBuddy account. We hope to see you soon!",
+  title: 'TechBuddy - Logout',
+  description: 'Logout from your TechBuddy account. We hope to see you soon!'
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
