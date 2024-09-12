@@ -7,7 +7,6 @@ import { config } from 'dotenv';
 config({
   path: ['.env.local', '.env']
 });
-console.log(process.env.DATABASE_URL);
 const app = express();
 const prisma = new PrismaClient();
 const allowOrigin =

@@ -28,14 +28,16 @@ export async function GET(req: NextRequestWithUser) {
 
     // Filtering
     const status = url.searchParams.get('status');
-    const subject = url.searchParams.get('subject');
+    const search = url.searchParams.get('search');
     const interventionType = url.searchParams.get('interventionType');
     const dateFrom = url.searchParams.get('dateFrom');
     const dateTo = url.searchParams.get('dateTo');
 
     const filters: any = {
       ...(status && { status }),
-      ...(subject && { subject: { contains: subject } }),
+      ...(search && {
+        OR: [{ subject: { contains: search } }, { description: { contains: search } }]
+      }),
       ...(interventionType && { interventionType }),
       ...(dateFrom && { requestDate: { gte: new Date(dateFrom) } }),
       ...(dateTo && { requestDate: { lte: new Date(dateTo) } })
