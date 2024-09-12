@@ -60,7 +60,7 @@ const UIMessage = ({ message, userId, nextMessage, isAI }: UIMessageProps) => {
   return (
     <>
       <div key={message.id} className={`w-full flex flex-col ${alignClass}`}>
-        <div className='flex flex-row gap-1'>
+        <div className='flex flex- gap-1'>
           {isAI && 'sender' in message && message.sender === 'AI' && (
             <Image
               src={ChatBot}
@@ -75,12 +75,10 @@ const UIMessage = ({ message, userId, nextMessage, isAI }: UIMessageProps) => {
             onClick={onClick}
             dangerouslySetInnerHTML={{ __html: contentHtml || message.content }}
           />
-          {(isShouldDisplayTime || displayTime) && (
-            <span className='text-xs text-gray-400'>
-              {moment(message.sendDate).format('HH:mm')}
-            </span>
-          )}
         </div>
+        {(isShouldDisplayTime || displayTime) && (
+          <span className='text-xs text-gray-400'>{moment(message.sendDate).format('HH:mm')}</span>
+        )}
       </div>
       {isShouldDisplayDate && (
         <span className='text-xs text-gray-400'>
