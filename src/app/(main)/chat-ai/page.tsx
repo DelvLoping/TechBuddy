@@ -82,7 +82,11 @@ export default function Page() {
               return res.data.aiChat;
             }
           });
-          const newAiChats = _.orderBy([currentChat, ...aiChats], ['creationDate'], ['desc']);
+          const newAiChats = _.orderBy(
+            [currentChat, ...(aiChats || [])],
+            ['creationDate'],
+            ['desc']
+          );
           setAiChats(newAiChats);
           setSelectedChat(currentChat.id);
         }
@@ -130,6 +134,7 @@ export default function Page() {
         setTypingStatus('');
       }
     } catch (err: any) {
+      console.log(err);
       toast.error('Error sending message');
     } finally {
       setLoading(false);

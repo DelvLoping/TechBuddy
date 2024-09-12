@@ -15,7 +15,7 @@ const AILink = () => {
           <div className=' text-center flex flex-col items-center'>
             <Image src={ChatBot} alt='chatbot' width={100} height={100} />
           </div>
-          <div className='text-center sm:text-start flex flex-col items-center sm:items-start gap-2'>
+          <div className='text-center sm:text-start flex flex-col items-center sm:items-start gap-4'>
             <h3 className='text-lg sm:text-xl md:text-2xl font-bold'>You need help ?</h3>
             <p className='text-xs sm:text-sm md:text-base'>
               Buddy is here to help you 24/7. Click here to chat with Buddy
