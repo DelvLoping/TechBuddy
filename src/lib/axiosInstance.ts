@@ -1,20 +1,18 @@
-import axios, { AxiosRequestConfig } from "axios";
-import { removeJWT, setJWT } from "./redux/slices/user";
-import { store } from "./redux/store";
-
+import axios, { InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
+import { removeJWT } from './redux/slices/user';
+import { store } from './redux/store';
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL ,
+  baseURL: '/api'
 });
 
 axiosInstance.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("jwt") : null;
+  (config: InternalAxiosRequestConfig) => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('jwt') : null;
     if (token) {
-      config.headers = {
-        ...config.headers,
-        Authorization: `Bearer ${token}`,
-      };
+      if (!config.headers) {
+        config.headers = new AxiosHeaders();
+      }
+      config.headers.set('Authorization', `Bearer ${token}`);
     }
     return config;
   },
@@ -29,7 +27,7 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401) {
-      if (typeof window !== "undefined") {
+      if (typeof window !== 'undefined') {
         store.dispatch(removeJWT());
       }
     }
