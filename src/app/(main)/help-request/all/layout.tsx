@@ -1,9 +1,8 @@
-import { Metadata } from "next";
+import { Metadata } from 'next';
 
 const metadata: Metadata = {
-  title: "TechBuddy | Help Request",
-  description:
-    "Request help from a TechBuddy volunteer. We are here to help you with your tech-related questions."
+  title: 'TechBuddy | Help Requests',
+  description: 'Browse all help requests and find the one you can help with'
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

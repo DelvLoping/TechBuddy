@@ -5,12 +5,12 @@ import axiosInstance from '@/lib/axiosInstance';
 import { Chat } from '@prisma/client';
 import moment from 'moment';
 import _ from 'lodash';
-import { Button } from '@nextui-org/react';
+import { Button, Spinner } from '@nextui-org/react';
 import { HiOutlineVideoCamera, HiOutlineVideoCameraSlash } from 'react-icons/hi2';
 import { TbMicrophone, TbMicrophoneOff } from 'react-icons/tb';
 import { LuScreenShare, LuScreenShareOff } from 'react-icons/lu';
 import { GoScreenFull, GoScreenNormal } from 'react-icons/go';
-import helpRequests from '@/lib/redux/slices/helpRequests';
+import { FaUser } from 'react-icons/fa';
 
 type PeerPageProps = {
   chatId: string | number;
@@ -35,6 +35,9 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
   const [currentCall, setCurrentCall] = useState<any>(null);
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
 
+  const [isRemoteStreamActive, setIsRemoteStreamActive] = useState(false);
+  const [deviceError, setDeviceError] = useState(false);
+
   useEffect(() => {
     if (chatId) {
       axiosInstance.get(`/chat/${chatId}`).then((res) => {
@@ -48,21 +51,17 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
   useEffect(() => {
     if (chat) {
       const users = [chat.user1Id, chat.user2Id];
-      console.log(' user list', users, user.id);
       if (users.includes(user.id)) {
-        console.log('authorized');
         setIsAuthorized(true);
         const req = axiosInstance
           .get(`/help-request/${chat.requestId}`)
           .then((res) => {
-            console.log('res', res.data);
             if (res.data) {
               const helpRequest = res.data.helpRequest;
               const helperApply = _.find(
                 helpRequest.applications,
                 (apply) => apply.helperId === chat.user2Id
               );
-              console.log('if data', helpRequest, helperApply);
               if (
                 moment(helpRequest.interventionDate).isBefore(moment()) &&
                 helpRequest.status !== 'COMPLETED' &&
@@ -82,7 +81,6 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
               }
             }
           });
-        console.log('promise', req);
       }
     }
   }, [chat]);
@@ -96,10 +94,8 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
     });
 
     setPeer(newPeer);
-    console.log('peer', newPeer);
-    console.log(navigator, navigator.mediaDevices);
+
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      console.log('getUserMedia supported');
       navigator.mediaDevices
         .getUserMedia({
           video: true,
@@ -116,7 +112,11 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
             call.on('stream', (remoteStream) => {
               if (remoteVideoRef.current) {
                 remoteVideoRef.current.srcObject = remoteStream;
+                setIsRemoteStreamActive(true);
               }
+            });
+            call.on('close', () => {
+              setIsRemoteStreamActive(false);
             });
             setCurrentCall(call);
           });
@@ -128,12 +128,17 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
             call.on('stream', (remoteStream) => {
               if (remoteVideoRef.current) {
                 remoteVideoRef.current.srcObject = remoteStream;
+                setIsRemoteStreamActive(true);
               }
+            });
+            call.on('close', () => {
+              setIsRemoteStreamActive(false);
             });
           }
         })
         .catch((err) => {
           console.error('Error accessing media devices', err);
+          setDeviceError(true);
         });
     }
 
@@ -143,6 +148,9 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
       }
       if (stream) {
         stream.getTracks().forEach((track) => track.stop());
+      }
+      if (screenStream) {
+        screenStream.getTracks().forEach((track) => track.stop());
       }
     };
   }, [peerIdToCall]);
@@ -217,23 +225,36 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
     }
   };
 
-  console.log(chat, isAuthorized, isOpen);
   return (
     <div
       className={`flex flex-col justify-center items-center h-full gap-4 ${
         isFullScreen && 'sm:flex-row fixed top-0 left-0 w-screen h-screen z-50 bg-black p-4'
       }`}
     >
-      {chat ? (
+      {deviceError && (
+        <div className='bg-white w-full text-center text-secondary flex flex-col items-center gap-4 p-4 py-8 border border-gray-200 rounded-xl mt-8 sm:mt-32'>
+          <HiOutlineVideoCameraSlash className='w-6 h-6' />
+          Devices not found. Please check your camera and microphone then refresh the page.
+        </div>
+      )}
+      {!deviceError && chat ? (
         isAuthorized ? (
           isOpen ? (
             <>
               <video
-                className={`${isFullScreen ? 'h-full' : 'h-full'} w-full`}
+                className={`${isFullScreen ? 'h-full' : 'h-full'} w-full ${
+                  !isRemoteStreamActive && 'hidden'
+                }`}
                 playsInline
                 ref={remoteVideoRef}
                 autoPlay
               />
+              {!isRemoteStreamActive && (
+                <div className='bg-white w-full text-center text-secondary flex flex-col items-center gap-4 p-4 py-8 border border-gray-200 w-full sm:w-72'>
+                  <FaUser className='w-6 h-6' />
+                  Waiting for the other user to join...
+                </div>
+              )}
               <video
                 className={`w-full sm:w-36 ${isFullScreen && 'w-36'}`}
                 playsInline
@@ -300,9 +321,9 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
         ) : (
           <div className='text-center'>You are not authorized to access this page.</div>
         )
-      ) : (
-        <div className='text-center'>Loading...</div>
-      )}
+      ) : !deviceError ? (
+        <Spinner color='primary' />
+      ) : null}
     </div>
   );
 };

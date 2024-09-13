@@ -54,7 +54,6 @@ export async function verifyToken(req: NextRequestWithUser): Promise<boolean> {
 
     return true;
   } catch (error) {
-    console.log('Error verifying token:', error);
     console.error('Error verifying token:', error);
     return false;
   }

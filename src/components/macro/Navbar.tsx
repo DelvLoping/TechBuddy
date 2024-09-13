@@ -3,7 +3,6 @@ import { useRouter } from 'next/navigation';
 import { FaHome } from 'react-icons/fa';
 import { FaPowerOff } from 'react-icons/fa6';
 import { useSelector } from 'react-redux';
-
 const Navbar = () => {
   const router = useRouter();
   const useReducer = useSelector((state: any) => state.user);
