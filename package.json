@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "prisma": "set -a && source .env.local && set +a && npx prisma ",
-    "prismaw": "dotenv -e .env.local -- npx prisma "
+    "prismaw": "dotenv -e .env.local -- npx prisma ",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "type": "module",
   "dependencies": {
@@ -42,7 +44,10 @@
     "socket.io-client": "^4.7.5"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.0.1",
     "@types/bcrypt": "^5.0.2",
+    "@types/jest": "^29.5.13",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20",
     "@types/react": "^18",
@@ -52,9 +57,12 @@
     "dotenv-cli": "^7.4.2",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8",
     "prisma": "^5.14.0",
     "tailwindcss": "^3.4.1",
+    "ts-jest": "^29.2.5",
     "typescript": "^5"
   }
 }
