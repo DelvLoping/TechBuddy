@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'TechBuddy | Login',
+  title: 'TechBuddy - Login',
   description:
     'Login to your TechBuddy account. Get started with your journey to become a tech expert or a tech helper.'
 };

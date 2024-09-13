@@ -29,6 +29,15 @@ export async function GET(req: NextRequestWithUser) {
           requestId: {
             in: helpRequestIds
           }
+        },
+        include: {
+          helper: {
+            select: {
+              id: true,
+              firstname: true,
+              lastname: true
+            }
+          }
         }
       });
     } else {

@@ -122,7 +122,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
   return (
     <div
       key={id + 'HelpRequest'}
-      className='flex flex-col p-4 border-b border-gray-300 last:border-none gap-2'
+      className={`flex flex-col p-4 border border-gray-200 last:border-none gap-2 mt-6 `}
     >
       <div className='flex justify-between items-start'>
         <h4 className='text-base sm:text-xl font-semibold leading-none'>{subject}</h4>
@@ -130,25 +130,30 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
           {moment(requestDate).format('ll')}
         </p>
       </div>
-      <p className='text-sm sm:text-base text-secondary'>{description}</p>
-      <p className='text-sm sm:text-base'>
-        <span className='underline'>Status</span> : <span className={`${color}`}>{status}</span>
-      </p>
+      <div className='flex flex-col sm:flex-row justify-between items-start gap-2'>
+        <div className='flex flex-col gap-2'>
+          <p className='text-sm sm:text-base text-secondary'>{description}</p>
+          <p className='text-sm sm:text-base'>
+            <span className='underline'>Status</span> : <span className={`${color}`}>{status}</span>
+          </p>
+        </div>
+        {interventionType === 'VIRTUAL' && chat && (
+          <div className='flex flex-row items-center justify-center sm:justify-end w-full gap-2'>
+            <Button
+              className='bg-white text-primary border border-primary p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit text-sm:text-base'
+              onClick={() => router.push(`/chat/${chat.id}`)}
+            >
+              <HiOutlineVideoCamera className='h-4 w-4 sm:h-5 sm:w-5' />
+              Intervention Meet
+            </Button>
+          </div>
+        )}
+      </div>
+
       {reward && (
         <p className='text-sm sm:text-base'>
           <span className='italic text-gray-500'>Reward</span> : {reward}
         </p>
-      )}
-      {interventionType === 'VIRTUAL' && chat && (
-        <div className='flex flex-row items-center justify-center sm:justify-end w-full gap-2'>
-          <Button
-            className='bg-white text-primary border border-primary p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit text-sm:text-base'
-            onClick={() => router.push(`/chat/${chat.id}`)}
-          >
-            <HiOutlineVideoCamera className='h-4 w-4 sm:h-5 sm:w-5' />
-            Intervention Meet
-          </Button>
-        </div>
       )}
       {user.id === userId && (
         <>

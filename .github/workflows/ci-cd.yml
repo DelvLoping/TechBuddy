@@ -55,7 +55,8 @@ jobs:
                   NODE_ENV: production
                   DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:5432/techbuddy
                   JWT_SECRET: ${{ secrets.JWT_SECRET }}
-
+                  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+                  
               websocket:
                 image: ${{ secrets.DOCKER_USERNAME }}/techbuddy:latest
                 command: node server.js

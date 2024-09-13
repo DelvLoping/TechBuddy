@@ -16,17 +16,16 @@ export async function GET(req: NextRequestWithUser) {
     const url = new URL(req.url);
     const aiChatId = url.searchParams.get('aiChatId');
 
-    if (!aiChatId) {
-      return NextResponse.json({ message: 'AiChatId is required' }, { status: 400 });
-    }
-
     let aIMessages;
     if (user.type === ADMIN) {
       aIMessages = await prisma.aIMessage.findMany();
     } else {
       aIMessages = await prisma.aIMessage.findMany({
         where: {
-          aiChatId: Number(aiChatId)
+          aiChatId: aiChatId ? Number(aiChatId) : undefined,
+          aiChat: {
+            userId: user.id
+          }
         }
       });
     }

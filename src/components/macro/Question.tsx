@@ -1,16 +1,12 @@
-"use client";
-
 import React from 'react';
 import _ from 'lodash';
-import Collapse from '@/components/micro/collapse';
-
+import Collapse from '@/components/micro/Collapse';
 type QuestionProps = {
   title: string;
   content: string;
   className?: string;
   isDefaultOpen?: boolean;
 };
-
 const Question = ({ title, content, className, isDefaultOpen = false }: QuestionProps) => {
   const [isOpen, setIsOpen] = React.useState(isDefaultOpen);
   const handleChangeIsOpen = () => {
@@ -33,4 +29,5 @@ const Question = ({ title, content, className, isDefaultOpen = false }: Question
     </div>
   );
 };
+
 export default Question;
