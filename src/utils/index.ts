@@ -1,7 +1,5 @@
 import { AIMessage, Message } from '@prisma/client';
 import moment from 'moment';
-import { remark } from 'remark';
-import html from 'remark-html';
 
 export const getFullNames = (user: any) => {
   if (!user) {
@@ -45,8 +43,3 @@ export const formatAddress = (address: {
   const { city, country, postalCode, street } = address;
   return [street, city, postalCode, country].filter(Boolean).join(', ');
 };
-
-export default async function markdownToHtml(markdown: string) {
-  const result = await remark().use(html).process(markdown);
-  return result.toString();
-}
