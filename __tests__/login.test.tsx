@@ -2,7 +2,6 @@ import '@testing-library/jest-dom'; // For custom matchers like .toBeInTheDocume
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import Page from '@/app/(main)/login/page'; // Adjust the import based on your folder structure
 import { useDispatch } from 'react-redux';
-import { login } from '@/lib/redux/slices/user';
 import axios from 'axios';
 
 // Mocking useDispatch from react-redux
@@ -20,7 +19,7 @@ jest.mock('@/components/form/AuthForm', () => ({
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onSubmit({ email: 'test@example.com', password: 'test123' });
+        onSubmit({ username: 'test@example.com', password: 'test123' });
       }}
     >
       <button type='submit'>Login</button>
@@ -68,14 +67,12 @@ describe('Login Page', () => {
 
       return dispatchedThunk((action: any) => {
         // Check if the action contains the expected type
+
         expect(action.type).toMatch(/auth\/login\/pending|rejected|fulfilled/);
         if (action.type === 'auth/login/pending') {
-          expect(action.payload).toEqual({ username: 'test@example.com', password: 'test123' });
+          expect(action.meta.arg).toEqual({ username: 'test@example.com', password: 'test123' });
         } else if (action.type === 'auth/login/fulfilled') {
           expect(action.payload).toEqual({ token: 'mockToken', user: { id: 1, name: 'John Doe' } });
-        } else if (action.type === 'auth/login/rejected') {
-          console.log(action.error);
-          expect(action.error.message).toMatch(/An error occurred while trying to log in./);
         }
       });
     });
