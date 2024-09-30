@@ -67,7 +67,6 @@ describe('Login Page', () => {
 
       return dispatchedThunk((action: any) => {
         // Check if the action contains the expected type
-
         expect(action.type).toMatch(/auth\/login\/pending|rejected|fulfilled/);
         if (action.type === 'auth/login/pending') {
           expect(action.meta.arg).toEqual({ username: 'test@example.com', password: 'test123' });
