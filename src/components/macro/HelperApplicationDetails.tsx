@@ -70,7 +70,7 @@ const HelperApplicationDetails = ({ helperApplication }: HelperApplicationDetail
     >
       <div className='flex flex-row justify-between items-start'></div>
       <h1 className='text-lg font-bold'>
-        {fullname} <span className='font-normal'>veux vous aider !</span>
+        {fullname} <span className='font-normal'>want to help you!</span>
       </h1>
       <p className='text-base '>{helpRequest?.subject}</p>
       <p className={`text-sm ${color}`}>{helperApplication.status}</p>
