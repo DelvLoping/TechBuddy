@@ -1,11 +1,12 @@
 // src/app/api/evaluation/route.ts
 
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { authenticate } from "../middleware";
-import { ADMIN, RATINGS } from "@/constant";
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { authenticate } from '../middleware';
+import { NextRequestWithUser } from '../type';
+import { ADMIN, RATINGS } from '@/constant';
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
@@ -22,27 +23,24 @@ export async function GET(req: NextRequest) {
         where: {
           OR: [
             {
-              evaluatorId: user.id,
+              evaluatorId: user.id
             },
             {
-              evaluateeId: user.id,
-            },
-          ],
-        },
+              evaluateeId: user.id
+            }
+          ]
+        }
       });
     }
 
     return NextResponse.json({ evaluations }, { status: 200 });
   } catch (error) {
-    console.error("Error fetching evaluations:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error('Error fetching evaluations:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
@@ -54,18 +52,15 @@ export async function POST(req: NextRequest) {
 
     if (!requestId || !evaluateeId || !rating) {
       return NextResponse.json(
-        { message: "Request ID, evaluatee ID and rating are required" },
+        { message: 'Request ID, evaluatee ID and rating are required' },
         { status: 400 }
       );
     }
     if (!RATINGS[rating]) {
-      return NextResponse.json({ message: "Invalid rating" }, { status: 400 });
+      return NextResponse.json({ message: 'Invalid rating' }, { status: 400 });
     }
     if (user.id === Number(evaluateeId)) {
-      return NextResponse.json(
-        { message: "You can't evaluate yourself" },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: "You can't evaluate yourself" }, { status: 400 });
     }
 
     const evaluation = await prisma.evaluation.create({
@@ -74,16 +69,13 @@ export async function POST(req: NextRequest) {
         evaluatorId: user.id,
         evaluateeId: Number(evaluateeId),
         rating: rating,
-        comment,
-      },
+        comment
+      }
     });
 
     return NextResponse.json({ evaluation }, { status: 201 });
   } catch (error) {
-    console.error("Error creating evaluation:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error('Error creating evaluation:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }

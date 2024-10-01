@@ -1,11 +1,12 @@
 // src/app/api/user/route.ts
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { authenticate } from '../middleware';
+import { NextRequestWithUser } from '../type';
 import { ADMIN } from '@/constant';
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequestWithUser) {
   try {
     const authFailed = await authenticate(req);
     if (authFailed) {
@@ -32,7 +33,6 @@ export async function GET(req: NextRequest) {
         applications: true,
         chatsAsUser1: true,
         chatsAsUser2: true,
-        messages: true,
         evaluationsGiven: true,
         evaluationsReceived: true,
         aiChats: true,

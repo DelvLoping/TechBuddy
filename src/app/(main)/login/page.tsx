@@ -5,7 +5,7 @@ import { login } from "@/lib/redux/slices/user";
 import { useDispatch } from "react-redux";
 
 export default function Page() {
-  const dispatch = useDispatch();
+  const dispatch: any = useDispatch();
   const submit = async (formData: any) => {
     dispatch(login(formData));
   };

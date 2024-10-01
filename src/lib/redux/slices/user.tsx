@@ -103,6 +103,7 @@ const logout = createAsyncThunk<
         Authorization: `Bearer ${jwt}`,
       },
     });
+    return { message: "Logged out successfully" }; // Ensure a successful return type
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (
@@ -117,7 +118,9 @@ const logout = createAsyncThunk<
         });
       }
     } else {
-      throw new Error("different error than axios");
+      return rejectWithValue({
+        message: "A non-Axios error occurred while trying to log out.",
+      });
     }
   }
 });
@@ -156,7 +159,7 @@ export const userSlice = createSlice({
       }
     });
     builder.addCase(login.rejected, (state, action) => {
-      state.error = action.payload?.message;
+      state.error = action.payload?.message || null;
     });
     builder.addCase(register.fulfilled, (state, action) => {
       const { user, token } = action.payload;
@@ -169,7 +172,7 @@ export const userSlice = createSlice({
       }
     });
     builder.addCase(register.rejected, (state, action) => {
-      state.error = action.payload?.message;
+      state.error = action.payload?.message || null;
     });
   },
 });

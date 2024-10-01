@@ -1,11 +1,12 @@
 // src/app/api/ai-message/[id]/route.ts
 
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
-import { authenticate } from "../../middleware";
-import { ADMIN } from "@/constant";
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { authenticate } from '../../middleware';
+import { ADMIN } from '@/constant';
+import { NextRequestWithUser } from '../../type';
 
-export async function GET(req: NextRequest, { params }) {
+export async function GET(req: NextRequestWithUser, { params }) {
   try {
     const { id } = params;
     const authFailed = await authenticate(req);
@@ -16,44 +17,38 @@ export async function GET(req: NextRequest, { params }) {
 
     const aIMessage = await prisma.aIMessage.findUnique({
       where: {
-        id: Number(id),
-      },
+        id: Number(id)
+      }
     });
 
     const aIChat = await prisma.aIChat.findUnique({
       where: {
-        id: aIMessage?.aiChatId,
+        id: aIMessage?.aiChatId
       },
       select: {
-        userId: true,
-      },
+        userId: true
+      }
     });
 
     if (!aIMessage || !aIChat) {
-      return NextResponse.json(
-        { message: "aIMessages not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: 'aIMessages not found' }, { status: 404 });
     }
 
     if (aIChat.userId !== user.id && user.type !== ADMIN) {
       return NextResponse.json(
-        { message: "You are not authorized to view this ai message" },
+        { message: 'You are not authorized to view this ai message' },
         { status: 403 }
       );
     }
 
     return NextResponse.json({ aIMessage }, { status: 200 });
   } catch (error) {
-    console.error("Error fetching ai messages:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error('Error fetching ai messages:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }
 
-export async function PUT(req: NextRequest, { params }) {
+export async function PUT(req: NextRequestWithUser, { params }) {
   try {
     const { id } = params;
     const authFailed = await authenticate(req);
@@ -65,64 +60,55 @@ export async function PUT(req: NextRequest, { params }) {
     const user = req.user;
 
     if (!content) {
-      return NextResponse.json(
-        { message: "Content is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: 'Content is required' }, { status: 400 });
     }
 
     const oldAIMessage = await prisma.aIMessage.findUnique({
       where: {
-        id: Number(id),
+        id: Number(id)
       },
       select: {
-        aiChatId: true,
-      },
+        aiChatId: true
+      }
     });
 
     const aIChat = await prisma.aIChat.findUnique({
       where: {
-        id: oldAIMessage?.aiChatId,
+        id: oldAIMessage?.aiChatId
       },
       select: {
-        userId: true,
-      },
+        userId: true
+      }
     });
 
     if (!oldAIMessage || !aIChat) {
-      return NextResponse.json(
-        { message: "aIMessages not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: 'aIMessages not found' }, { status: 404 });
     }
 
     if (aIChat.userId !== user.id && user.type !== ADMIN) {
       return NextResponse.json(
-        { message: "You are not authorized to edit this ai message" },
+        { message: 'You are not authorized to edit this ai message' },
         { status: 403 }
       );
     }
 
     const aIMessage = await prisma.aIMessage.update({
       where: {
-        id: Number(id),
+        id: Number(id)
       },
       data: {
-        content,
-      },
+        content
+      }
     });
 
     return NextResponse.json({ aIMessage }, { status: 200 });
   } catch (error) {
-    console.error("Error creating ai message:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error('Error creating ai message:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }
 
-export async function DELETE(req: NextRequest, { params }) {
+export async function DELETE(req: NextRequestWithUser, { params }) {
   try {
     const { id } = params;
     const authFailed = await authenticate(req);
@@ -134,48 +120,42 @@ export async function DELETE(req: NextRequest, { params }) {
 
     const oldAIMessage = await prisma.aIMessage.findUnique({
       where: {
-        id: Number(id),
+        id: Number(id)
       },
       select: {
-        aiChatId: true,
-      },
+        aiChatId: true
+      }
     });
 
     const aIChat = await prisma.aIChat.findUnique({
       where: {
-        id: oldAIMessage?.aiChatId,
+        id: oldAIMessage?.aiChatId
       },
       select: {
-        userId: true,
-      },
+        userId: true
+      }
     });
 
     if (!oldAIMessage || !aIChat) {
-      return NextResponse.json(
-        { message: "aIMessages not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: 'aIMessages not found' }, { status: 404 });
     }
 
     if (aIChat.userId !== user.id && user.type !== ADMIN) {
       return NextResponse.json(
-        { message: "You are not authorized to delete this ai message" },
+        { message: 'You are not authorized to delete this ai message' },
         { status: 403 }
       );
     }
 
     await prisma.aIMessage.delete({
       where: {
-        id: Number(id),
-      },
+        id: Number(id)
+      }
     });
 
-    return NextResponse.json({ message: "aIMessage deleted" }, { status: 200 });
+    return NextResponse.json({ message: 'aIMessage deleted' }, { status: 200 });
   } catch (error) {
-    console.error("Error deleting ai message:", error);
-    return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
-    );
+    console.error('Error deleting ai message:', error);
+    return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
   }
 }

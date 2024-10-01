@@ -1,60 +1,27 @@
 'use client';
-import Image from 'next/image';
+import { useSelector } from 'react-redux';
+import _ from 'lodash';
+import HomeHelper from '@/components/macro/Home/HomeHelper';
+import HomeTechBuddy from '@/components/macro/Home/HomeTechBuddy';
 
-export default function Home() {
+export default function Dashboard() {
+  const userReducer = useSelector((state: any) => state.user);
+  const helperApplicationReducer = useSelector((state: any) => state.helperApplication);
+  const { helperApplication } = helperApplicationReducer || {};
+  const { user } = userReducer || {};
+  const { type } = user || {};
+  const helpRequestsReducer = useSelector((state: any) => state.helpRequests);
+  const { helpRequests } = helpRequestsReducer || {};
+  const isTechBuddy = type === 'TECHBUDDY';
   return (
-    <>
-      <head>
-        <title>TechBuddy | Home</title>
-        <meta
-          name='description'
-          content='TechBuddy is a elderly care platform that connects seniors with tech-savvy volunteers.'
-        />
-      </head>
-      <main className='flex h-full w-full flex-col items-center '>
-        <ul>
-          <li>
-            {' '}
-            <p className='font-bold text-blue-500/40'>TTTTTTTT</p>{' '}
-            <span className='font-bold text-primary'>OOOOOOO</span>
-          </li>
-          <li>
-            {' '}
-            <p className='font-bold text-gray-600/40'>TTTTTTTT</p>{' '}
-            <span className='font-bold text-secondary'>OOOOOOO</span>
-          </li>
-          <li>
-            {' '}
-            <p className='font-bold text-green-500/40'>TTTTTTTT</p>{' '}
-            <span className='font-bold text-success'>OOOOOOO</span>
-          </li>
-          <li>
-            {' '}
-            <p className='font-bold text-cyan-500/40'>TTTTTTTT</p>{' '}
-            <span className='font-bold text-info'>OOOOOOO</span>
-          </li>
-          <li>
-            {' '}
-            <p className='font-bold text-yellow-500/40'>TTTTTTTT</p>{' '}
-            <span className='font-bold text-warning'>OOOOOOO</span>
-          </li>
-          <li>
-            {' '}
-            <p className='font-bold text-red-500/40'>TTTTTTTT</p>{' '}
-            <span className='font-bold text-danger'>OOOOOOO</span>
-          </li>
-          <li>
-            {' '}
-            <p className='font-bold text-gray-100/40'>TTTTTTTT</p>{' '}
-            <span className='font-bold text-light'>OOOOOOO</span>
-          </li>
-          <li>
-            {' '}
-            <p className='font-bold text-gray-900/40'>TTTTTTTT</p>{' '}
-            <span className='font-bold text-dark'>OOOOOOO</span>
-          </li>
-        </ul>
-      </main>
-    </>
+    <div className='w-full flex flex-col'>
+      <div className='flex flex-col gap-8 w-full'>
+        {isTechBuddy ? (
+          <HomeTechBuddy helpRequests={helpRequests} helperApplication={helperApplication} />
+        ) : (
+          <HomeHelper helpRequests={helpRequests} />
+        )}
+      </div>
+    </div>
   );
 }

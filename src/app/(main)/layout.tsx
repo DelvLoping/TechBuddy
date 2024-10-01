@@ -1,30 +1,33 @@
 'use client';
 import { setJWT, setUser } from '@/lib/redux/slices/user';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { use, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import axiosInstance from '@/lib/axiosInstance';
 import _ from 'lodash';
-import Chat from '@/components/websocket/Chat';
 import Navbar from '@/components/macro/Navbar';
+import { reloadChats, setChats } from '@/lib/redux/slices/chats';
+import { Spinner } from '@nextui-org/react';
+import { reloadHelpRequests, setHelpRequests } from '@/lib/redux/slices/helpRequests';
+import { IoArrowBack } from 'react-icons/io5';
+import { ToastContainer } from 'react-toastify';
+import { reloadHelperApplication } from '@/lib/redux/slices/helperApplication';
+import 'react-toastify/dist/ReactToastify.min.css';
+import WebSocketChat from '@/components/websocket/WebSocketChat';
+import Link from 'next/link';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const useReducer = useSelector((state) => state.user);
+  const useReducer = useSelector((state: any) => state.user);
   const { jwt: jwtRedux, user } = useReducer;
-  const dispatch = useDispatch();
+  const dispatch: any = useDispatch();
 
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
     if (jwt && !jwtRedux) {
       dispatch(setJWT(jwt));
-      if (!user) {
-        axiosInstance.get('/user/current').then((res) => {
-          dispatch(setUser(res.data));
-        });
-      }
     }
     if (pathname === '/login' || pathname === '/register') {
       if (jwt) {
@@ -37,52 +40,72 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }
   }, [useReducer, pathname]);
 
-  const navbarVisible = pathname !== '/login' && pathname !== '/register' && pathname !== '/logout';
+  useEffect(() => {
+    if (!user && jwtRedux) {
+      axiosInstance.get('/user/current').then((res) => {
+        dispatch(setUser(res.data));
+      });
+      dispatch(reloadChats());
+      dispatch(reloadHelpRequests());
+      dispatch(reloadHelperApplication());
+    }
+  }, [user, pathname, jwtRedux]);
+
+  const navbarVisible =
+    pathname !== '/login' &&
+    pathname !== '/register' &&
+    pathname !== '/logout' &&
+    pathname !== '/chat-ai';
 
   const pathSegments = pathname.split('/').filter((segment) => segment);
 
-  const renderBreadcrumb = () => {
-    if (pathSegments.length < 2) return null;
+  const goBack = () => {
+    if (pathSegments.length < 1) return null;
 
-    const breadcrumb = pathSegments.map((segment, index) => {
-      const href = '/' + pathSegments.slice(0, index + 1).join('/');
-      const isLast = index === pathSegments.length - 1;
-      return (
-        <span key={href} className={`mr-2 text-primary ${isLast && 'font-bold'}`}>
-          {!isLast ? (
-            <a href={href} className='hover:underline'>
-              {segment}
-            </a>
-          ) : (
-            segment
-          )}
-          {!isLast && ' / '}
-        </span>
-      );
-    });
-
-    return <div className='w-full flex flex-row items-start ms-2 mb-4'>{breadcrumb}</div>;
+    return (
+      <div
+        className='w-full flex flex-row items-center ms-2 mb-4 cursor-pointer text-primary gap-1 font-semibold'
+        onClick={() => router.back()}
+      >
+        <IoArrowBack className='stroke-2' />
+        <p>Back</p>
+      </div>
+    );
   };
 
   return (
-    <div className='min-h-screen flex flex-col h-full'>
-      {navbarVisible && <Navbar />}
-      <div
-        className={`flex justify-center items-center flex-col p-4 lg:p-8 ${
-          navbarVisible ? '!pt-24' : 'h-screen'
-        }`}
-      >
-        {navbarVisible && renderBreadcrumb()}
-        {children}
-        {navbarVisible && <Chat isShow={false} />}
+    <>
+      <header>
+        <title>TechBuddy</title>
+        <meta name='description' content='TechBuddy' />
+      </header>
+      <div className='min-h-screen flex flex-col h-full flex flex-col justify-between'>
+        {navbarVisible && <Navbar />}
+        <div
+          className={`flex justify-center items-center flex-col p-4 lg:p-8 ${
+            navbarVisible ? '!pt-28' : 'h-screen'
+          }`}
+        >
+          {navbarVisible && goBack()}
+          {navbarVisible && _.isEmpty(user) ? <Spinner color='primary' /> : children}
+          {navbarVisible && <WebSocketChat isShow={false} />}
+        </div>
+        <ToastContainer />
+        <footer
+          className={`${
+            !navbarVisible && 'hidden'
+          } w-full bg-primary border-t border-gray-200 p-4 text-center mt-auto `}
+        >
+          <div className='flex flex-col gap-4 justify-center'>
+            <div className='w-full flex flex-row justify-center gap-4 text-white p-4 whitespace-nowrap flex-wrap'>
+              <Link href='/'>Home</Link> |
+              <Link href='/terms-and-conditions'>Terms and Conditions</Link> |
+              <Link href='/privacy-policy'>Privacy Policy</Link> |<Link href='/cookie'>Cookie</Link>
+            </div>
+            <p className='text-white'>TechBuddy © {moment().format('YYYY')}</p>
+          </div>
+        </footer>
       </div>
-      <footer
-        className={`${
-          !navbarVisible && 'hidden'
-        } w-full bg-primary border-t border-gray-200 p-4 text-center mt-auto`}
-      >
-        <p className='text-white'>TechBuddy © {moment().format('YYYY')}</p>
-      </footer>
-    </div>
+    </>
   );
 }
