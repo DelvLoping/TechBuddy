@@ -6,9 +6,29 @@ on:
       - prod
 
 jobs:
-  build:
-    name: Build Docker image
+  test:
+    name: Install and Test
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test 
+
+  build:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    needs: test
 
     steps:
       - name: Checkout repository
@@ -31,6 +51,12 @@ jobs:
           push: true
           tags: '${{ secrets.DOCKER_USERNAME }}/techbuddy:latest'
 
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build  
+
+    steps:
       - name: Deploy to production server
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -56,7 +82,7 @@ jobs:
                   DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:5432/techbuddy
                   JWT_SECRET: ${{ secrets.JWT_SECRET }}
                   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-                  
+
               websocket:
                 image: ${{ secrets.DOCKER_USERNAME }}/techbuddy:latest
                 command: node server.js
