@@ -75,6 +75,8 @@ const ChatComponent = ({
   const [showSidebar, setShowSidebar] = useState(true);
   const messagesEndRef = useRef(null);
   const [messageInput, setMessageInput] = useState('');
+  const [chatHeight, setChatHeight] = useState('100vh');
+
   const router = useRouter();
   useEffect(() => {
     const handleResize = () => {
@@ -135,11 +137,28 @@ const ChatComponent = ({
     setMessageInput('');
   };
 
+  useEffect(() => {
+    const handleResize = () => {
+      const height = window.innerHeight;
+      setChatHeight(`${height}px`);
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <>
       {(isShow || show) && (
         <div
-          className={`flex flex-row items-center sm:h-[35rem] sm:w-[29rem] top-0 left-0 h-screen w-screen z-[99999] sm:flex ${className}`}
+          id='chat-id'
+          style={{ height: chatHeight }}
+          className={`flex flex-row items-center sm:h-[35rem] sm:w-[29rem] top-0 left-0 w-screen z-[99999] sm:flex ${className}`}
         >
           <div
             className={`h-full ${
@@ -243,7 +262,7 @@ const ChatComponent = ({
               onSubmit={handleSendMessage}
             >
               <textarea
-                className={`w-full p-2 rounded-lg border border-gray-300 resize-none text-gray-900 text-sm focus:outline-none ${
+                className={`w-full p-2 rounded-lg border border-gray-300 resize-none text-gray-900 text-base focus:outline-none ${
                   !messageInput ? 'h-10' : 'h-auto'
                 } ${inputClassName}`}
                 value={messageInput}

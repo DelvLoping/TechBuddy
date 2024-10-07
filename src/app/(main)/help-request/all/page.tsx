@@ -67,13 +67,13 @@ export default function HelpRequestsPage() {
             placeholder='Search'
             value={filters.search}
             onChange={handleFilterChange}
-            className='p-2 border rounded-large mr-2'
+            className='p-2 border rounded-large mr-2 text-base'
           />
           <select
             name='status'
             value={filters.status}
             onChange={handleFilterChange}
-            className='p-2 border rounded-large m-2'
+            className='p-2 border rounded-large m-2 text-base'
           >
             {_.map(statusOptions, (status) => (
               <option key={status.value} value={status.value}>
@@ -85,7 +85,7 @@ export default function HelpRequestsPage() {
             name='interventionType'
             value={filters.interventionType}
             onChange={handleFilterChange}
-            className='p-2 border rounded-large m-2'
+            className='p-2 border rounded-large m-2 text-base'
           >
             <option value=''>All Types</option>
             <option value='IN_PERSON'>In Person</option>
@@ -95,7 +95,7 @@ export default function HelpRequestsPage() {
             name='sortOrder'
             value={filters.sortOrder}
             onChange={handleFilterChange}
-            className='p-2 border rounded-large m-2'
+            className='p-2 border rounded-large m-2 text-base'
           >
             <option value='asc'>Sort Ascending</option>
             <option value='desc'>Sort Descending</option>

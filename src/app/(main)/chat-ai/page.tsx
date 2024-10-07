@@ -142,9 +142,9 @@ export default function Page() {
   };
 
   return (
-    <div className='fixed !w-screen !h-screen !p-0'>
+    <div className='fixed !w-screen h-screen !p-0'>
       <ChatComponent
-        className='!w-full !h-full'
+        className='!w-full'
         sidebarClassName='!w-[15%] !min-w-[10rem] !rounded-none'
         messagesDivClassName='!rounded-none'
         formClassName='!p-10 !justify-center !bg-transparent'

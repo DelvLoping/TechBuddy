@@ -52,12 +52,14 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
   }, [id]);
 
   let color = '';
+  let closed = false;
   switch (helpRequest.status) {
     case 'OPEN':
       color = 'text-primary';
       break;
     case 'COMPLETED':
       color = 'text-success';
+      closed = true;
       break;
     case 'IN_PROGRESS':
       color = 'text-warning';
@@ -134,7 +136,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
             <span className='underline'>Status</span> : <span className={`${color}`}>{status}</span>
           </p>
         </div>
-        {interventionType === 'VIRTUAL' && chat && (
+        {interventionType === 'VIRTUAL' && chat && !closed && (
           <div className='flex flex-row items-center justify-center sm:justify-end w-full gap-2'>
             <Button
               className='bg-white text-primary border border-primary p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit text-sm:text-base'
@@ -175,7 +177,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
                 <MdDelete className='h-4 w-4 sm:h-5 sm:w-5' />
                 Delete
               </Button>
-              {helpRequest.status === 'COMPLETED' ? null : (
+              {closed ? null : (
                 <Button
                   className='bg-success text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit text-sm:text-base'
                   onClick={markAsCompleted}
@@ -185,8 +187,11 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
                 </Button>
               )}
               <Button
-                className='bg-primary text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit text-sm:text-base'
+                className={`bg-primary text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit text-sm:text-base ${
+                  closed && 'opacity-50 cursor-not-allowed'
+                }`}
                 onClick={() => router.push(`/help-request/${id}`)}
+                disabled={closed}
               >
                 <FaPen className='h-4 w-4 sm:h-5 sm:w-5' />
                 Edit
@@ -195,7 +200,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
           )}
         </>
       )}
-      {!isOwner && user.type !== 'TECHBUDDY' && (
+      {!isOwner && user.type !== 'TECHBUDDY' && !closed && (
         <div className='flex flex-row items-center justify-center w-full gap-2'>
           {isAlreadyApplied ? (
             <div className='text-sm sm:text-base text-success flex flex-row items-center gap-2'>

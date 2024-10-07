@@ -78,8 +78,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <header>
         <title>TechBuddy</title>
         <meta name='description' content='TechBuddy' />
+        <meta
+          name='viewport'
+          content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
+        />
       </header>
-      <div className='min-h-screen flex flex-col h-full flex flex-col justify-between'>
+      <div className='min-h-screen flex flex-col h-full justify-between'>
         {navbarVisible && <Navbar />}
         <div
           className={`flex justify-center items-center flex-col p-4 lg:p-8 ${
