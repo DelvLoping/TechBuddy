@@ -62,32 +62,6 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
                 helpRequest.applications,
                 (apply) => apply.helperId === chat.user2Id
               );
-              console.log(
-                'helpRequest',
-                helpRequest.interventionDate,
-
-                moment(helpRequest.interventionDate).isBefore(moment())
-              );
-              console.log(
-                moment(helpRequest.interventionDate).utc().isBefore(moment()),
-                helpRequest.status !== 'COMPLETED',
-                helperApply.status === 'ACCEPTED'
-              );
-              console.log(
-                'interventionDate',
-                moment(helpRequest.interventionDate),
-                moment(helpRequest.interventionDate).format(),
-                moment(helpRequest.interventionDate).utc(),
-                moment.utc(helpRequest.interventionDate),
-                moment(helpRequest.interventionDate).utc().format()
-              );
-              console.log(
-                'now',
-                moment(),
-                moment().format,
-                moment().utc(),
-                moment().utc().format()
-              );
               if (
                 moment.utc(helpRequest.interventionDate).isBefore(moment().utc()) &&
                 helpRequest.status !== 'COMPLETED' &&
