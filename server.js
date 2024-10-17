@@ -27,8 +27,14 @@ const io = new Server(server, {
   }
 });
 
+const userSocketMap = {};
+
 io.on('connection', (socket) => {
   const userChannels = new Set();
+
+  socket.on('registerUser', (userId) => {
+    userSocketMap[userId] = socket.id;
+  });
 
   socket.on('joinChat', async (chatId, userId) => {
     const chat = await prisma.chat.findFirst({
@@ -76,7 +82,26 @@ io.on('connection', (socket) => {
     io.to(chatId).to(chatId).emit('typing', { userId, isTyping });
   });
 
+  socket.on('sendUpdate', (userIds) => {
+    try {
+      userIds.forEach((userId) => {
+        const targetSocketId = userSocketMap[userId];
+        if (targetSocketId) {
+          io.to(targetSocketId).emit('update');
+        }
+      });
+    } catch (error) {
+      console.error('Error sending update:', error);
+    }
+  });
+
   socket.on('disconnect', () => {
+    for (const userId in userSocketMap) {
+      if (userSocketMap[userId] === socket.id) {
+        delete userSocketMap[userId];
+        break;
+      }
+    }
     userChannels.clear();
   });
 });

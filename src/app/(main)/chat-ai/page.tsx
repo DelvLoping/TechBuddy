@@ -134,7 +134,6 @@ export default function Page() {
         setTypingStatus('');
       }
     } catch (err: any) {
-      console.log(err);
       toast.error('Error sending message');
     } finally {
       setLoading(false);

@@ -26,7 +26,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
     subject: undefined,
     description: undefined,
     interventionType: VIRTUAL,
-    interventionDate: undefined,
+    interventionDate: moment().format('YYYY-MM-DD HH:mm'),
     reward: undefined,
     interventionAddress: {
       street: undefined,

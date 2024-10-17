@@ -13,15 +13,16 @@ import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import { HiOutlineVideoCamera } from 'react-icons/hi2';
 import { MdAdsClick } from 'react-icons/md';
-import { reloadHelperApplication } from '@/lib/redux/slices/helperApplication';
+import { io } from 'socket.io-client';
+import { useSocket } from '../websocket/socketContext';
 
 type HelpRequestDetailsProps = {
   helpRequest: HelpRequest & {
     interventionAddress?: Address | null;
   };
+  callback?: () => void;
 };
-const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
-  const dispatch: any = useDispatch();
+const HelpRequestDetails = ({ helpRequest, callback }: HelpRequestDetailsProps) => {
   const router = useRouter();
   const helperApplicationReducer = useSelector((state: any) => state.helperApplication);
   const { helperApplication } = helperApplicationReducer || {};
@@ -41,15 +42,26 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
   } = helpRequest;
   const [chat, setChat] = useState<Chat | null>(null);
   const isOwner = user.id === userId;
+  const socket = useSocket();
+
   useEffect(() => {
-    if (id) {
+    if (id && status === 'IN_PROGRESS') {
       axiosInstance.get(`/chat?helpRequestId=${id}`).then((res) => {
         if (res.data) {
           setChat(res.data.chats[0]);
         }
       });
     }
-  }, [id]);
+  }, [helpRequest]);
+
+  const handleEmitUpdate = async () => {
+    const getHelperIds = _.filter(
+      helperApplication,
+      (application: HelperApplication) => application.requestId === id
+    ).map((application: HelperApplication) => application.helperId);
+    const relatedUserIds = [helpRequest.userId, user.id, ...getHelperIds];
+    socket.emit('sendUpdate', relatedUserIds);
+  };
 
   let color = '';
   let closed = false;
@@ -68,7 +80,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
   const deleteHelpRequest = async () => {
     try {
       await axiosInstance.delete(`/help-request/${id}`);
-      dispatch(reloadHelpRequests());
+      handleEmitUpdate();
       toast.success('Help request deleted successfully');
     } catch (error) {
       toast.error('Failed to delete help request');
@@ -78,7 +90,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
   const markAsCompleted = async () => {
     try {
       await axiosInstance.put(`/help-request/${id}`, { status: 'COMPLETED' });
-      dispatch(reloadHelpRequests());
+      handleEmitUpdate();
       toast.success('Help request marked as completed');
     } catch (error) {
       toast.error('Failed to mark help request as completed');
@@ -88,7 +100,10 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
     try {
       await axiosInstance.post(`/helper-application`, { requestId: id });
       toast.success('Applied successfully');
-      dispatch(reloadHelperApplication());
+      handleEmitUpdate();
+      if (callback) {
+        callback();
+      }
     } catch (error) {
       toast.error('Failed to apply');
     }
@@ -157,7 +172,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
       {user.id === userId && (
         <>
           <p className='text-sm sm:text-base'>
-            <span className=''>Intervention Date</span> : {moment(interventionDate).format('ll')}
+            <span className=''>Intervention Date</span> : {moment(interventionDate).format('lll')}
           </p>
           <p className='text-sm sm:text-base'>
             <span className=''>Intervention Type</span> :{' '}

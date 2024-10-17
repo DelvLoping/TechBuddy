@@ -16,6 +16,8 @@ import { reloadHelperApplication } from '@/lib/redux/slices/helperApplication';
 import 'react-toastify/dist/ReactToastify.min.css';
 import WebSocketChat from '@/components/websocket/WebSocketChat';
 import Link from 'next/link';
+import { SocketProvider } from '@/components/websocket/socketContext';
+import { WebsocketDaemon } from '@/components/websocket/WebsocketDaemon';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -83,33 +85,38 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
         />
       </header>
-      <div className='min-h-screen flex flex-col h-full justify-between'>
-        {navbarVisible && <Navbar />}
-        <div
-          className={`flex justify-center items-center flex-col p-4 lg:p-8 ${
-            navbarVisible ? '!pt-28' : 'h-screen'
-          }`}
-        >
-          {navbarVisible && goBack()}
-          {navbarVisible && _.isEmpty(user) ? <Spinner color='primary' /> : children}
-          {navbarVisible && <WebSocketChat isShow={false} />}
-        </div>
-        <ToastContainer />
-        <footer
-          className={`${
-            !navbarVisible && 'hidden'
-          } w-full bg-primary border-t border-gray-200 p-4 text-center mt-auto `}
-        >
-          <div className='flex flex-col gap-4 justify-center'>
-            <div className='w-full flex flex-row justify-center gap-4 text-white p-4 whitespace-nowrap flex-wrap'>
-              <Link href='/'>Home</Link> |
-              <Link href='/terms-and-conditions'>Terms and Conditions</Link> |
-              <Link href='/privacy-policy'>Privacy Policy</Link> |<Link href='/cookie'>Cookie</Link>
-            </div>
-            <p className='text-white'>TechBuddy © {moment().format('YYYY')}</p>
+
+      <SocketProvider>
+        <WebsocketDaemon />
+        <div className='min-h-screen flex flex-col h-full justify-between'>
+          {navbarVisible && <Navbar />}
+          <div
+            className={`flex justify-center items-center flex-col p-4 lg:p-8 ${
+              navbarVisible ? '!pt-28' : 'h-screen'
+            }`}
+          >
+            {navbarVisible && goBack()}
+            {navbarVisible && _.isEmpty(user) ? <Spinner color='primary' /> : children}
+            {navbarVisible && <WebSocketChat isShow={false} />}
           </div>
-        </footer>
-      </div>
+          <ToastContainer />
+          <footer
+            className={`${
+              !navbarVisible && 'hidden'
+            } w-full bg-primary border-t border-gray-200 p-4 text-center mt-auto `}
+          >
+            <div className='flex flex-col gap-4 justify-center'>
+              <div className='w-full flex flex-row justify-center gap-4 text-white p-4 whitespace-nowrap flex-wrap'>
+                <Link href='/'>Home</Link> |
+                <Link href='/terms-and-conditions'>Terms and Conditions</Link> |
+                <Link href='/privacy-policy'>Privacy Policy</Link> |
+                <Link href='/cookie'>Cookie</Link>
+              </div>
+              <p className='text-white'>TechBuddy © {moment().format('YYYY')}</p>
+            </div>
+          </footer>
+        </div>
+      </SocketProvider>
     </>
   );
 }
