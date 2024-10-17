@@ -75,6 +75,11 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
                 helpRequest.status !== 'COMPLETED',
                 helperApply.status === 'ACCEPTED'
               );
+              console.log(
+                moment(helpRequest.interventionDate).utc(),
+                moment(helpRequest.interventionDate).utc().format()
+              );
+              console.log(moment().utc(), moment(helpRequest.interventionDate).utc().format());
               if (
                 moment(helpRequest.interventionDate).utc().isBefore(moment().utc()) &&
                 helpRequest.status !== 'COMPLETED' &&
