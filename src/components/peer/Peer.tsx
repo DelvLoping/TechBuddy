@@ -79,7 +79,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
                 moment(helpRequest.interventionDate).utc(),
                 moment(helpRequest.interventionDate).utc().format()
               );
-              console.log(moment().utc(), moment(helpRequest.interventionDate).utc().format());
+              console.log(moment().utc(), moment().utc().format());
               if (
                 moment(helpRequest.interventionDate).utc().isBefore(moment().utc()) &&
                 helpRequest.status !== 'COMPLETED' &&
