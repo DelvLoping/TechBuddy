@@ -60,6 +60,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+    formData.interventionDate = moment(formData.interventionDate).utc().format();
     e.preventDefault();
     try {
       if (isEdit) {
