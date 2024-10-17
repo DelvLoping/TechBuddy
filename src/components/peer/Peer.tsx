@@ -78,6 +78,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
                 moment(helpRequest.interventionDate),
                 moment(helpRequest.interventionDate).format(),
                 moment(helpRequest.interventionDate).utc(),
+                moment.utc(helpRequest.interventionDate),
                 moment(helpRequest.interventionDate).utc().format()
               );
               console.log(
@@ -88,7 +89,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
                 moment().utc().format()
               );
               if (
-                moment(helpRequest.interventionDate).isBefore(moment().format()) &&
+                moment.utc(helpRequest.interventionDate).isBefore(moment().utc()) &&
                 helpRequest.status !== 'COMPLETED' &&
                 helperApply.status === 'ACCEPTED'
               ) {
