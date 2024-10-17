@@ -53,7 +53,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
       const users = [chat.user1Id, chat.user2Id];
       if (users.includes(user.id)) {
         setIsAuthorized(true);
-        const req = axiosInstance
+        axiosInstance
           .get(`/help-request/${chat.requestId}`)
           .then((res) => {
             if (res.data) {
@@ -62,8 +62,16 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
                 helpRequest.applications,
                 (apply) => apply.helperId === chat.user2Id
               );
+              console.log(
+                'helpRequest',
+                helpRequest.interventionDate,
+
+                moment(helpRequest.interventionDate).isBefore(moment())
+              );
+              console.log(moment(helpRequest.interventionDate).format());
+              console.log(moment().format());
               if (
-                moment(helpRequest.interventionDate).isBefore(moment()) &&
+                moment(helpRequest.interventionDate).utc().isBefore(moment().utc()) &&
                 helpRequest.status !== 'COMPLETED' &&
                 helperApply.status === 'ACCEPTED'
               ) {
@@ -123,17 +131,19 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
 
           if (peerIdToCall) {
             const call = newPeer.call(peerIdToCall, stream);
-            setCurrentCall(call);
+            if (call) {
+              setCurrentCall(call);
 
-            call.on('stream', (remoteStream) => {
-              if (remoteVideoRef.current) {
-                remoteVideoRef.current.srcObject = remoteStream;
-                setIsRemoteStreamActive(true);
-              }
-            });
-            call.on('close', () => {
-              setIsRemoteStreamActive(false);
-            });
+              call.on('stream', (remoteStream) => {
+                if (remoteVideoRef.current) {
+                  remoteVideoRef.current.srcObject = remoteStream;
+                  setIsRemoteStreamActive(true);
+                }
+              });
+              call.on('close', () => {
+                setIsRemoteStreamActive(false);
+              });
+            }
           }
         })
         .catch((err) => {
