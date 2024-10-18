@@ -168,7 +168,7 @@ export default function AuthForm({
           </div>
         </>
       )}
-      <div className='flex flex-row items-start justify-center gap-4 w-full mb-4 flex-wrap'>
+      <div className='flex flex-col items-center justify-center gap-4 w-full mb-4 flex-wrap'>
         {error && <p className='w-full text-danger text-center'>{error}</p>}
         <Button
           type='submit'
@@ -179,19 +179,22 @@ export default function AuthForm({
           {loading ? <Spinner color='white' /> : 'Submit'}
         </Button>
         {register ? (
-          <p className='text-center w-full opacity-50'>
+          <p className='text-center w-full'>
             <span className=' opacity-50'>Already have an account?</span>{' '}
             <Link href='/login'>
               <p className='text-primary'>Login</p>
             </Link>
           </p>
         ) : (
-          <p className='text-center w-full'>
-            <span className=' opacity-50'>Don't have an account?</span>{' '}
+          <div className='flex flex-row gap-2 items-center'>
             <Link href='/register'>
               <p className='text-primary'>Register</p>
+            </Link>{' '}
+            /
+            <Link href='/forgot-password'>
+              <p className='text-secondary'>Forgot Password</p>
             </Link>
-          </p>
+          </div>
         )}
       </div>
     </form>

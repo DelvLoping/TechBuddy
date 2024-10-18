@@ -4,8 +4,11 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { addToValidTokens } from '@/app/api/middleware';
 import { NextRequestWithUser } from '../../type';
+import { sendVerificationMail } from '../../services/mailService';
+import moment from 'moment';
 
 export async function POST(req: NextRequestWithUser) {
   try {
@@ -41,6 +44,8 @@ export async function POST(req: NextRequestWithUser) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+
     const newUser = await prisma.user.create({
       data: {
         email,
@@ -49,9 +54,14 @@ export async function POST(req: NextRequestWithUser) {
         lastname,
         age: parseInt(age) || undefined,
         type,
-        address: addressId ? { connect: { id: addressId } } : undefined
+        address: addressId ? { connect: { id: addressId } } : undefined,
+        verificationToken,
+        verificationTokenExpiry: moment().add(30, 'minutes').toDate()
       }
     });
+
+    const verificationLink = `${process.env.APP_URL}/verify-email?token=${verificationToken}`;
+    await sendVerificationMail(email, verificationLink);
 
     const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET || 'secret', {
       expiresIn: '10d'

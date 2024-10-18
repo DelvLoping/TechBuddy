@@ -25,13 +25,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const useReducer = useSelector((state: any) => state.user);
   const { jwt: jwtRedux, user } = useReducer;
   const dispatch: any = useDispatch();
+  const publicPathnames = ['/login', '/register', '/logout', '/forgot-password', '/reset-password'];
 
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
     if (jwt && !jwtRedux) {
       dispatch(setJWT(jwt));
     }
-    if (pathname === '/login' || pathname === '/register') {
+    if (publicPathnames.includes(pathname)) {
       if (jwt) {
         router.push('/');
       }
@@ -47,17 +48,24 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       axiosInstance.get('/user/current').then((res) => {
         dispatch(setUser(res.data));
       });
-      dispatch(reloadChats());
-      dispatch(reloadHelpRequests());
-      dispatch(reloadHelperApplication());
     }
   }, [user, pathname, jwtRedux]);
 
+  useEffect(() => {
+    if (user) {
+      console.log('user', user, user.emailVerified, pathname, pathname !== '/verify-email');
+      if (user.emailVerified) {
+        dispatch(reloadChats());
+        dispatch(reloadHelpRequests());
+        dispatch(reloadHelperApplication());
+      } else if (pathname !== '/verify-email') {
+        router.push('/verify-email');
+      }
+    }
+  }, [user]);
+
   const navbarVisible =
-    pathname !== '/login' &&
-    pathname !== '/register' &&
-    pathname !== '/logout' &&
-    pathname !== '/chat-ai';
+    !publicPathnames.includes(pathname) && pathname !== '/chat-ai' && pathname !== '/verify-email';
 
   const pathSegments = pathname.split('/').filter((segment) => segment);
 

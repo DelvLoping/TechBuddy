@@ -23,6 +23,11 @@ model User {
   addressId           Int?
   type                UserType            @default(TECHBUDDY)
   signupDate          DateTime            @default(now())
+  emailVerified       Boolean             @default(false)
+  verificationToken   String?
+  verificationTokenExpiry DateTime?
+  resetPasswordToken   String?
+  resetPasswordTokenExpiry DateTime?
   helpRequests        HelpRequest[]
   applications        HelperApplication[]
   chatsAsUser1               Chat[]              @relation("User1Chats")

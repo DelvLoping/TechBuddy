@@ -82,6 +82,8 @@ jobs:
                   DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:5432/techbuddy
                   JWT_SECRET: ${{ secrets.JWT_SECRET }}
                   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+                  NODEMAILER_PW: ${{ secrets.NODEMAILER_PW }}
+                  NODEMAILER_EMAIL: ${{ secrets.NODEMAILER_EMAIL }}
 
               websocket:
                 image: ${{ secrets.DOCKER_USERNAME }}/techbuddy:latest
