@@ -30,9 +30,15 @@ const HelpRequestsList = ({ helpRequests, isTechBuddy }: HelpRequestsListProps) 
                 </Button>
               )}
             </div>
-            {_.map(helpRequests, (request: HelpRequest) => (
-              <HelpRequestDetails key={request.id} helpRequest={request} />
-            ))}
+            {_.isEmpty(helpRequests) ? (
+              <div className='flex flex-row justify-center items-center opacity-50'>
+                <p className='text-sm sm:text-base'>No Help Requests</p>
+              </div>
+            ) : (
+              _.map(helpRequests, (request: HelpRequest) => (
+                <HelpRequestDetails key={request.id} helpRequest={request} />
+              ))
+            )}
           </div>
         </Card>
       </div>

@@ -63,11 +63,13 @@ export default function AuthForm({
           <Input
             label='Email'
             type='email'
+            size='lg'
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           />
           <Input
             label='Password'
+            size='lg'
             type='password'
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -78,17 +80,20 @@ export default function AuthForm({
             <div className='flex flex-col items-center justify-center gap-4 w-60 mb-4'>
               <Input
                 label='First Name'
+                size='lg'
                 value={formData.firstname}
                 onChange={(e) => setFormData({ ...formData, firstname: e.target.value })}
               />
               <Input
                 label='Last Name'
+                size='lg'
                 value={formData.lastname}
                 onChange={(e) => setFormData({ ...formData, lastname: e.target.value })}
               />
               <Input
                 label='Age'
                 type='number'
+                size='lg'
                 value={formData.age}
                 onChange={(e) => setFormData({ ...formData, age: e.target.value })}
               />
@@ -112,6 +117,7 @@ export default function AuthForm({
             <div className='flex flex-col items-center justify-center gap-4 w-60 mb-4'>
               <Input
                 label='Street'
+                size='lg'
                 value={formData.address.street}
                 onChange={(e) =>
                   setFormData({
@@ -122,6 +128,7 @@ export default function AuthForm({
               />
               <Input
                 label='City'
+                size='lg'
                 value={formData.address.city}
                 onChange={(e) =>
                   setFormData({
@@ -134,6 +141,7 @@ export default function AuthForm({
             <div className='flex flex-col items-center justify-center gap-4 w-60 mb-4'>
               <Input
                 label='Country'
+                size='lg'
                 value={formData.address.country}
                 onChange={(e) =>
                   setFormData({
@@ -144,6 +152,7 @@ export default function AuthForm({
               />
               <Input
                 label='Zip'
+                size='lg'
                 value={formData.address.postalCode}
                 onChange={(e) =>
                   setFormData({
@@ -159,7 +168,7 @@ export default function AuthForm({
           </div>
         </>
       )}
-      <div className='flex flex-row items-start justify-center gap-4 w-full mb-4 flex-wrap'>
+      <div className='flex flex-col items-center justify-center gap-4 w-full mb-4 flex-wrap'>
         {error && <p className='w-full text-danger text-center'>{error}</p>}
         <Button
           type='submit'
@@ -170,19 +179,22 @@ export default function AuthForm({
           {loading ? <Spinner color='white' /> : 'Submit'}
         </Button>
         {register ? (
-          <p className='text-center w-full opacity-50'>
+          <p className='text-center w-full'>
             <span className=' opacity-50'>Already have an account?</span>{' '}
             <Link href='/login'>
               <p className='text-primary'>Login</p>
             </Link>
           </p>
         ) : (
-          <p className='text-center w-full'>
-            <span className=' opacity-50'>Don't have an account?</span>{' '}
+          <div className='flex flex-row gap-2 items-center'>
             <Link href='/register'>
               <p className='text-primary'>Register</p>
+            </Link>{' '}
+            /
+            <Link href='/forgot-password'>
+              <p className='text-secondary'>Forgot Password</p>
             </Link>
-          </p>
+          </div>
         )}
       </div>
     </form>

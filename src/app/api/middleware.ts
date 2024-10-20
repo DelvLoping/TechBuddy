@@ -36,6 +36,7 @@ export async function verifyToken(req: NextRequestWithUser): Promise<boolean> {
         addressId: true,
         type: true,
         signupDate: true,
+        emailVerified: true,
         helpRequests: true,
         applications: true,
         chatsAsUser1: true,

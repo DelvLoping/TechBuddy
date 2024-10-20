@@ -15,9 +15,15 @@ const HelperApplicationList = ({ helperApplication }: HelperApplicationListProps
             <div className='flex flex-row justify-between items-center'>
               <h3 className='text-lg sm:text-2xl text-secondary font-bold'>Helper Applications</h3>
             </div>
-            {_.map(helperApplication, (request: HelperApplication) => (
-              <HelperApplicationDetails key={request.id} helperApplication={request} />
-            ))}
+            {_.isEmpty(helperApplication) ? (
+              <div className='flex flex-row justify-center items-center opacity-50'>
+                <p className='text-sm sm:text-base'>No Helper Applications</p>
+              </div>
+            ) : (
+              _.map(helperApplication, (request: HelperApplication) => (
+                <HelperApplicationDetails key={request.id} helperApplication={request} />
+              ))
+            )}
           </div>
         </Card>
       </div>

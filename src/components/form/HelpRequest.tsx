@@ -26,7 +26,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
     subject: undefined,
     description: undefined,
     interventionType: VIRTUAL,
-    interventionDate: undefined,
+    interventionDate: moment().format('YYYY-MM-DD HH:mm'),
     reward: undefined,
     interventionAddress: {
       street: undefined,
@@ -60,6 +60,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+    formData.interventionDate = moment(formData.interventionDate).utc().format();
     e.preventDefault();
     try {
       if (isEdit) {
@@ -88,7 +89,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  }
+  };
 
   const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -116,6 +117,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
                 <Input
                   label='Subject'
                   name='subject'
+                  size='lg'
                   value={formData.subject}
                   onChange={handleChange}
                   required
@@ -123,6 +125,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
                 <Textarea
                   label='Description'
                   name='description'
+                  size='lg'
                   value={formData.description}
                   onChange={handleChange}
                   required
@@ -130,6 +133,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
                 <Select
                   label='Intervention Type'
                   name='interventionType'
+                  size='lg'
                   onChange={handleChange}
                   required
                   defaultSelectedKeys={[formData.interventionType]}
@@ -145,6 +149,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
                 <Input
                   label='Intervention Date'
                   type='datetime-local'
+                  size='lg'
                   name='interventionDate'
                   value={formData.interventionDate}
                   onChange={handleChange}
@@ -153,6 +158,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
                   label='Reward'
                   type='text'
                   name='reward'
+                  size='lg'
                   value={formData.reward}
                   onChange={handleChange}
                 />
@@ -166,24 +172,28 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
                     <Input
                       label='Street'
                       name='street'
+                      size='lg'
                       value={formData.interventionAddress?.street}
                       onChange={handleAddressChange}
                     />
                     <Input
                       label='City'
                       name='city'
+                      size='lg'
                       value={formData.interventionAddress?.city}
                       onChange={handleAddressChange}
                     />
                     <Input
                       label='Postal Code'
                       name='postalCode'
+                      size='lg'
                       value={formData.interventionAddress?.postalCode}
                       onChange={handleAddressChange}
                     />
                     <Input
                       label='Country'
                       name='country'
+                      size='lg'
                       value={formData.interventionAddress?.country}
                       onChange={handleAddressChange}
                     />

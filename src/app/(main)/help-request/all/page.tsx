@@ -2,8 +2,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Card, Spinner } from '@nextui-org/react';
 import axiosInstance from '@/lib/axiosInstance';
-import HelpRequestList from '@/components/list/HelpRequestList';
 import _ from 'lodash';
+import { HelpRequest } from '@prisma/client';
+import HelpRequestDetails from '@/components/macro/HelpRequestDetails';
 
 export default function HelpRequestsPage() {
   const [helpRequests, setHelpRequests] = useState([]);
@@ -24,19 +25,19 @@ export default function HelpRequestsPage() {
     { value: 'COMPLETED', label: 'COMPLETED' }
   ];
 
-  useEffect(() => {
-    const fetchHelpRequests = async () => {
-      try {
-        const applyFilters = _.pickBy(filters, (value) => value !== '');
-        const response = await axiosInstance.get('/help-request', { params: applyFilters });
-        setHelpRequests(response.data.helpRequests);
-      } catch (error) {
-        setError('Failed to load help requests.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchHelpRequests = async () => {
+    try {
+      const applyFilters = _.pickBy(filters, (value) => value !== '');
+      const response = await axiosInstance.get('/help-request', { params: applyFilters });
+      setHelpRequests(response.data.helpRequests);
+    } catch (error) {
+      setError('Failed to load help requests.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchHelpRequests();
   }, [filters]);
 
@@ -58,7 +59,7 @@ export default function HelpRequestsPage() {
   return (
     <div className='p-4 w-full'>
       <Card className='w-full p-4'>
-        <h1 className='text-2xl font-bold mb-4'>My Help Requests</h1>
+        <h1 className='text-2xl font-bold mb-4'>Help Requests</h1>
 
         <div className='mb-4'>
           <input
@@ -67,13 +68,13 @@ export default function HelpRequestsPage() {
             placeholder='Search'
             value={filters.search}
             onChange={handleFilterChange}
-            className='p-2 border rounded-large mr-2'
+            className='p-2 border rounded-large mr-2 text-base'
           />
           <select
             name='status'
             value={filters.status}
             onChange={handleFilterChange}
-            className='p-2 border rounded-large m-2'
+            className='p-2 border rounded-large m-2 text-base'
           >
             {_.map(statusOptions, (status) => (
               <option key={status.value} value={status.value}>
@@ -85,7 +86,7 @@ export default function HelpRequestsPage() {
             name='interventionType'
             value={filters.interventionType}
             onChange={handleFilterChange}
-            className='p-2 border rounded-large m-2'
+            className='p-2 border rounded-large m-2 text-base'
           >
             <option value=''>All Types</option>
             <option value='IN_PERSON'>In Person</option>
@@ -95,14 +96,15 @@ export default function HelpRequestsPage() {
             name='sortOrder'
             value={filters.sortOrder}
             onChange={handleFilterChange}
-            className='p-2 border rounded-large m-2'
+            className='p-2 border rounded-large m-2 text-base'
           >
             <option value='asc'>Sort Ascending</option>
             <option value='desc'>Sort Descending</option>
           </select>
         </div>
-
-        <HelpRequestList helpRequests={helpRequests} userType={userType} />
+        {_.map(helpRequests, (request: HelpRequest) => (
+          <HelpRequestDetails key={request.id} helpRequest={request} callback={fetchHelpRequests} />
+        ))}
       </Card>
     </div>
   );

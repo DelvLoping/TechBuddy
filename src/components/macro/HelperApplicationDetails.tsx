@@ -1,12 +1,13 @@
 import { Button } from '@nextui-org/react';
 import { HelperApplication, HelpRequest, User } from '@prisma/client';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import axiosInstance from '@/lib/axiosInstance';
 import { reloadHelperApplication } from '@/lib/redux/slices/helperApplication';
 import { toast } from 'react-toastify';
 import { getFullNames } from '@/utils';
+import { useSocket } from '../websocket/socketContext';
 
 type HelperApplicationDetailsProps = {
   helperApplication: HelperApplication & { helper?: User };
@@ -16,14 +17,16 @@ const HelperApplicationDetails = ({ helperApplication }: HelperApplicationDetail
   const [helpRequest, setHelpRequest] = useState<HelpRequest | null>(null);
   const { id, helper } = helperApplication || {};
   const fullname = getFullNames(helper);
+  const userReducer = useSelector((state: any) => state.user);
+  const { user } = userReducer || {};
+  const { requestId } = helperApplication || {};
+  const socket = useSocket();
+
   useEffect(() => {
-    const { requestId } = helperApplication || {};
     if (requestId) {
-      if (helperApplication.requestId) {
-        axiosInstance.get(`/help-request/${requestId}`).then((res) => {
-          setHelpRequest(res.data.helpRequest);
-        });
-      }
+      axiosInstance.get(`/help-request/${requestId}`).then((res) => {
+        setHelpRequest(res.data.helpRequest);
+      });
     }
   }, [helperApplication]);
 
@@ -39,12 +42,18 @@ const HelperApplicationDetails = ({ helperApplication }: HelperApplicationDetail
       color = 'text-danger';
       break;
   }
+
+  const handleEmitUpdate = async () => {
+    const relatedUserIds = [helpRequest.userId, helperApplication.helperId];
+    socket.emit('sendUpdate', relatedUserIds);
+  };
+
   const Accept = async () => {
     try {
       await axiosInstance.put(`/helper-application/${id}`, {
         status: 'ACCEPTED'
       });
-      dispatch(reloadHelperApplication());
+      handleEmitUpdate();
       toast.success('Helper Application Accepted');
     } catch (error) {
       toast.error('Error Accepting Helper Application');
@@ -56,7 +65,7 @@ const HelperApplicationDetails = ({ helperApplication }: HelperApplicationDetail
       await axiosInstance.put(`/helper-application/${id}`, {
         status: 'REJECTED'
       });
-      dispatch(reloadHelperApplication());
+      handleEmitUpdate();
       toast.success('Helper Application Rejected');
     } catch (error) {
       toast.error('Error Rejecting Helper Application');
@@ -70,7 +79,7 @@ const HelperApplicationDetails = ({ helperApplication }: HelperApplicationDetail
     >
       <div className='flex flex-row justify-between items-start'></div>
       <h1 className='text-lg font-bold'>
-        {fullname} <span className='font-normal'>veux vous aider !</span>
+        {fullname} <span className='font-normal'>want to help you!</span>
       </h1>
       <p className='text-base '>{helpRequest?.subject}</p>
       <p className={`text-sm ${color}`}>{helperApplication.status}</p>

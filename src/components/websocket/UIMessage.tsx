@@ -1,10 +1,12 @@
-import markdownToHtml, { shouldDisplayDate, shouldDisplayTime } from '@/utils';
+import { shouldDisplayDate, shouldDisplayTime } from '@/utils';
 import { AIMessage, Message } from '@prisma/client';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import _ from 'lodash';
 import ChatBot from '@/assets/images/chatbot.png';
 import Image from 'next/image';
+import { remark } from 'remark';
+import html from 'remark-html';
 
 type UIMessageProps = {
   message: Message | AIMessage;
@@ -20,6 +22,11 @@ const UIMessage = ({ message, userId, nextMessage, isAI }: UIMessageProps) => {
   const isShouldDisplayDate = shouldDisplayDate(message, nextMessage);
   const [displayTime, setDisplayTime] = useState(false);
   const [contentHtml, setContentHtml] = useState<string | null>(null);
+
+  const markdownToHtml = async (markdown: string) => {
+    const result = await remark().use(html).process(markdown);
+    return result.toString();
+  };
 
   useEffect(() => {
     const convertMarkdown = async () => {

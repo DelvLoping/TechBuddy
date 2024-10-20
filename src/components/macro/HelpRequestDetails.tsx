@@ -13,15 +13,16 @@ import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import { HiOutlineVideoCamera } from 'react-icons/hi2';
 import { MdAdsClick } from 'react-icons/md';
-import { reloadHelperApplication } from '@/lib/redux/slices/helperApplication';
+import { io } from 'socket.io-client';
+import { useSocket } from '../websocket/socketContext';
 
 type HelpRequestDetailsProps = {
   helpRequest: HelpRequest & {
     interventionAddress?: Address | null;
   };
+  callback?: () => void;
 };
-const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
-  const dispatch: any = useDispatch();
+const HelpRequestDetails = ({ helpRequest, callback }: HelpRequestDetailsProps) => {
   const router = useRouter();
   const helperApplicationReducer = useSelector((state: any) => state.helperApplication);
   const { helperApplication } = helperApplicationReducer || {};
@@ -41,23 +42,36 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
   } = helpRequest;
   const [chat, setChat] = useState<Chat | null>(null);
   const isOwner = user.id === userId;
+  const socket = useSocket();
+
   useEffect(() => {
-    if (id) {
+    if (id && status === 'IN_PROGRESS') {
       axiosInstance.get(`/chat?helpRequestId=${id}`).then((res) => {
         if (res.data) {
           setChat(res.data.chats[0]);
         }
       });
     }
-  }, [id]);
+  }, [helpRequest]);
+
+  const handleEmitUpdate = async () => {
+    const getHelperIds = _.filter(
+      helperApplication,
+      (application: HelperApplication) => application.requestId === id
+    ).map((application: HelperApplication) => application.helperId);
+    const relatedUserIds = [helpRequest.userId, user.id, ...getHelperIds];
+    socket.emit('sendUpdate', relatedUserIds);
+  };
 
   let color = '';
+  let closed = false;
   switch (helpRequest.status) {
     case 'OPEN':
       color = 'text-primary';
       break;
     case 'COMPLETED':
       color = 'text-success';
+      closed = true;
       break;
     case 'IN_PROGRESS':
       color = 'text-warning';
@@ -66,7 +80,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
   const deleteHelpRequest = async () => {
     try {
       await axiosInstance.delete(`/help-request/${id}`);
-      dispatch(reloadHelpRequests());
+      handleEmitUpdate();
       toast.success('Help request deleted successfully');
     } catch (error) {
       toast.error('Failed to delete help request');
@@ -76,7 +90,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
   const markAsCompleted = async () => {
     try {
       await axiosInstance.put(`/help-request/${id}`, { status: 'COMPLETED' });
-      dispatch(reloadHelpRequests());
+      handleEmitUpdate();
       toast.success('Help request marked as completed');
     } catch (error) {
       toast.error('Failed to mark help request as completed');
@@ -86,7 +100,10 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
     try {
       await axiosInstance.post(`/helper-application`, { requestId: id });
       toast.success('Applied successfully');
-      dispatch(reloadHelperApplication());
+      handleEmitUpdate();
+      if (callback) {
+        callback();
+      }
     } catch (error) {
       toast.error('Failed to apply');
     }
@@ -120,10 +137,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
   };
 
   return (
-    <div
-      key={id + 'HelpRequest'}
-      className={`flex flex-col p-4 border border-gray-200 last:border-none gap-2 mt-6 `}
-    >
+    <div key={id + 'HelpRequest'} className={`flex flex-col p-4 gap-2 mt-6 `}>
       <div className='flex justify-between items-start'>
         <h4 className='text-base sm:text-xl font-semibold leading-none'>{subject}</h4>
         <p className='text-xs sm:text-sm text-gray-500 text-nowrap'>
@@ -137,7 +151,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
             <span className='underline'>Status</span> : <span className={`${color}`}>{status}</span>
           </p>
         </div>
-        {interventionType === 'VIRTUAL' && chat && (
+        {interventionType === 'VIRTUAL' && chat && !closed && (
           <div className='flex flex-row items-center justify-center sm:justify-end w-full gap-2'>
             <Button
               className='bg-white text-primary border border-primary p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit text-sm:text-base'
@@ -158,7 +172,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
       {user.id === userId && (
         <>
           <p className='text-sm sm:text-base'>
-            <span className=''>Intervention Date</span> : {moment(interventionDate).format('ll')}
+            <span className=''>Intervention Date</span> : {moment(interventionDate).format('lll')}
           </p>
           <p className='text-sm sm:text-base'>
             <span className=''>Intervention Type</span> :{' '}
@@ -178,7 +192,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
                 <MdDelete className='h-4 w-4 sm:h-5 sm:w-5' />
                 Delete
               </Button>
-              {helpRequest.status === 'COMPLETED' ? null : (
+              {closed ? null : (
                 <Button
                   className='bg-success text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit text-sm:text-base'
                   onClick={markAsCompleted}
@@ -188,8 +202,11 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
                 </Button>
               )}
               <Button
-                className='bg-primary text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit text-sm:text-base'
+                className={`bg-primary text-white p-2 w-fit rounded-xl flex flex-col items-center justify-center h-fit text-sm:text-base ${
+                  closed && 'opacity-50 cursor-not-allowed'
+                }`}
                 onClick={() => router.push(`/help-request/${id}`)}
+                disabled={closed}
               >
                 <FaPen className='h-4 w-4 sm:h-5 sm:w-5' />
                 Edit
@@ -198,7 +215,7 @@ const HelpRequestDetails = ({ helpRequest }: HelpRequestDetailsProps) => {
           )}
         </>
       )}
-      {!isOwner && user.type !== 'TECHBUDDY' && (
+      {!isOwner && user.type !== 'TECHBUDDY' && !closed && (
         <div className='flex flex-row items-center justify-center w-full gap-2'>
           {isAlreadyApplied ? (
             <div className='text-sm sm:text-base text-success flex flex-row items-center gap-2'>

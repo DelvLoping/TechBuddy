@@ -53,7 +53,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
       const users = [chat.user1Id, chat.user2Id];
       if (users.includes(user.id)) {
         setIsAuthorized(true);
-        const req = axiosInstance
+        axiosInstance
           .get(`/help-request/${chat.requestId}`)
           .then((res) => {
             if (res.data) {
@@ -63,7 +63,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
                 (apply) => apply.helperId === chat.user2Id
               );
               if (
-                moment(helpRequest.interventionDate).isBefore(moment()) &&
+                moment.utc(helpRequest.interventionDate).isBefore(moment().utc()) &&
                 helpRequest.status !== 'COMPLETED' &&
                 helperApply.status === 'ACCEPTED'
               ) {
@@ -123,17 +123,19 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
 
           if (peerIdToCall) {
             const call = newPeer.call(peerIdToCall, stream);
-            setCurrentCall(call);
+            if (call) {
+              setCurrentCall(call);
 
-            call.on('stream', (remoteStream) => {
-              if (remoteVideoRef.current) {
-                remoteVideoRef.current.srcObject = remoteStream;
-                setIsRemoteStreamActive(true);
-              }
-            });
-            call.on('close', () => {
-              setIsRemoteStreamActive(false);
-            });
+              call.on('stream', (remoteStream) => {
+                if (remoteVideoRef.current) {
+                  remoteVideoRef.current.srcObject = remoteStream;
+                  setIsRemoteStreamActive(true);
+                }
+              });
+              call.on('close', () => {
+                setIsRemoteStreamActive(false);
+              });
+            }
           }
         })
         .catch((err) => {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import io from 'socket.io-client';
 import _ from 'lodash';
 import { useSelector } from 'react-redux';
@@ -104,10 +104,11 @@ const WebSocketChat = ({ isShow = true }: ChatProps) => {
   return (
     <div
       className={`fixed bottom-4 sm:!bottom-4 right-4 sm:!right-4 z-50 flex flex-col gap-2 items-end ${
-        show && '!bottom-0 !right-0 '
+        show && '!bottom-0 !right-0 w-screen sm:w-fit'
       }`}
     >
       <ChatComponent
+        className='sm:!h-[35rem] sm:!w-[29rem]'
         isShow={isShow}
         show={show}
         chats={chats}
