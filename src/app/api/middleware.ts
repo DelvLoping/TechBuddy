@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import prisma from '@/lib/prisma';
 import { NextRequestWithUser } from './type';
 
+//Next will be in Redis
 const validTokens = new Map<number, string>();
 
 export async function verifyToken(req: NextRequestWithUser): Promise<boolean> {
