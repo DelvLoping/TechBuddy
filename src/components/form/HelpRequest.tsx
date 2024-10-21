@@ -29,7 +29,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
     subject: undefined,
     description: undefined,
     interventionType: VIRTUAL,
-    interventionDate: moment().format('YYYY-MM-DDTHH:mm'), 
+    interventionDate: moment().format('YYYY-MM-DD HH:mm'),
     reward: undefined,
     interventionAddress: {
       street: undefined,
@@ -47,7 +47,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
         .then((res) => {
           const helpRequest = res.data.helpRequest;
           helpRequest.interventionType = helpRequest.interventionType || VIRTUAL;
-          helpRequest.interventionDate = moment(helpRequest.interventionDate).format('YYYY-MM-DDTHH:mm');
+          helpRequest.interventionDate = moment(helpRequest.interventionDate).format('YYYY-MM-DD HH:mm');
           setFormData(helpRequest);
         })
         .catch((error: any) => {
@@ -60,11 +60,8 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
 
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
-  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
+  const validateForm = (): boolean => {
     setFormErrors({ subject: '', description: '', interventionDate: '' });
-
     let isValid = true;
 
     if (!formData.subject) {
@@ -79,13 +76,16 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
       setFormErrors((prev) => ({ ...prev, interventionDate: 'Intervention date is required' }));
       isValid = false;
     }
+    return isValid; 
+  };
 
-    if (!isValid) {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+    formData.interventionDate = moment(formData.interventionDate).utc().format();
+    e.preventDefault();
+    if (!validateForm()) {
       return; 
     }
-
     formData.interventionDate = moment(formData.interventionDate).utc().format();
-
     try {
       if (isEdit) {
         await axiosInstance.put(`/help-request/${idHelpRequest}`, formData);
