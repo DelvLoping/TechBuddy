@@ -237,6 +237,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
                 >
                   {loading ? <Spinner color='white' /> : 'Submit'}
                 </Button>
+                {error && <p className='text-danger'>{error}</p>}
               </div>
             </form>
           )}
