@@ -2,12 +2,20 @@
 
 import AuthForm from '@/components/form/AuthForm';
 import { login } from '@/lib/redux/slices/user';
+import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 
 export default function Page() {
+  const router = useRouter();
   const dispatch: any = useDispatch();
   const submit = async (formData: any) => {
+    if (formData.isMagicLink && !formData.email) {
+      return;
+    }
     dispatch(login(formData));
+    if (formData.isMagicLink) {
+      router.push('/magic-link-sent');
+    }
   };
 
   return (

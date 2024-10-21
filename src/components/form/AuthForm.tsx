@@ -5,7 +5,6 @@ import { Spinner } from '@nextui-org/spinner';
 import { useSelector } from 'react-redux';
 import { HELPER, TECHBUDDY } from '@/constant';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 export interface IformData {
   email: string;
@@ -33,7 +32,6 @@ export default function AuthForm({
   register?: boolean;
   useMagicLink?: boolean;
 }) {
-  const router = useRouter();
   const userReducer = useSelector((state: any) => state.user);
   const { jwt, user, error, loading } = userReducer || {};
   const [isMagicLink, setIsMagicLink] = useState(useMagicLink);
@@ -54,9 +52,6 @@ export default function AuthForm({
   const submit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     onSubmit(isMagicLink ? { email: formData.email, isMagicLink } : formData);
-    if (isMagicLink) {
-      router.push('/magic-link-sent');
-    }
   };
 
   const handleChangeCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
