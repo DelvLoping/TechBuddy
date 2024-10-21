@@ -53,7 +53,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (user) {
-      console.log('user', user, user.emailVerified, pathname, pathname !== '/verify-email');
       if (user.emailVerified) {
         dispatch(reloadChats());
         dispatch(reloadHelpRequests());
