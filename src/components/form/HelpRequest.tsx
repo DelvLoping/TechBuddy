@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input, Textarea, Select, SelectItem, Card } from '@nextui-org/react';
+import { Button, Input, Textarea, Select, SelectItem } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react';
 import { Spinner } from '@nextui-org/spinner';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,13 +15,16 @@ type HelpRequestProps = {
   id: string;
   idHelpRequest?: string;
 };
+
 export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
   const isEdit = !!idHelpRequest;
   const dispatch: any = useDispatch();
   const userReducer = useSelector((state: any) => state.user);
   const { loading } = userReducer || {};
   const [error, setError] = useState('');
+  const [formErrors, setFormErrors] = useState({ subject: '', description: '', interventionDate: '' });
   const router = useRouter();
+  
   const [formData, setFormData] = useState({
     subject: undefined,
     description: undefined,
@@ -44,9 +47,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
         .then((res) => {
           const helpRequest = res.data.helpRequest;
           helpRequest.interventionType = helpRequest.interventionType || VIRTUAL;
-          helpRequest.interventionDate = moment(helpRequest.interventionDate).format(
-            'YYYY-MM-DD HH:mm'
-          );
+          helpRequest.interventionDate = moment(helpRequest.interventionDate).format('YYYY-MM-DD HH:mm');
           setFormData(helpRequest);
         })
         .catch((error: any) => {
@@ -59,9 +60,32 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
 
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
+  const validateForm = (): boolean => {
+    setFormErrors({ subject: '', description: '', interventionDate: '' });
+    let isValid = true;
+
+    if (!formData.subject) {
+      setFormErrors((prev) => ({ ...prev, subject: 'Subject is required' }));
+      isValid = false;
+    }
+    if (!formData.description) {
+      setFormErrors((prev) => ({ ...prev, description: 'Description is required' }));
+      isValid = false;
+    }
+    if (!formData.interventionDate) {
+      setFormErrors((prev) => ({ ...prev, interventionDate: 'Intervention date is required' }));
+      isValid = false;
+    }
+    return isValid; 
+  };
+
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     formData.interventionDate = moment(formData.interventionDate).utc().format();
     e.preventDefault();
+    if (!validateForm()) {
+      return; 
+    }
+    formData.interventionDate = moment(formData.interventionDate).utc().format();
     try {
       if (isEdit) {
         await axiosInstance.put(`/help-request/${idHelpRequest}`, formData);
@@ -122,6 +146,8 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
                   onChange={handleChange}
                   required
                 />
+                {formErrors.subject && <p className='text-danger'>{formErrors.subject}</p>}
+
                 <Textarea
                   label='Description'
                   name='description'
@@ -130,6 +156,8 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
                   onChange={handleChange}
                   required
                 />
+                {formErrors.description && <p className='text-danger'>{formErrors.description}</p>}
+
                 <Select
                   label='Intervention Type'
                   name='interventionType'
@@ -154,6 +182,8 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
                   value={formData.interventionDate}
                   onChange={handleChange}
                 />
+                {formErrors.interventionDate && <p className='text-danger'>{formErrors.interventionDate}</p>}
+
                 <Input
                   label='Reward'
                   type='text'
@@ -216,7 +246,7 @@ export default function HelpRequest({ id, idHelpRequest }: HelpRequestProps) {
             <div className='text-green-600 text-center font-bold mt-4'>
               {isEdit
                 ? 'Your help request has been updated successfully!'
-                : ' Your help request has been submitted successfully!'}
+                : 'Your help request has been submitted successfully!'}
             </div>
           )}
         </>
