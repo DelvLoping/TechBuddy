@@ -1,8 +1,12 @@
+// __tests__/login.test.tsx
+
 import '@testing-library/jest-dom'; // For custom matchers like .toBeInTheDocument()
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import Page from '@/app/(main)/login/page'; // Adjust the import based on your folder structure
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import { RouterContext } from 'next/dist/shared/lib/router-context'; // Import RouterContext
 
 // Mocking useDispatch from react-redux
 jest.mock('react-redux', () => ({
@@ -27,12 +31,21 @@ jest.mock('@/components/form/AuthForm', () => ({
   )
 }));
 
+// Mocking useRouter
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn()
+}));
+
 describe('Login Page', () => {
   let mockDispatch: jest.Mock;
+  let mockPush: jest.Mock;
 
   beforeEach(() => {
     mockDispatch = jest.fn();
     (useDispatch as jest.Mock).mockReturnValue(mockDispatch);
+
+    mockPush = jest.fn();
+    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
 
     // Mock axios to simulate a successful login response
     (axios.post as jest.Mock).mockResolvedValue({
