@@ -77,10 +77,12 @@ jobs:
                   - "3000:3000"
                 depends_on:
                   - db
+                  - redis
                 environment:
                   NODE_ENV: production
                   DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:5432/techbuddy
                   JWT_SECRET: ${{ secrets.JWT_SECRET }}
+                  REDIS_URL: redis://redis:6379
                   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
                   NODEMAILER_PW: ${{ secrets.NODEMAILER_PW }}
                   NODEMAILER_EMAIL: ${{ secrets.NODEMAILER_EMAIL }}
@@ -92,6 +94,7 @@ jobs:
                   - "3001:3001"
                 depends_on:
                   - db
+                  - redis
                 environment:
                   NODE_ENV: production
                   DATABASE_URL: postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:5432/techbuddy
