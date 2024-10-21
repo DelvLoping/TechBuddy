@@ -4,9 +4,9 @@ import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import prisma from '@/lib/prisma';
 import { NextRequestWithUser } from './type';
+import Redis from 'ioredis';
 
-//Next will be in Redis
-const validTokens = new Map<number, string>();
+const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
 
 export async function verifyToken(req: NextRequestWithUser): Promise<boolean> {
   try {
@@ -22,7 +22,8 @@ export async function verifyToken(req: NextRequestWithUser): Promise<boolean> {
       userId: number;
     };
 
-    if (!validTokens.has(decoded.userId) && process.env.NODE_ENV !== 'development') {
+    const storedToken = await redis.get(`user:${decoded.userId}`);
+    if (!storedToken) {
       return false;
     }
 
@@ -60,15 +61,15 @@ export async function verifyToken(req: NextRequestWithUser): Promise<boolean> {
     return false;
   }
 }
-export function getValidTokens(id: number) {
-  return validTokens.get(id);
+export async function getValidTokens(id: number) {
+  return await redis.get(`user:${id}`);
 }
-export function addToValidTokens(id: number, token: string) {
-  validTokens.set(id, token);
+export async function addToValidTokens(id: number, token: string) {
+  await redis.set(`user:${id}`, token, 'EX', 60 * 60 * 24 * 10);
 }
 
-export function removeFromValidTokens(id: number) {
-  validTokens.delete(id);
+export async function removeFromValidTokens(id: number) {
+  await redis.del(`user:${id}`);
 }
 
 export const authenticate = async (req: NextRequestWithUser) => {

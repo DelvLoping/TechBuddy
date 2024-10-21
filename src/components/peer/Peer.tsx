@@ -38,6 +38,9 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
   const [isRemoteStreamActive, setIsRemoteStreamActive] = useState(false);
   const [deviceError, setDeviceError] = useState(false);
 
+  //getDisplayMedia is not supported on mobile devices currently
+  const isMobile = window.innerWidth < 640;
+
   useEffect(() => {
     if (chatId) {
       axiosInstance.get(`/chat/${chatId}`).then((res) => {
@@ -174,6 +177,8 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
   };
 
   const startScreenShare = async () => {
+    if (isMobile) return;
+
     if (!isScreenSharing && stream) {
       try {
         const screenStream = await navigator.mediaDevices.getDisplayMedia({
@@ -206,6 +211,8 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
   };
 
   const stopScreenShare = async () => {
+    if (isMobile) return;
+
     if (screenStream) {
       screenStream.getTracks().forEach((track) => track.stop());
       setScreenStream(null);
@@ -293,17 +300,19 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
                   )}
                 </Button>
 
-                <Button
-                  onClick={isScreenSharing ? stopScreenShare : startScreenShare}
-                  className={`p-3 !min-w-[0px] bg-primary text-white w-fit rounded-full
+                {!isMobile && (
+                  <Button
+                    onClick={isScreenSharing ? stopScreenShare : startScreenShare}
+                    className={`p-3 !min-w-[0px] bg-primary text-white w-fit rounded-full
                     ${isScreenSharing ? 'bg-red-500' : 'bg-primary'}`}
-                >
-                  {isScreenSharing ? (
-                    <LuScreenShareOff className='w-6 h-6' />
-                  ) : (
-                    <LuScreenShare className='w-6 h-6' />
-                  )}
-                </Button>
+                  >
+                    {isScreenSharing ? (
+                      <LuScreenShareOff className='w-6 h-6' />
+                    ) : (
+                      <LuScreenShare className='w-6 h-6' />
+                    )}
+                  </Button>
+                )}
 
                 <Button
                   onClick={() => setIsFullScreen(!isFullScreen)}

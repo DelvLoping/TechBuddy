@@ -67,7 +67,7 @@ export async function POST(req: NextRequestWithUser) {
       expiresIn: '10d'
     });
 
-    addToValidTokens(newUser.id, token);
+    await addToValidTokens(newUser.id, token);
 
     return NextResponse.json({ message: 'User created', user: newUser, token }, { status: 201 });
   } catch (error) {

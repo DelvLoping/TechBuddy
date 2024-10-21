@@ -12,7 +12,7 @@ export async function GET(req: NextRequestWithUser) {
     }
     const userId = req.user?.id;
     if (userId) {
-      removeFromValidTokens(userId);
+      await removeFromValidTokens(userId);
       return NextResponse.json({ message: 'User logged out' }, { status: 200 });
     } else {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });

@@ -25,7 +25,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const useReducer = useSelector((state: any) => state.user);
   const { jwt: jwtRedux, user } = useReducer;
   const dispatch: any = useDispatch();
-  const publicPathnames = ['/login', '/register', '/logout', '/forgot-password', '/reset-password'];
+  const publicPathnames = [
+    '/login',
+    '/register',
+    '/forgot-password',
+    '/reset-password',
+    '/magic-link-sent'
+  ];
 
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
@@ -64,7 +70,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   const navbarVisible =
-    !publicPathnames.includes(pathname) && pathname !== '/chat-ai' && pathname !== '/verify-email';
+    !publicPathnames.includes(pathname) &&
+    pathname !== '/chat-ai' &&
+    pathname !== '/verify-email' &&
+    pathname !== '/logout';
 
   const pathSegments = pathname.split('/').filter((segment) => segment);
 

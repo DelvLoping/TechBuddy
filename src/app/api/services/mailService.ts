@@ -115,3 +115,36 @@ export const sendWelcomeMail = async (to: string) => {
       `;
   await sendMail(to, subject, html);
 };
+
+export const sendMagicLinkMail = async (to: string, link: string) => {
+  const subject = '🔗 Sign in with Magic Link';
+  const html = `
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+          <tr>
+            <td align="center" style="width: 100%;">
+              <table role="presentation" width="600px" cellspacing="0" cellpadding="0" border="0" style="background-color: #f7f7f7; border-radius: 32px 32px 0 0; padding: 32px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <tr>
+                  <td style="padding: 32px; background-color: white; border-radius: 15px;">
+                    <h2 style="font-family: Arial, sans-serif; color: #007BFF; text-align: left;">🔗 Sign in with Magic Link</h2>
+                    <p style="font-family: Arial, sans-serif; font-size: 16px; color: #555; text-align: left;">We received a request to sign in to your account. Click the button below to sign in:</p>
+                    <div style="text-align: left; margin: 20px 0;">
+                      <a href="${link}" style="background-color: #007BFF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-family: Arial, sans-serif; font-size: 16px;">🔗 Sign In</a>
+                    </div>
+                    <p style="font-family: Arial, sans-serif; font-size: 14px; color: #555; text-align: left;">If the button doesn't work, click the link below:</p>
+                    <a href="${link}" style="font-family: Arial, sans-serif; font-size: 14px; color: #007BFF; text-align: left; word-break: break-all;">${link}</a>
+                    <p style="font-family: Arial, sans-serif; font-size: 14px; color: #555; text-align: left; margin-top: 20px;">Thank you for using our platform! 😊</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 32px;">
+                    <p style="font-family: Arial, sans-serif; font-size: 14px; color: #555; text-align: left;">Best regards,</p>
+                    <p style="font-family: Arial, sans-serif; font-size: 14px; color: #555; text-align: left;">The Team 🚀</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      `;
+  await sendMail(to, subject, html);
+};

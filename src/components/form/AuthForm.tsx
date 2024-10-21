@@ -1,10 +1,11 @@
 'use client';
-import { Button, Checkbox, Input } from '@nextui-org/react';
+import { Button, Checkbox, Input, Switch } from '@nextui-org/react';
 import React, { useState } from 'react';
 import { Spinner } from '@nextui-org/spinner';
 import { useSelector } from 'react-redux';
 import { HELPER, TECHBUDDY } from '@/constant';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export interface IformData {
   email: string;
@@ -24,14 +25,18 @@ export interface IformData {
 export default function AuthForm({
   id,
   onSubmit,
-  register = false
+  register = false,
+  useMagicLink = false
 }: {
   id: string;
   onSubmit: (formData: any) => Promise<void>;
   register?: boolean;
+  useMagicLink?: boolean;
 }) {
+  const router = useRouter();
   const userReducer = useSelector((state: any) => state.user);
   const { jwt, user, error, loading } = userReducer || {};
+  const [isMagicLink, setIsMagicLink] = useState(useMagicLink);
   const [formData, setFormData] = useState<IformData>({
     email: '',
     password: '',
@@ -48,7 +53,10 @@ export default function AuthForm({
   });
   const submit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit(isMagicLink ? { email: formData.email, isMagicLink } : formData);
+    if (isMagicLink) {
+      router.push('/magic-link-sent');
+    }
   };
 
   const handleChangeCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,13 +75,22 @@ export default function AuthForm({
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           />
-          <Input
-            label='Password'
-            size='lg'
-            type='password'
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-          />
+          {!isMagicLink && (
+            <Input
+              label='Password'
+              size='lg'
+              type='password'
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            />
+          )}
+          {!register && (
+            <div className='flex flex-row items-start justify-center gap-4 w-full mb-4 flex-wrap'>
+              <Switch isSelected={isMagicLink} onChange={() => setIsMagicLink(!isMagicLink)}>
+                Login with Magic Link ?
+              </Switch>
+            </div>
+          )}
         </div>
         {register && (
           <>

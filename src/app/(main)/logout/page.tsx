@@ -9,9 +9,12 @@ export default function Page() {
   const dispatch: any = useDispatch();
 
   useEffect(() => {
-    setTimeout(() => {
-      dispatch(logout());
-    }, 2000);
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      setTimeout(() => {
+        dispatch(logout());
+      }, 2000);
+    }
   }, []);
 
   return (
