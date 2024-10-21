@@ -70,6 +70,9 @@ export async function GET(req: NextRequestWithUser, { params }: { params: { id: 
             country: true
           }
         }
+      } ,
+      orderBy: {
+        requestDate: 'desc' 
       }
     });
 
