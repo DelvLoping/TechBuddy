@@ -18,7 +18,7 @@ const login = createAsyncThunk<
 >(
   'auth/login',
   async (
-    formData: { username: string; password?: string; isMagicLink?: boolean },
+    formData: { username: string; password?: string; isMagicLink?: boolean; email?: string },
     { rejectWithValue, dispatch }
   ) => {
     try {
