@@ -60,7 +60,7 @@ const PageContent = () => {
           )}
         </>
       )}
-      {error && !success && (
+      {!loading && error && !success && (
         <h1 className='text-4xl font-bold text-danger mb-16 text-center'>{error}</h1>
       )}
       {success ? (
