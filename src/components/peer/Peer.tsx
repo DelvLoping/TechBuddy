@@ -236,9 +236,8 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
 
   return (
     <div
-      className={`relative flex flex-col justify-center items-center h-full gap-4 ${
-        isFullScreen &&
-        'sm:flex-row fixed top-0 left-0 w-screen sm:h-screen z-50 bg-black p-4 h-[100vhs]'
+      className={`flex flex-col justify-center items-center h-full gap-4 ${
+        isFullScreen && 'sm:flex-row fixed top-0 left-0 w-screen sm:h-screen z-50 bg-black p-4'
       }`}
     >
       {deviceError && (
@@ -274,7 +273,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
               />
               <div
                 className={`flex flex-row items-center justify-center gap-4 ${
-                  isFullScreen && 'absolute bottom sm:bottom-6'
+                  isFullScreen && 'absolute bottom-20 sm:bottom-6'
                 }`}
               >
                 <Button
