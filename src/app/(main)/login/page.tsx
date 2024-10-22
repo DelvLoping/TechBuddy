@@ -20,7 +20,7 @@ export default function Page() {
 
   return (
     <div className='flex flex-col items-center gap-10 w-full p-4 px-10 md:px-20 h-full mb-10'>
-      <h1 className='text-4xl font-bold text-primary'>Login</h1>
+      <h1 className='text-4xl font-bold text-primary text-center'>Login</h1>
       <p>Welcome back! Please log in to your account.</p>
       <AuthForm id='login' onSubmit={submit} useMagicLink={true} />
     </div>

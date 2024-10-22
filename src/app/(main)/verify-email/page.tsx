@@ -50,7 +50,7 @@ const PageContent = () => {
     <div className='flex flex-col items-center justify-center gap-4 w-full p-4 px-10 md:px-20 lg:px-40 xl:px-80 h-full mb-10'>
       {!error && !success && (
         <>
-          <h1 className='text-4xl font-bold text-primary mb-16'>Verify Email</h1>
+          <h1 className='text-4xl font-bold text-primary mb-16 text-center'> Verify Email</h1>
           {loading ? (
             <Spinner size='lg' className='text-primary' />
           ) : (
@@ -60,9 +60,11 @@ const PageContent = () => {
           )}
         </>
       )}
-      {error && !success && <h1 className='text-4xl font-bold text-danger mb-16'>{error}</h1>}
+      {error && !success && (
+        <h1 className='text-4xl font-bold text-danger mb-16 text-center'>{error}</h1>
+      )}
       {success ? (
-        <h1 className='text-4xl font-bold text-success mb-16'>Email verified</h1>
+        <h1 className='text-4xl font-bold text-success mb-16 text-center'>Email verified</h1>
       ) : (
         !loading && (
           <>
