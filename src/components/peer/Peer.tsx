@@ -241,7 +241,11 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
       }`}
     >
       {deviceError && (
-        <div className='bg-white w-full text-center text-secondary flex flex-col items-center gap-4 p-4 py-8 border border-gray-200 rounded-xl mt-8 sm:mt-32'>
+        <div
+          className={`${
+            isFullScreen ? 'bg-zinc-900' : 'bg-white border border-gray-200'
+          } w-full text-center text-secondary flex flex-col items-center gap-4 p-4 py-8 rounded-xl mt-8 sm:mt-32`}
+        >
           <HiOutlineVideoCameraSlash className='w-6 h-6' />
           Devices not found. Please check your camera and microphone then refresh the page.
         </div>
@@ -259,7 +263,11 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
                 autoPlay
               />
               {!isRemoteStreamActive && (
-                <div className='bg-white w-full text-center text-secondary flex flex-col items-center gap-4 p-4 py-8 border border-gray-200 sm:w-72'>
+                <div
+                  className={`${
+                    isFullScreen ? 'bg-zinc-900' : 'bg-white border border-gray-200'
+                  } w-full text-center text-secondary flex flex-col items-center gap-4 p-4 py-8 sm:w-72`}
+                >
                   <FaUser className='w-6 h-6' />
                   Waiting for the other user to join...
                 </div>
@@ -273,7 +281,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
               />
               <div
                 className={`flex flex-row items-center justify-center gap-4 ${
-                  isFullScreen && 'absolute bottom-20 sm:bottom-6'
+                  isFullScreen && 'absolute bottom-6'
                 }`}
               >
                 <Button
