@@ -273,7 +273,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
               />
               <div
                 className={`flex flex-row items-center justify-center gap-4 ${
-                  isFullScreen && 'sm:absolute bottom-6'
+                  isFullScreen && 'absolute bottom-16 sm:bottom-6'
                 }`}
               >
                 <Button
