@@ -23,7 +23,7 @@ const PageContent = () => {
 
   return (
     <div className='flex flex-col items-center justify-center gap-4 w-full p-4 px-10 md:px-20 lg:px-40 xl:px-80 h-full mb-10'>
-      <h1 className='text-4xl font-bold text-primary mb-16'>
+      <h1 className='text-4xl font-bold text-primary mb-16 text-center'>
         Magic Link {error ? '' : loading ? 'Sending' : 'Sent'}
       </h1>
 
