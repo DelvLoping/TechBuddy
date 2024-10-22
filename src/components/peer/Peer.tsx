@@ -265,7 +265,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
                 </div>
               )}
               <video
-                className={`w-full sm:w-36 ${isFullScreen && 'w-36 h-36'}`}
+                className={`w-full sm:w-36 ${isFullScreen && 'w-36 h-36 sm:h-full'}`}
                 playsInline
                 ref={myVideoRef}
                 autoPlay
