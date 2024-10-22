@@ -251,7 +251,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
           isOpen ? (
             <>
               <video
-                className={`${isFullScreen && 'max-h-[60vh]'} h-full w-full ${
+                className={`${isFullScreen && 'max-h-[60vh] sm:max-h-none'} h-full w-full ${
                   !isRemoteStreamActive && 'hidden'
                 }`}
                 playsInline
