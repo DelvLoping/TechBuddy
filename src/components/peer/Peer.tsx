@@ -251,7 +251,7 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
           isOpen ? (
             <>
               <video
-                className={`${isFullScreen ? 'h-full' : 'h-full'} w-full ${
+                className={`${isFullScreen && 'max-h-[60vh]'} h-full w-full ${
                   !isRemoteStreamActive && 'hidden'
                 }`}
                 playsInline
@@ -259,13 +259,13 @@ const PeerPage = ({ chatId }: PeerPageProps) => {
                 autoPlay
               />
               {!isRemoteStreamActive && (
-                <div className='bg-white w-full text-center text-secondary flex flex-col items-center gap-4 p-4 py-8 border border-gray-200 w-full sm:w-72'>
+                <div className='bg-white w-full text-center text-secondary flex flex-col items-center gap-4 p-4 py-8 border border-gray-200 sm:w-72'>
                   <FaUser className='w-6 h-6' />
                   Waiting for the other user to join...
                 </div>
               )}
               <video
-                className={`w-full sm:w-36 ${isFullScreen && 'w-36'}`}
+                className={`w-full sm:w-36 ${isFullScreen && 'w-36 h-36'}`}
                 playsInline
                 ref={myVideoRef}
                 autoPlay
