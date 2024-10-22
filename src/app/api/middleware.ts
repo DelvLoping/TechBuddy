@@ -7,7 +7,7 @@ import { NextRequestWithUser } from './type';
 import Redis from 'ioredis';
 
 const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
-
+export const EXPIRATION_TIME_IN_DAYS = 30;
 export async function verifyToken(req: NextRequestWithUser): Promise<boolean> {
   try {
     const authHeader = req.headers.get('Authorization');
@@ -23,7 +23,7 @@ export async function verifyToken(req: NextRequestWithUser): Promise<boolean> {
     };
 
     const storedToken = await redis.get(`user:${decoded.userId}`);
-    if (!storedToken) {
+    if (!storedToken || storedToken !== token) {
       return false;
     }
 
@@ -65,7 +65,7 @@ export async function getValidTokens(id: number) {
   return await redis.get(`user:${id}`);
 }
 export async function addToValidTokens(id: number, token: string) {
-  await redis.set(`user:${id}`, token, 'EX', 60 * 60 * 24 * 10);
+  await redis.set(`user:${id}`, token, 'EX', 60 * 60 * 24 * EXPIRATION_TIME_IN_DAYS);
 }
 
 export async function removeFromValidTokens(id: number) {

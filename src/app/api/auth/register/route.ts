@@ -5,7 +5,7 @@ import prisma from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { addToValidTokens } from '@/app/api/middleware';
+import { addToValidTokens, EXPIRATION_TIME_IN_DAYS } from '@/app/api/middleware';
 import { NextRequestWithUser } from '../../type';
 import { sendVerificationMail } from '../../services/mailService';
 import moment from 'moment';
@@ -64,7 +64,7 @@ export async function POST(req: NextRequestWithUser) {
     await sendVerificationMail(email, verificationLink);
 
     const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET || 'secret', {
-      expiresIn: '10d'
+      expiresIn: `${EXPIRATION_TIME_IN_DAYS}d`
     });
 
     await addToValidTokens(newUser.id, token);
