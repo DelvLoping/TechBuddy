@@ -69,9 +69,8 @@ export default function CookiePolicy() {
           If you have any questions about this Cookie Policy, please contact us:
         </p>
         <ul className='list-disc pl-6 mb-4'>
-          <li className='text-black/60 text-base lg:text-lg'>By email: support@techbuddy.com</li>
           <li className='text-black/60 text-base lg:text-lg'>
-            By visiting this page on our website: [Contact Page URL]
+            By email: noreply.techbuddy@gmail.com{' '}
           </li>
         </ul>
       </div>

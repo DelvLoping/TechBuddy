@@ -8,9 +8,9 @@ export default function PrivacyPolicy() {
           Privacy Policy
         </h1>
         <p className='text-black/60 text-base lg:text-lg mb-4'>
-          At TechBuddy, accessible from [your domain], one of our main priorities is the privacy of
-          our visitors. This Privacy Policy document contains types of information that is collected
-          and recorded by TechBuddy and how we use it.
+          At TechBuddy, accessible from {process.env.NEXT_PUBLIC_ORIGIN}, one of our main priorities
+          is the privacy of our visitors. This Privacy Policy document contains types of information
+          that is collected and recorded by TechBuddy and how we use it.
         </p>
 
         <h2 className='text-2xl lg:text-4xl font-bold mt-6 mb-4'>1. Information We Collect</h2>
@@ -106,9 +106,8 @@ export default function PrivacyPolicy() {
           If you have any questions about this Privacy Policy, please contact us:
         </p>
         <ul className='list-disc pl-6 mb-4'>
-          <li className='text-black/60 text-base lg:text-lg'>By email: support@techbuddy.com</li>
           <li className='text-black/60 text-base lg:text-lg'>
-            By visiting this page on our website: [Contact Page URL]
+            By email: noreply.techbuddy@gmail.com{' '}
           </li>
         </ul>
       </div>

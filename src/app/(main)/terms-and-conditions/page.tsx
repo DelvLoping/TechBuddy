@@ -1,6 +1,29 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 export default function TermsAndConditions() {
+  const [userCountry, setUserCountry] = useState('');
+
+  const fetchUserCountry = async () => {
+    try {
+      const response = await fetch('https://api.ipify.org?format=json');
+      const data = await response.json();
+      const userIP = data.ip;
+
+      const countryResponse = await fetch(`https://ipapi.co/${userIP}/country_name/`);
+      const country = await countryResponse.text();
+
+      setUserCountry(country);
+    } catch (error) {
+      console.error('Error fetching user country:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserCountry();
+  }, []);
+
   return (
     <div className='w-full flex flex-col px-4 lg:px-32'>
       <div className='w-full flex flex-col'>
@@ -70,9 +93,9 @@ export default function TermsAndConditions() {
 
         <h2 className='text-2xl lg:text-4xl font-bold mt-6 mb-4'>7. Governing Law</h2>
         <p className='text-black/60 text-base lg:text-lg mb-4'>
-          These Terms and Conditions are governed by and construed in accordance with the laws of
-          [Your Country], and any disputes related to these terms will be subject to the exclusive
-          jurisdiction of the courts in [Your Country].
+          These Terms and Conditions are governed by and construed in accordance with the laws of{' '}
+          {userCountry}, and any disputes related to these terms will be subject to the exclusive
+          jurisdiction of the courts in {userCountry}.
         </p>
       </div>
     </div>
